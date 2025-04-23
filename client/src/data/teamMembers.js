@@ -1,9 +1,13 @@
+const experienceYear = new Date().getFullYear() - 2024;
+console.log(experienceYear);
+
+
 const teamMembers = [
     {
       id: 1,
       name: 'Trần Minh Phú',
       position: 'Sinh viên',
-      bio: 'Chuyên gia công nghệ với 1 năm kinh nghiệm trong lĩnh vực IT',
+      bio: `Chuyên gia công nghệ với ${experienceYear} năm kinh nghiệm trong lĩnh vực IT`,
       image: '/images/team-1.jpg'
     },
     // {

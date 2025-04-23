@@ -1,2 +1,83 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 @import "tailwindcss";
 
+body {
+  font-family: 'Inter', sans-serif;
+  margin: 0;
+  padding: 0;
+  color: #333;
+  background-color: #f9f9f9;
+}
+
+/* Animation for dropdown */
+.fade-enter {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+.fade-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 300ms, transform 300ms;
+}
+.fade-exit {
+  opacity: 1;
+}
+.fade-exit-active {
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 300ms, transform 300ms;
+}
+
+
+
+.container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  /* Hero Section */
+  .hero-section {
+    background: linear-gradient(rgba(26, 115, 82, 0.9), rgba(26, 115, 82, 0.9)), 
+                url('/images/hero-bg.jpg') no-repeat center center;
+    background-size: cover;
+  }
+  
+  .search-box input {
+    min-width: 0;
+  }
+  
+  /* Animation */
+  .group-hover\:scale-105:hover {
+    transform: scale(1.05);
+  }
+  
+  .transition {
+    transition-property: all;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 300ms;
+  }
+  
+  .duration-300 {
+    transition-duration: 300ms;
+  }
+  
+  .duration-500 {
+    transition-duration: 500ms;
+  }
+  
+  /* Responsive */
+  @media (max-width: 768px) {
+    .search-box {
+      flex-direction: column;
+    }
+    
+    .search-box input {
+      width: 100%;
+      margin-bottom: 10px;
+    }
+    
+    .search-box button {
+      width: 100%;
+    }
+  }

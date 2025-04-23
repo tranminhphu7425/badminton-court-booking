@@ -1,12 +1,22 @@
 const API_BASE_URL = 'http://localhost:3001/api';
 
+const handleResponse = async (response) => {
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || 'Something went wrong');
+  }
+  return response.json();
+};
+
 export const getCourts = async () => {
   try {
-    const response = await fetch(`${API_BASE_URL}/courts`);
-    if (!response.ok) {
-      throw new Error('Failed to fetch courts');
-    }
-    return await response.json();
+    const response = await fetch(`${API_BASE_URL}/courts`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    return handleResponse(response);
   } catch (error) {
     console.error('Error fetching courts:', error);
     throw error;
@@ -15,11 +25,13 @@ export const getCourts = async () => {
 
 export const getBookings = async (date) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/bookings/${date}`);
-    if (!response.ok) {
-      throw new Error('Failed to fetch bookings');
-    }
-    return await response.json();
+    const response = await fetch(`${API_BASE_URL}/bookings/${date}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    return handleResponse(response);
   } catch (error) {
     console.error('Error fetching bookings:', error);
     throw error;
@@ -35,10 +47,7 @@ export const createBooking = async (bookingData) => {
       },
       body: JSON.stringify(bookingData),
     });
-    if (!response.ok) {
-      throw new Error('Failed to create booking');
-    }
-    return await response.json();
+    return handleResponse(response);
   } catch (error) {
     console.error('Error creating booking:', error);
     throw error;

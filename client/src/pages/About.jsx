@@ -3,6 +3,8 @@ import { GiSoccerField } from 'react-icons/gi';
 import teamMembers from '../data/teamMembers'; // Tạo file này sau
 
 const About = () => {
+
+
   return (
     <div className="about-page">
       {/* Hero Section */}
