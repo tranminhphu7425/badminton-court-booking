@@ -1,29 +1,30 @@
-import {BrowserRouter as Router, Routes, Route} from 'react-router-dom';
-import Navigation from './components/Navigation';
-
-import About from './pages/About';
-import Home from './pages/Home';
-import Badminton from './pages/Badminton';
+import { Suspense } from 'react';
+import { Routes, Route } from 'react-router-dom';
+import { routes } from './routes';
+import Navbar from './components/Navbar';
+import LoadingSpinner from './components/LoadingSpinner';
 import './App.css';
+import Temp from './pages/temp';
 
-function App () {
+
+function App() {
   return (
-    <Router>
-      <div className='App'>
-        <Navigation />
+    <>
+      <Navbar />
+      
+      <Suspense fallback={<LoadingSpinner />}> 
         <Routes>
-          <Route path='/' element={<Home />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/booking" element={<Badminton />} />
+          {routes.map((route, index) => (
+            <Route
+              key={index}
+              path={route.path}
+              element={route.element}
+            />
+          ))}
         </Routes>
-      </div>
-    </Router>
-
+      </Suspense>
+    </>
   );
-
-
-
-};
-
+}
 
 export default App;

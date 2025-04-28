@@ -1,6 +1,7 @@
 import { FaUsers, FaTrophy, FaCalendarCheck, FaMapMarkedAlt } from 'react-icons/fa';
 import { GiSoccerField } from 'react-icons/gi';
 import teamMembers from '../data/teamMembers'; // Tạo file này sau
+import Section from '../components/Section';
 
 const About = () => {
 
@@ -16,17 +17,17 @@ const About = () => {
       </section>
 
       {/* Our Story Section */}
-      <section className="py-16">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-col md:flex-row items-center gap-12">
-            <div className="md:w-1/2">
+      <Section>
+        <div className="pt-16 container mx-auto px-4">
+          <div className="flex flex-col lg:flex-row items-center gap-12">
+            <div className="lg:w-1/2">
               <img 
-                src="/images/about-story.jpg" 
+                src="./public\assets\images\backgrounds\about\gioi_thieu_sportbooking.png" 
                 alt="Our story" 
                 className="rounded-lg shadow-lg w-full"
               />
             </div>
-            <div className="md:w-1/2">
+            <div className="lg:w-1/2">
               <h2 className="text-3xl font-bold text-gray-800 mb-6">Câu Chuyện Của Chúng Tôi</h2>
               <p className="text-gray-600 mb-4">
                 SportBooking được thành lập năm 2023 với sứ mệnh mang lại giải pháp đặt sân thể thao tiện lợi nhất cho cộng đồng yêu thể thao tại Việt Nam.
@@ -34,17 +35,20 @@ const About = () => {
               <p className="text-gray-600 mb-4">
                 Xuất phát từ chính nhu cầu thực tế của những người chơi thể thao, chúng tôi nhận thấy việc đặt sân luôn là vấn đề nan giải với nhiều bất cập.
               </p>
-              <p className="text-gray-600">
+              <p className="text-gray-600 mb-4">
                 Với nền tảng công nghệ hiện đại, chúng tôi kết nối chủ sân và người chơi, mang lại trải nghiệm đặt sân nhanh chóng, minh bạch và hiệu quả.
               </p>
+              <p className="text-gray-600">
+    Chúng tôi tin rằng thể thao không chỉ là hoạt động rèn luyện thể chất mà còn là cầu nối gắn kết cộng đồng. Vì vậy, bằng sự tận tâm và sáng tạo, SportBooking cam kết mang đến trải nghiệm đặt sân minh bạch, tiện lợi và hiệu quả, góp phần thúc đẩy phong trào thể thao ngày càng phát triển mạnh mẽ tại Việt Nam.
+  </p>
             </div>
           </div>
         </div>
-      </section>
+      </Section>
 
       {/* Mission & Vision Section */}
-      <section className="py-16 bg-gray-50">
-        <div className="container mx-auto px-4">
+      <Section>
+        <div className="bg-gray-50 container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-gray-800 mb-4">Sứ Mệnh & Tầm Nhìn</h2>
             <p className="text-gray-600 max-w-2xl mx-auto">Những giá trị cốt lõi định hướng phát triển của chúng tôi</p>
@@ -66,10 +70,10 @@ const About = () => {
             </div>
           </div>
         </div>
-      </section>
+      </Section>
 
       {/* By The Numbers Section */}
-      <section className="py-16">
+      <Section>
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-gray-800 mb-4">Con Số Ấn Tượng</h2>
@@ -110,11 +114,11 @@ const About = () => {
             </div>
           </div>
         </div>
-      </section>
+      </Section>
 
       {/* Team Section */}
-      <section className="py-16 bg-gray-50">
-        <div className="container mx-auto px-4">
+      <Section>
+        <div className="bg-gray-50 container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-gray-800 mb-4">Đội Ngũ Của Chúng Tôi</h2>
             <p className="text-gray-600 max-w-2xl mx-auto">Những người đứng sau sự thành công của SportBooking</p>
@@ -123,7 +127,7 @@ const About = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {teamMembers.map((member) => (
               <div key={member.id} className="bg-white rounded-xl overflow-hidden shadow-sm text-center">
-                <div className="h-64 bg-gray-200 overflow-hidden">
+                <div className="h-50 bg-gray-200 overflow-hidden">
                   <img 
                     src={member.image} 
                     alt={member.name} 
@@ -139,10 +143,10 @@ const About = () => {
             ))}
           </div>
         </div>
-      </section>
+      </Section>
 
       {/* Partners Section */}
-      <section className="py-16">
+      <Section>
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-gray-800 mb-4">Đối Tác Của Chúng Tôi</h2>
@@ -153,7 +157,7 @@ const About = () => {
             {[1, 2, 3, 4, 5].map((item) => (
               <div key={item} className="bg-white p-6 rounded-xl shadow-sm flex items-center justify-center">
                 <img 
-                  src={`/images/partner-${item}.png`} 
+                  src={`${item}`} 
                   alt={`Partner ${item}`} 
                   className="h-12 object-contain grayscale hover:grayscale-0 transition duration-300"
                 />
@@ -161,18 +165,18 @@ const About = () => {
             ))}
           </div>
         </div>
-      </section>
+      </Section>
 
       {/* CTA Section */}
-      <section className="py-16 bg-green-700 text-white">
-        <div className="container mx-auto px-4 text-center">
+      <Section>
+        <div className="py-16 bg-green-700 text-white container mx-auto px-4 text-center">
           <h2 className="text-3xl font-bold mb-6">Bạn muốn trở thành đối tác của chúng tôi?</h2>
           <p className="text-xl mb-8 max-w-2xl mx-auto">Liên hệ ngay để đưa sân thể thao của bạn lên hệ thống</p>
           <button className="bg-white text-green-700 hover:bg-gray-100 px-8 py-4 rounded-lg font-bold text-lg transition duration-300">
             Liên hệ ngay
           </button>
         </div>
-      </section>
+      </Section>
     </div>
   );
 };

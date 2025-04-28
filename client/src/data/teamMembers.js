@@ -8,7 +8,7 @@ const teamMembers = [
       name: 'Trần Minh Phú',
       position: 'Sinh viên',
       bio: `Chuyên gia công nghệ với ${experienceYear} năm kinh nghiệm trong lĩnh vực IT`,
-      image: '/images/team-1.jpg'
+      image: './public/assets/images/backgrounds/about/profile-bg-tranminhphu.png'
     },
     // {
     //   id: 2,

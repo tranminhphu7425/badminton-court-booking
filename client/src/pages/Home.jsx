@@ -5,6 +5,7 @@ import { MdSportsTennis, MdSportsVolleyball } from 'react-icons/md';
 import SportCard from '../components/SportCard';
 import CourtCard from '../components/CourtCard';
 import TestimonialCard from '../components/TestimonialCard';
+import Section from '../components/Section';
 
 const Home = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -13,6 +14,7 @@ const Home = () => {
   const popularSports = [
     { id: 'football', name: 'Bóng đá', icon: <GiSoccerBall size={24} />, count: 32 },
     { id: 'badminton', name: 'Cầu lông', icon: <MdSportsTennis size={24} />, count: 28 },
+    { id: 'pickleball', name: 'Pickleball', icon: <GiTennisCourt size={24} />, count: 25 },
     { id: 'basketball', name: 'Bóng rổ', icon: <GiBasketballBall size={24} />, count: 18 },
     { id: 'volleyball', name: 'Bóng chuyền', icon: <MdSportsVolleyball size={24} />, count: 15 },
     { id: 'tennis', name: 'Tennis', icon: <GiTennisCourt size={24} />, count: 12 },
@@ -101,8 +103,8 @@ const Home = () => {
       </section>
 
       {/* Popular Sports Section */}
-      <section className="py-16 bg-gray-50">
-        <div className="container mx-auto px-4">
+      <Section>
+        <div className="pt-16 bg-gray-50 container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-gray-800 mb-4">Môn Thể Thao Phổ Biến</h2>
             <p className="text-gray-600 max-w-2xl mx-auto">Chọn môn thể thao yêu thích của bạn và bắt đầu đặt sân ngay</p>
@@ -115,15 +117,15 @@ const Home = () => {
                 icon={sport.icon}
                 name={sport.name}
                 count={sport.count}
-                link={`/sport/${sport.id}`}
+                link={`/sports/${sport.id}`}
               />
             ))}
           </div>
         </div>
-      </section>
+      </Section>
 
       {/* Popular Courts Section */}
-      <section className="py-16">
+      <Section>
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center mb-12">
             <div>
@@ -150,11 +152,11 @@ const Home = () => {
             ))}
           </div>
         </div>
-      </section>
+      </Section>
 
       {/* How It Works Section */}
-      <section className="py-16 bg-gray-50">
-        <div className="container mx-auto px-4">
+      <Section>
+        <div className="bg-gray-50 container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-gray-800 mb-4">Cách Đặt Sân</h2>
             <p className="text-gray-600 max-w-2xl mx-auto">Chỉ với 3 bước đơn giản để có sân chơi như ý</p>
@@ -186,10 +188,10 @@ const Home = () => {
             </div>
           </div>
         </div>
-      </section>
+      </Section>
 
       {/* Testimonials Section */}
-      <section className="py-16">
+      <Section>
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-gray-800 mb-4">Khách Hàng Nói Gì</h2>
@@ -208,18 +210,18 @@ const Home = () => {
             ))}
           </div>
         </div>
-      </section>
+      </Section>
 
       {/* CTA Section */}
-      <section className="py-16 bg-green-700 text-white">
-        <div className="container mx-auto px-4 text-center">
+      <Section>
+        <div className="py-16 bg-green-700 text-white container mx-auto px-4 text-center">
           <h2 className="text-3xl font-bold mb-6">Sẵn sàng đặt sân thể thao?</h2>
           <p className="text-xl mb-8 max-w-2xl mx-auto">Đăng ký ngay để nhận ưu đãi 10% cho lần đặt sân đầu tiên</p>
           <button className="bg-white text-green-700 hover:bg-gray-100 px-8 py-4 rounded-lg font-bold text-lg transition duration-300">
             Đặt sân ngay
           </button>
         </div>
-      </section>
+      </Section>
     </div>
   );
 };
