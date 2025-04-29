@@ -14,20 +14,26 @@ const About = () => {
     <div className="about-page">
       {/* Hero Section */}
       <section
-        className="hero-section text-white py-20 lg:py-50 bg-cover bg-center"
-        style={{
-          backgroundImage: `url(${backgroundImage})`,
-          height: '100%'
-        
-        }}
-      >
-        <div className="container mx-auto px-4 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold mb-6">Về Chúng Tôi</h1>
-          <p className="text-xl max-w-2xl mx-auto">
-            Kết nối cộng đồng yêu thể thao với những sân chơi chất lượng
-          </p>
-        </div>
-      </section>
+  className="hero-section text-white py-20 md:py-30 lg:py-40 relative"
+  style={{
+    backgroundImage: `url(${backgroundImage})`,
+    backgroundSize: 'cover',
+    backgroundRepeat: 'no-repeat',
+    backgroundPosition: 'center',
+  }}
+>
+  {/* Overlay làm tối background */}
+  <div className="absolute inset-0 bg-black opacity-20"></div>
+
+  {/* Nội dung section */}
+  <div className="container relative z-10 mx-auto px-4 text-center">
+    <h1 className="text-4xl md:text-5xl font-bold mb-6 text-shadow-lg">Về Chúng Tôi</h1>
+    <p className="text-xl max-w-2xl mx-auto text-shadow-lg">
+      Kết nối cộng đồng yêu thể thao với những sân chơi chất lượng
+    </p>
+  </div>
+</section>
+
 
       {/* Our Story Section */}
       <Section>

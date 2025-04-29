@@ -4,7 +4,7 @@ import { routes } from './routes';
 import Navbar from './components/Navbar';
 import LoadingSpinner from './components/LoadingSpinner';
 import './App.css';
-import Temp from './pages/temp';
+
 
 
 function App() {

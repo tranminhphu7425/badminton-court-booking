@@ -569,7 +569,7 @@ function Main() {
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gradient-to-r from-blue-600 to-blue-500">
               <tr>
-                <th className="px-4 py-2 text-left text-xs font-semibold text-white uppercase tracking-wider rounded-tl-2xl">
+                <th className="px-4 py-2 text-center text-xs font-semibold text-white uppercase tracking-wider rounded-tl-2xl">
                   Sân
                 </th>
                 {hours.map((hour) => (

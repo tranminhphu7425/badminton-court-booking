@@ -27,3 +27,14 @@ const pool = mysql.createPool({
   queueLimit: 0
 });
 
+
+
+pool.getConnection()
+  .then(conn => {
+    console.log('Connected to MySQL database');
+    conn.release();
+  })
+  .catch(err => {
+    console.error('Error connecting to database: ', err);
+  });
+
