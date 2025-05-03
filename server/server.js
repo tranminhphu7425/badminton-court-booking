@@ -119,14 +119,45 @@ app.get('/api/sporttypes', async (req, res) => {
 // API lấy danh sách locations
 app.get('/api/locations', async (req, res) => {
   try {
-    const query = 'SELECT * FROM Locations';
-    const [results] = await pool.query(query);
-    res.json(results);
+    // Base query to get location information
+    const locationQuery = `
+      SELECT 
+        l.*,
+        (SELECT AVG(r.Rating) FROM location_reviews r WHERE r.LocationID = l.LocationID) AS AverageRating,
+        (SELECT i.ImageUrl FROM location_images i WHERE i.LocationID = l.LocationID AND i.IsPrimary = 1 LIMIT 1) AS PrimaryImageUrl
+      FROM Locations l
+    `;
+    
+    const [locations] = await pool.query(locationQuery);
+    
+    // Get features for each location
+    const featuresQuery = 'SELECT * FROM location_features WHERE LocationID = ?';
+    
+    // Enhance each location with its features
+    const enhancedLocations = await Promise.all(
+      locations.map(async (location) => {
+        const [features] = await pool.query(featuresQuery, [location.LocationID]);
+        return {
+          ...location,
+          features: features[0] || null, // Attach features to the location
+        };
+      })
+    );
+    
+    res.json(enhancedLocations);
   } catch (err) {
     console.error('Database error:', err);
-    res.status(500).json({ error: 'Database error', details: err.message });
+    res.status(500).json({ 
+      error: 'Database error', 
+      details: err.message 
+    });
   }
 });
+
+
+
+
+
 
 // API tạo booking mới (phiên bản cải tiến)
 app.post('/api/bookings', async (req, res) => {

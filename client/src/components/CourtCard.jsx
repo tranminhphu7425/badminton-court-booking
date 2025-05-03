@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { FaStar, FaMapMarkerAlt } from 'react-icons/fa';
 
-const CourtCard = ({ name, image, location, price, rating, link }) => {
+const CourtCard = ({ name, image, location, price, rating, link, badges }) => {
   return (
     <Link to={link} className="group">
       <div className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition duration-300">
@@ -20,7 +20,11 @@ const CourtCard = ({ name, image, location, price, rating, link }) => {
           </div>
           <div className="flex items-center justify-between mt-4">
             <span className="text-green-600 font-medium">{price}</span>
+            
             <div className="flex items-center bg-green-100 px-2 py-1 rounded">
+            {badges && (
+            <div className='mr-1'>{badges}</div>
+              )}
               <FaStar className="text-yellow-500 mr-1" />
               <span className="font-medium">{rating}</span>
             </div>

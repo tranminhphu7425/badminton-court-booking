@@ -1,23 +1,49 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { FaSearch, FaFilter, FaMapMarkerAlt, FaStar, FaCalendarAlt, FaClock } from 'react-icons/fa';
 import { GiTennisCourt } from 'react-icons/gi';
+import Select from 'react-select';
+import AddressSelector from '../../components/AddressSelector'; 
+import {sportTypeApi} from "../../api/sportTypeApi";
+
 import CourtCard from '../../components/CourtCard';
+import { useParams } from 'react-router-dom';
 
 
-const SportLayout = ({ sportName }) => {
+const api =  {
+  async fetchLocations(){
+    try {
+      const response = await fetch('http://localhost:8081/api/locations');
+      if (!response.ok){
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to fetch locations");
+      }
+
+      const data = await response.json();
+      return data;
+    }
+    catch(error){
+      console.error('Fetch locations error: ', error);
+      throw new Error(`Lỗi tải danh sách các địa điểm: ${error.message}`)
+    }
+  },
+};
+
+
+
+const SportLayout  = () => {
   const navigate = useNavigate();
-  const { sport } = useParams();
   const [courts, setCourts] = useState([]);
   const [filteredCourts, setFilteredCourts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showFilters, setShowFilters] = useState(false);
+  const [locations, setLocations] = useState([]);
   
   // State cho bộ lọc
   const [filters, setFilters] = useState({
-    province: '',
-    district: '',
-    ward: '',
+    province: null,
+    district: null,
+    ward: null,
     priceRange: [0, 200000],
     availableWithinHour: false,
     rating: 0,
@@ -29,23 +55,109 @@ const SportLayout = ({ sportName }) => {
     }
   });
 
-  // Lấy dữ liệu từ API
+  const {sportCode} = useParams();
+  console.log('SportCode:', sportCode);
+  const [sportType, setSportType] = useState(null);
+  
+  const handleAddressChange = (address) => {
+    setFilters({
+      ...filters,
+      province: address.province?.name || '',
+      district: address.district?.name || '',
+      ward: address.ward?.name || ''
+    });
+  };
+
   useEffect(() => {
-    const fetchCourts = async () => {
-      try {
-        setLoading(true);
-        const data = await getCourtsBySport(sport);
-        setCourts(data);
-        setFilteredCourts(data);
-      } catch (error) {
-        console.error('Error fetching courts:', error);
-      } finally {
+    const loadSportTypes = async(sportCode) => {
+      try{
+        const data = await sportTypeApi.fetchSportTypes();
+        console.log('sedfsdfs:', data);
+        const targetsportType = data.find(item => item.SportCode === sportCode);
+        setSportType(targetsportType);
         setLoading(false);
-      }
+      } catch (err) {
+             
+          console.error(err);
+      } 
     };
+    loadSportTypes(sportCode);
+  }, [sportCode]);
+
+  console.log('SportType:', sportType);
+  // Dữ liệu mẫu - trong thực tế bạn sẽ fetch từ API
+  useEffect(() => {
+    // const mockCourts = [
+    //   {
+    //     id: 1,
+    //     name: 'Sân cầu lông Phú Thọ',
+    //     image: '/images/badminton-1.jpg',
+    //     address: '1 Lữ Gia, Phường 15, Quận 11, TP.HCM',
+    //     priceRange: [100000, 150000],
+    //     rating: 4.5,
+    //     availableSlots: ['15:00-16:00', '16:00-17:00', '19:00-20:00'],
+    //     amenities: ['parking', 'lights', 'drinks'],
+    //     province: 'TP.HCM',
+    //     district: 'Quận 11',
+    //     ward: 'Phường 15'
+    //   },
+    //   {
+    //     id: 2,
+    //     name: 'Sân cầu lông Quận 7',
+    //     image: '/images/badminton-2.jpg',
+    //     address: '78 Nguyễn Thị Thập, Phường Tân Phú, Quận 7, TP.HCM',
+    //     priceRange: [120000, 180000],
+    //     rating: 4.7,
+    //     availableSlots: ['14:00-15:00', '17:00-18:00'],
+    //     amenities: ['parking', 'shower', 'lights'],
+    //     province: 'TP.HCM',
+    //     district: 'Quận 7',
+    //     ward: 'Phường Tân Phú'
+    //   },
+    //   {
+    //     id: 3,
+    //     name: 'Sân cầu lông Thủ Đức',
+    //     image: '/images/badminton-3.jpg',
+    //     address: '12 Võ Văn Ngân, Phường Linh Chiểu, Thủ Đức, TP.HCM',
+    //     priceRange: [80000, 120000],
+    //     rating: 4.2,
+    //     availableSlots: ['16:00-17:00', '20:00-21:00'],
+    //     amenities: ['parking', 'drinks'],
+    //     province: 'TP.HCM',
+    //     district: 'Thủ Đức',
+    //     ward: 'Phường Linh Chiểu'
+    //   },
+    //   {
+    //     id: 4,
+    //     name: 'Sân cầu lông Gò Vấp',
+    //     image: '/images/badminton-4.jpg',
+    //     address: '45 Quang Trung, Phường 10, Gò Vấp, TP.HCM',
+    //     priceRange: [150000, 200000],
+    //     rating: 4.8,
+    //     availableSlots: ['15:00-16:00', '18:00-19:00'],
+    //     amenities: ['parking', 'shower', 'lights', 'drinks'],
+    //     province: 'TP.HCM',
+    //     district: 'Gò Vấp',
+    //     ward: 'Phường 10'
+    //   }
+    // ];
+
+    const loadLocations = async() => {
+      try{
+        const data = await api.fetchLocations();
+        setLocations(data);
+        console.log('Locations:', data);
+        setFilteredCourts(data);
+        setLoading(false);
+      } catch (err) {
+             
+          console.error(err);
+      } 
+    };
+    loadLocations();
+
     
-    fetchCourts();
-  }, [sport]);
+  }, []);
 
   // Hàm áp dụng bộ lọc
   const applyFilters = () => {
@@ -108,10 +220,10 @@ const SportLayout = ({ sportName }) => {
   // Reset bộ lọc
   const resetFilters = () => {
     setFilters({
-      province: '',
-      district: '',
-      ward: '',
-      priceRange: [0, 500000],
+      province: null,
+      district: null,
+      ward: null,
+      priceRange: [0, 200000],
       availableWithinHour: false,
       rating: 0,
       amenities: {
@@ -125,46 +237,29 @@ const SportLayout = ({ sportName }) => {
   };
 
   // Hàm kiểm tra xem có filter đang được áp dụng không
-  const isFilterActive = () => {
-    return (
-      filters.province ||
-      filters.district ||
-      filters.ward ||
-      filters.priceRange[0] !== 0 || 
-      filters.priceRange[1] !== 200000 ||
-      filters.availableWithinHour ||
-      filters.rating > 0 ||
-      Object.values(filters.amenities).some(Boolean)
-    );
-  };
-
-  // Danh sách tỉnh/thành phố - trong thực tế nên lấy từ API
-  const provinces = ['TP.HCM', 'Hà Nội', 'Đà Nẵng', 'Cần Thơ'];
-  const districts = {
-    'TP.HCM': ['Quận 1', 'Quận 3', 'Quận 7', 'Quận 11', 'Gò Vấp', 'Thủ Đức'],
-    'Hà Nội': ['Quận Ba Đình', 'Quận Hoàn Kiếm', 'Quận Đống Đa'],
-    'Đà Nẵng': ['Quận Hải Châu', 'Quận Thanh Khê'],
-    'Cần Thơ': ['Quận Ninh Kiều', 'Quận Bình Thủy']
-  };
-
-  const sportTitles = {
-    badminton: 'Sân Cầu Lông',
-    volleyball: 'Sân Bóng Chuyền',
-    basketball: 'Sân Bóng Rổ',
-    pickleball: 'Sân Pickleball',
-    football: 'Sân Bóng Đá',
-    tennis: 'Sân Quần Vợt'
-  };
-
-  return (
-    <div className={`${sport}-page`}>
+    
+    const isFilterActive = () => {
+      return (
+        filters.province ||
+        filters.district ||
+        filters.ward ||
+        filters.priceRange[0] !== 0 || 
+        filters.priceRange[1] !== 200000 ||
+        filters.availableWithinHour ||
+        filters.rating > 0 ||
+        Object.values(filters.amenities).some(Boolean)
+      );
+    };
+  
+  return sportType ? (
+    <div className="badminton-page">
       {/* Hero Section */}
       <section className="hero-section bg-green-700 text-white py-16">
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row items-center justify-between">
             <div>
-              <h1 className="text-3xl md:text-4xl font-bold mb-2">{sportTitles[sport]}</h1>
-              <p className="text-lg">Tìm và đặt {sportTitles[sport].toLowerCase()} ưng ý nhất</p>
+              <h1 className="text-3xl md:text-4xl font-bold mb-2 text-center md:text-left">Sân {sportType.SportName}</h1>
+              <p className="text-lg">Tìm và đặt sân {sportType.SportName.toLowerCase()} ưng ý nhất</p>
             </div>
             <div className="mt-4 md:mt-0">
               <button 
@@ -185,7 +280,7 @@ const SportLayout = ({ sportName }) => {
             <div className="relative flex-grow">
               <input
                 type="text"
-                placeholder={`Tìm ${sportTitles[sport].toLowerCase()}...`}
+                placeholder={`Tìm sân ${sportType.SportName.toLowerCase()}...`}
                 className="w-full py-3 pl-10 pr-4 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500"
               />
               <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
@@ -203,34 +298,10 @@ const SportLayout = ({ sportName }) => {
             <div className="mt-6 bg-white p-6 rounded-lg shadow-lg">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {/* Lọc theo địa điểm */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Tỉnh/Thành phố</label>
-                  <select
-                    className="w-full p-2 border border-gray-300 rounded-md"
-                    value={filters.province}
-                    onChange={(e) => setFilters({...filters, province: e.target.value, district: '', ward: ''})}
-                  >
-                    <option value="">Tất cả</option>
-                    {provinces.map(province => (
-                      <option key={province} value={province}>{province}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Quận/Huyện</label>
-                  <select
-                    className="w-full p-2 border border-gray-300 rounded-md"
-                    value={filters.district}
-                    onChange={(e) => setFilters({...filters, district: e.target.value, ward: ''})}
-                    disabled={!filters.province}
-                  >
-                    <option value="">Tất cả</option>
-                    {filters.province && districts[filters.province]?.map(district => (
-                      <option key={district} value={district}>{district}</option>
-                    ))}
-                  </select>
-                </div>
+               
+                  
+                  <AddressSelector onAddressChange={handleAddressChange} />
+               
 
                 {/* Lọc theo giá */}
                 <div>
@@ -363,7 +434,7 @@ const SportLayout = ({ sportName }) => {
             <>
               <div className="flex justify-between items-center mb-8">
                 <h2 className="text-xl font-semibold text-gray-800">
-                  {filteredCourts.length} {sportTitles[sport].toLowerCase()} phù hợp
+                  {filteredCourts.length} sân {sportType.SportName.toLowerCase()} phù hợp
                 </h2>
                 <div className="flex items-center">
                   <span className="text-sm text-gray-600 mr-2">Sắp xếp:</span>
@@ -377,21 +448,22 @@ const SportLayout = ({ sportName }) => {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {filteredCourts.map((court) => (
+                {filteredCourts.map((location) => (
                   <CourtCard 
-                    key={court.id}
-                    name={court.name}
-                    image={court.image}
-                    location={court.address}
-                    price={`${court.priceRange[0].toLocaleString()} - ${court.priceRange[1].toLocaleString()}đ/giờ`}
-                    rating={court.rating}
-                    sport={sport}
-                    link={`/court/${court.id}`}
-                    badges={court.availableSlots.slice(0, 2).map(slot => (
-                      <span key={slot} className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded mr-1 mb-1 inline-flex items-center">
-                        <FaClock className="mr-1" /> {slot}
+                    key={location.LoactionID}
+                    name={location.LocationName}
+                    image={location.image}
+                    location={location.Address}
+                    // price={`${court.priceRange[0].toLocaleString()} - ${court.priceRange[1].toLocaleString()}đ/giờ`}
+                    rating={location.AverageRating}
+                    sport={sportType.SportCode}
+                    link={`/court/${location.LocationID}`}
+                    badges={
+                      <span className="bg-green-100 text-green-800 text-sm px-2 py-1 rounded mr-1 inline-flex items-center">
+                        <FaClock className="mr-1" /> 
+                        {location.OpeningTime.split(":").slice(0, 2).join(":")} - {location.ClosingTime.split(":").slice(0, 2).join(":")}
                       </span>
-                    ))}
+                    }
                   />
                 ))}
               </div>
@@ -400,7 +472,7 @@ const SportLayout = ({ sportName }) => {
         </div>
       </section>
     </div>
-  );
+  ) : null;
 };
 
 export default SportLayout;
