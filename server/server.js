@@ -17,14 +17,15 @@ app.use(express.json());
 
 // Database connection pool (sử dụng connection pool để tối ưu hiệu suất)
 const pool = mysql.createPool({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
+  host: process.env.DB_HOST || "localhost",
+  user:  "root", // Đảm bảo có giá trị mặc định
+  password: process.env.DB_PASSWORD || "TranMinhPhu7425*", // Đặt mật khẩu đúng
+  database: process.env.DB_NAME || "badmintoncourtmanagement",
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0
 });
+
 
 
 // Test database connection
@@ -40,7 +41,7 @@ pool.getConnection()
 // API lấy danh sách booking theo ngày và location
 app.get('/api/bookings', async (req, res) => {
   try {
-    const { date, locationId = 1, sportTypeId = 1 } = req.query;
+    const { date, locationId, sportTypeId} = req.query;
     console.log('Fetching bookings for date:', date, 'location:', locationId, 'sportTypeId: ', sportTypeId);
     
     const query = `
@@ -54,37 +55,48 @@ app.get('/api/bookings', async (req, res) => {
         l.LocationName AS location
       FROM Bookings b
       JOIN Courts c ON b.CourtID = c.CourtID
-      JOIN Locations l ON b.LocationID = l.LocationID
-      WHERE b.BookingDate = ? AND b.LocationID = ? AND b.SportTypeID = ?
+      JOIN Locations l ON c.LocationID = l.LocationID
+      WHERE b.BookingDate = ? 
+        AND c.LocationID = ? 
+        AND c.SportTypeID = ?
     `;
     
     const [results] = await pool.query(query, [date, locationId, sportTypeId]);
-    console.log('Query results:', results);
+    console.log('Booking results:', results);
     res.json(results);
   } catch (err) {
     console.error('Database error:', err);
     res.status(500).json({ error: 'Database error', details: err.message });
   }
 });
-
 // API lấy danh sách courts theo location và sport type
 app.get('/api/courts', async (req, res) => {
   try {
+    const { locationId, sportTypeId} = req.query;
+    console.log('Fetching courts for location:', locationId, 'sportTypeId:', sportTypeId);
+
     const query = `
       SELECT 
         c.CourtID,
-        c.CourtNumber,
-        ct.TypeName AS CourtType,   
-        c.HourlyRate,
-        c.Description,
-        c.Status
+        c.CourtNumber AS court,
+        l.LocationName AS location,
+        s.SportName AS sportType,
+        c.HourlyRate AS price
       FROM Courts c
-      JOIN CourtTypes ct ON c.CourtTypeID = ct.CourtTypeID
-      ORDER BY c.CourtNumber
-    `; 
-    const [results] = await pool.query(query); // Bỏ điều kiện WHERE
+      JOIN Locations l ON c.LocationID = l.LocationID
+      JOIN SportTypes s ON c.SportTypeID = s.SportTypeID
+      WHERE c.LocationID = ? 
+        AND c.SportTypeID = ?
+    `;
+
+    const [results] = await pool.query(query, [locationId, sportTypeId]);
     console.log('Courts results:', results);
-    res.json(results); 
+    
+    if (results.length === 0) {
+      return res.status(404).json({ message: 'No courts found for the specified criteria' });
+    }
+    
+    res.json(results);
   } catch (err) {
     console.error('Database error:', err);
     res.status(500).json({ error: 'Database error', details: err.message });
@@ -92,11 +104,12 @@ app.get('/api/courts', async (req, res) => {
 });
 
 // API lấy danh sách sport types
-app.get('/api/sport-types', async (req, res) => {
+app.get('/api/sporttypes', async (req, res) => {
   try {
     const query = 'SELECT * FROM SportTypes';
     const [results] = await pool.query(query);
     res.json(results);
+    console.log('Sporttype results:', results);
   } catch (err) {
     console.error('Database error:', err);
     res.status(500).json({ error: 'Database error', details: err.message });

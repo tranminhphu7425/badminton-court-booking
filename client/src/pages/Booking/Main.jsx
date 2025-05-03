@@ -3,6 +3,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { vi } from "date-fns/locale";
 import { toast } from "react-toastify"; // Added for better notifications
+import { useParams } from "react-router-dom";
 
 // Extract reusable components
 const CourtCell = ({ court }) => (
@@ -24,7 +25,7 @@ const CourtCell = ({ court }) => (
         </svg>
       </div>
       <div className="text-sm font-medium text-gray-900">
-        Sân {parseInt(court.CourtNumber.replace("S0", ""))}
+        Sân {parseInt(court.court.replace("S0", ""))}
       </div>
     </div>
   </td>
@@ -52,8 +53,8 @@ const TimeSlot = ({ court, hour, isBooked, isSelected, booking, onSelect }) => (
     >
       {isBooked ? (
         <>
-          <span className="text-xs font-semibold text-rose-600">
-            Đã được đặt
+          <span className="text-xs font-semibold text-rose-600" title={booking?.user || "Guest"}>
+            Đã được đặt 
           </span>
           {/* <span className="text-xs mt-1 text-rose-500 truncate max-w-[80px]">
             {booking?.user || "Guest"}
@@ -194,27 +195,29 @@ const BookingModal = ({
 
 // API service functions
 const api = {
-  async fetchCourts(){
+  async fetchCourts(locationId, sportTypeId) {
     try {
-      const response = await fetch (
-        `http://localhost:8081/api/courts`
-      );
-      if(!response.ok){
-        const errrorData = await response.json();
-        throw new Error(errrorData.message || "Failed to fetch courts");
+      const response = await fetch(`http://localhost:8081/api/courts?locationId=${locationId}&sportTypeId=${sportTypeId}`);
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to fetch courts");
       }
-      return await response.json();
-    } 
-    catch (error){
+  
+      const data = await response.json();
+      return data;
+  
+    } catch (error) {
       console.error("Fetch courts error:", error);
-      throw new Error(`Lỗi tải danh sách sân: ${error.message}`)
+      throw new Error(`Lỗi tải danh sách sân: ${error.message}`);
     }
+  
   },
-  async fetchBookings(date, locationId = 1) {
+  async fetchBookings(date, locationId, sportTypeId) {
     try {
       const formattedDate = formatDate(date);
       const response = await fetch(
-        `http://localhost:8081/api/bookings?date=${formattedDate}&locationId=${locationId}`
+        `http://localhost:8081/api/bookings?date=${formattedDate}&locationId=${locationId}&sportTypeId=${sportTypeId}`
       );
       if (!response.ok) {
         const errorData = await response.json();
@@ -296,14 +299,17 @@ function Main() {
   // List of operating hours
   const hours = Array.from({ length: 16 }, (_, i) => i + 7); // 7h - 22h
 
+  const { locationId, sportTypeId } = useParams();
+  console.log("Location ID:", locationId);
+  console.log("Sport Type ID:", sportTypeId);
   // Load courts on component mount
   useEffect(() => {
-    const loadCourts  = async () => {
+    const loadCourts  = async (locationId, sportTypeId) => {
       try {
         setLoading((prev) => ({ ...prev, courts: true }));
-        const data = await api.fetchCourts();
+        const data = await api.fetchCourts(locationId, sportTypeId);
         setCourts(data);
-        console.log(courts);
+        console.log(data);
         setError(null);
       } catch (err) {
         setError(err.message);
@@ -313,15 +319,15 @@ function Main() {
       }
     };
 
-    loadCourts();
-  }, []);
+    loadCourts( locationId, sportTypeId );
+  }, [ locationId, sportTypeId ]);
 
   // Load bookings when date changes
   useEffect(() => {
-    const loadBookings = async (date, locationId) => {
+    const loadBookings = async (date, locationId, sportTypeId) => {
       try {
         setLoading((prev) => ({ ...prev, bookings: true }));
-        const data = await api.fetchBookings(date, locationId);
+        const data = await api.fetchBookings(date, locationId, sportTypeId);
         setBookings(data);
         setError(null);
       } catch (err) {
@@ -332,8 +338,8 @@ function Main() {
       }
     };
 
-    loadBookings(currentDate, selectedLocation);
-  }, [currentDate, selectedLocation]);
+    loadBookings(currentDate,  locationId, sportTypeId );
+  }, [currentDate,  locationId, sportTypeId ]);
 
   // Check if a slot is booked
   const isBooked = (court, time) => {
@@ -593,12 +599,12 @@ function Main() {
               {courts.map((court) => {
                 // 
                 // kiểm tra CourtNumber phải bắt đầu bằng "S"
-                if (!court.CourtNumber.startsWith("S")) {
+                if (!court.court.startsWith("S")) {
                   return null; // bỏ qua court không hợp lệ
                 }
 
                 const courtNumber = parseInt(
-                  court.CourtNumber.replace("S0", "")
+                  court.court.replace("S0", "")
                 );
                 return (
                   <tr

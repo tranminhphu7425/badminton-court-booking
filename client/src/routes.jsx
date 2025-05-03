@@ -67,7 +67,7 @@ export const routes = [
     name: 'Chi tiết sân'
   },
   {
-    path: '/booking',
+    path: '/booking/:locationId/:sportTypeId',
     element: <BookingMain />,
     name: 'Đặt sân'
   },

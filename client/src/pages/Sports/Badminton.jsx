@@ -2,7 +2,11 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaSearch, FaFilter, FaMapMarkerAlt, FaStar, FaCalendarAlt, FaClock } from 'react-icons/fa';
 import { GiTennisCourt } from 'react-icons/gi';
+import Select from 'react-select';
+import AddressSelector from '../../components/AddressSelector';
 import CourtCard from '../../components/CourtCard';
+import { useParams } from 'react-router-dom';
+
 
 const Badminton = () => {
   const navigate = useNavigate();
@@ -13,9 +17,9 @@ const Badminton = () => {
   
   // State cho bộ lọc
   const [filters, setFilters] = useState({
-    province: '',
-    district: '',
-    ward: '',
+    province: null,
+    district: null,
+    ward: null,
     priceRange: [0, 200000],
     availableWithinHour: false,
     rating: 0,
@@ -26,6 +30,15 @@ const Badminton = () => {
       lights: false
     }
   });
+
+  const handleAddressChange = (address) => {
+    setFilters({
+      ...filters,
+      province: address.province?.name || '',
+      district: address.district?.name || '',
+      ward: address.ward?.name || ''
+    });
+  };
 
   // Dữ liệu mẫu - trong thực tế bạn sẽ fetch từ API
   useEffect(() => {
@@ -150,10 +163,10 @@ const Badminton = () => {
   // Reset bộ lọc
   const resetFilters = () => {
     setFilters({
-      province: '',
-      district: '',
-      ward: '',
-      priceRange: [0, 500000],
+      province: null,
+      district: null,
+      ward: null,
+      priceRange: [0, 200000],
       availableWithinHour: false,
       rating: 0,
       amenities: {
@@ -181,14 +194,6 @@ const Badminton = () => {
       );
     };
   
-    // Danh sách tỉnh/thành phố - trong thực tế nên lấy từ API
-    const provinces = ['TP.HCM', 'Hà Nội', 'Đà Nẵng', 'Cần Thơ'];
-    const districts = {
-      'TP.HCM': ['Quận 1', 'Quận 3', 'Quận 7', 'Quận 11', 'Gò Vấp', 'Thủ Đức'],
-      'Hà Nội': ['Quận Ba Đình', 'Quận Hoàn Kiếm', 'Quận Đống Đa'],
-      'Đà Nẵng': ['Quận Hải Châu', 'Quận Thanh Khê'],
-      'Cần Thơ': ['Quận Ninh Kiều', 'Quận Bình Thủy']
-    };
   return (
     <div className="badminton-page">
       {/* Hero Section */}
@@ -236,49 +241,10 @@ const Badminton = () => {
             <div className="mt-6 bg-white p-6 rounded-lg shadow-lg">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {/* Lọc theo địa điểm */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Tỉnh/Thành phố</label>
-                  <select
-                    className="w-full p-2 border border-gray-300 rounded-md"
-                    value={filters.province}
-                    onChange={(e) => setFilters({...filters, province: e.target.value, district: '', ward: ''})}
-                  >
-                    <option value="">Tất cả</option>
-                    {provinces.map(province => (
-                      <option key={province} value={province}>{province}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Quận/Huyện</label>
-                  <select
-                    className="w-full p-2 border border-gray-300 rounded-md"
-                    value={filters.district}
-                    onChange={(e) => setFilters({...filters, district: e.target.value, ward: ''})}
-                    disabled={!filters.province}
-                  >
-                    <option value="">Tất cả</option>
-                    {filters.province && districts[filters.province]?.map(district => (
-                      <option key={district} value={district}>{district}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Phường/Xã</label>
-                  <select
-                    className="w-full p-2 border border-gray-300 rounded-md"
-                    value={filters.ward}
-                    onChange={(e) => setFilters({...filters, ward: e.target.value})}
-                    disabled={!filters.district}
-                  >
-                    <option value="">Tất cả</option>
-                    {filters.district && wards[filters.district]?.map(ward => (
-                      <option key={ward} value={ward}>{ward}</option>
-                    ))}
-                  </select>
-                </div>
+               
+                  
+                  <AddressSelector onAddressChange={handleAddressChange} />
+               
 
                 {/* Lọc theo giá */}
                 <div>
