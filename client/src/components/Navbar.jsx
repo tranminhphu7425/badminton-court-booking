@@ -14,23 +14,21 @@ import {
   FaTableTennis,
   FaBasketballBall,
 } from "react-icons/fa";
-import { GiTennisBall, GiShuttlecock, GiSoccerBall  } from "react-icons/gi";
+import { GiTennisBall, GiShuttlecock, GiSoccerBall } from "react-icons/gi";
 
 import { MdSportsVolleyball } from "react-icons/md";
-import {sportTypeApi} from "../api/sportTypeApi";
-
-
-
+import { sportTypeApi } from "../api/sportTypeApi";
+import { FaSignInAlt, FaUserPlus, FaSignOutAlt } from "react-icons/fa";
+const logoSrc = "./public/assets/images/logos/logo.png";
 
 const translateIcon = {
-  GiShuttlecock: <GiShuttlecock/>,
-  GiSoccerBall: <GiSoccerBall/>,
-  FaBasketballBall: <FaBasketballBall/>,
-  MdSportsVolleyball: <MdSportsVolleyball/>,
-  GiTennisBall: <GiTennisBall/>,
-  FaTableTennis: <FaTableTennis/>
+  GiShuttlecock: <GiShuttlecock />,
+  GiSoccerBall: <GiSoccerBall />,
+  FaBasketballBall: <FaBasketballBall />,
+  MdSportsVolleyball: <MdSportsVolleyball />,
+  GiTennisBall: <GiTennisBall />,
+  FaTableTennis: <FaTableTennis />,
 };
-
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -38,45 +36,21 @@ const Navigation = () => {
   const [activeSport, setActiveSport] = useState(null);
   const [sports, setSports] = useState([]);
 
-  // const sports = [
-  //   { id: "football", name: "Bóng đá", icon: <GiSoccerBall /> },
-  //   { id: "badminton", name: "Cầu lông", icon: <GiShuttlecock /> },
-  //   { id: "pickleball", name: "Pickleball", icon: <FaTableTennis /> },
-  //   { id: "basketball", name: "Bóng rổ", icon: <FaBasketballBall /> },
-  //   { id: "volleyball", name: "Bóng chuyền", icon: <MdSportsVolleyball /> },
-  //   { id: "tennis", name: "Quần vợt", icon: <GiTennisBall /> },
-  // ];
+ 
   useEffect(() => {
-    const loadSportTypes = async() => {
-      try{
+    const loadSportTypes = async () => {
+      try {
         const data = await sportTypeApi.fetchSportTypes();
         setSports(data);
         console.log(data);
-
       } catch (err) {
-             
-          console.error(err);
-      } 
+        console.error(err);
+      }
     };
     loadSportTypes();
   }, []);
 
-  // 0
-  // : 
-  // {SportTypeID: 1, SportName: 'Cầu lông', Description: 'Sân cầu lông tiêu chuẩn 6.1m x 13.4m', ImageURL: null, CreatedAt: '2025-04-25T11:17:39.000Z'}
-  // 1
-  // : 
-  // {SportTypeID: 2, SportName: 'Bóng đá', Description: 'Sân bóng đá 5 người, 7 người hoặc 11 người', ImageURL: null, CreatedAt: '2025-04-25T11:17:39.000Z'}
-  // 2
-  // : 
-  // {SportTypeID: 3, SportName: 'Bóng rổ', Description: 'Sân bóng rổ tiêu chuẩn 15m x 28m', ImageURL: null, CreatedAt: '2025-04-25T11:17:39.000Z'}
-  // 3
-  // : 
-  // {SportTypeID: 4, SportName: 'Bóng chuyền', Description: 'Sân bóng chuyền tiêu chuẩn 9m x 18m', ImageURL: null, CreatedAt: '2025-04-25T11:17:39.000Z'}
-  // 4
-  // : 
-  // {SportTypeID: 5, SportName: 'Tennis', Description: 'Sân tennis đơn hoặc đôi', ImageURL: null, CreatedAt: '2025-04-25T11:17:39.000Z'}
-  
+ 
 
   useEffect(() => {
     const handleScroll = () => {
@@ -99,7 +73,6 @@ const Navigation = () => {
     setActiveSport(activeSport === sportId ? null : sportId);
   };
 
-
   return (
     <header
       className={`w-full transition-all duration-300 ${
@@ -114,15 +87,19 @@ const Navigation = () => {
               to="/"
               className="text-white text-2xl font-bold flex items-center"
             >
-              <span className="bg-white text-green-800 rounded-lg p-2 mr-2">
-                <FaFootballBall />
-              </span>
+              <img
+                src={logoSrc}
+                className="rounded-lg mr-2"
+                alt=""
+                width={40}
+                height={40}
+              />
               SportBooking
             </Link>
           </div>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-6">
+          <nav className="hidden lg:flex items-center space-x-6">
             <div className="relative group">
               <button
                 className="text-white hover:text-green-200 flex items-center space-x-1"
@@ -160,7 +137,9 @@ const Navigation = () => {
                           to={`/sports/${sport.SportCode}`}
                           className="flex px-4 py-2 text-gray-800 hover:bg-green-100 items-center"
                         >
-                          <span className="mr-2">{translateIcon[sport.Icon]}</span>
+                          <span className="mr-2">
+                            {translateIcon[sport.Icon]}
+                          </span>
                           {sport.SportName}
                         </Link>
                       ))}
@@ -188,10 +167,18 @@ const Navigation = () => {
             >
               <FaUser className="mr-1" /> Liên hệ
             </Link>
+
+            <Link
+              to="/login"
+              className="text-white hover:text-green-200 flex items-center bg-green-600 px-4 py-2 rounded-lg"
+            >
+              <FaSignInAlt className="mr-2" />
+              Đăng nhập
+            </Link>
           </nav>
 
           {/* Mobile menu button */}
-          <div className="md:hidden flex items-center">
+          <div className="lg:hidden flex items-center">
             <button
               onClick={toggleMenu}
               className="text-white focus:outline-none"
@@ -209,7 +196,7 @@ const Navigation = () => {
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
-              className="md:hidden overflow-hidden"
+              className="lg:hidden overflow-hidden"
             >
               <div className="pt-4 pb-2 space-y-2">
                 <div>
@@ -252,7 +239,9 @@ const Navigation = () => {
                             to={`/sports/${sport.SportCode}`}
                             className="flex py-2 px-3 text-white hover:bg-green-700 rounded items-center"
                           >
-                            <span className="mr-2">{translateIcon[sport.Icon]}</span>
+                            <span className="mr-2">
+                              {translateIcon[sport.Icon]}
+                            </span>
                             {sport.SportName}
                           </Link>
                         ))}
@@ -262,7 +251,7 @@ const Navigation = () => {
                 </div>
 
                 <Link
-                  to="/booking"
+                  to="/booking/1/1"
                   className="flex py-2 px-3 text-white hover:bg-green-700 rounded items-center"
                 >
                   <FaCalendarAlt className="mr-2" /> Đặt sân
@@ -279,6 +268,22 @@ const Navigation = () => {
                 >
                   <FaUser className="mr-2" /> Liên hệ
                 </Link>
+                <div className="flex items-center space-x-4 justify-center">
+                <Link
+                  to="/login"
+                  className="text-white hover:text-green-200 flex items-center bg-green-600 px-4 py-2 rounded-lg"
+                >
+                  <FaSignInAlt className="mr-2" />
+                  Đăng nhập
+                </Link>
+                <Link
+                  to="/register"
+                  className="text-white hover:text-green-200 flex items-center bg-green-500 px-4 py-2 rounded-lg"
+                >
+                  <FaUserPlus className="mr-2" />
+                  Đăng ký
+                </Link>
+                </div>
               </div>
             </motion.div>
           )}

@@ -3,6 +3,10 @@ import { lazy } from 'react';
 
 const Home = lazy(() => import('./pages/Home'));
 const About = lazy(() => import('./pages/About'));
+const Contact = lazy(() => import('./pages/Contact'));
+const Login = lazy(() => import('./pages/Auth/Login'));
+const Register = lazy(() => import('./pages/Auth/Register'));
+const ForgotPassword = lazy(() => import('./pages/Auth/ForgotPassword'));
 const SportLayout = lazy(() => import('./pages/Sports/SportLayout'));
 const CourtsList = lazy(() => import('./pages/Courts/List'));
 const CourtDetail = lazy(() => import('./pages/Courts/Detail'));
@@ -22,9 +26,29 @@ export const routes = [
     name: 'Về chúng tôi'
   },
   {
+    path: '/contact',
+    element: <Contact />,
+    name: 'Liên hệ',
+  },
+  {
+    path: '/login',
+    element: <Login />,
+    name: 'Đăng nhập'
+  },
+  {
+    path: '/register',
+    element: <Register />,
+    name: 'Đăng ký'
+  },
+  {
+    path: '/forgot-password',
+    element: <ForgotPassword />,
+    name: 'Quên mật khẩu'
+  },
+  {
     path: '/sports/:sportCode',
     element: <SportLayout />,
-    name: 'Cầu lông'
+    name: 'Danh sách sân theo từng môn thể thao'
   },
   {
     path: '/courts',

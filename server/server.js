@@ -119,17 +119,33 @@ app.get('/api/sporttypes', async (req, res) => {
 // API lấy danh sách locations
 app.get('/api/locations', async (req, res) => {
   try {
-    // Base query to get location information
-    const locationQuery = `
+    const { sportcode } = req.query; // Lấy sportcode từ query parameters
+
+    // Base query với JOIN để lọc theo sportcode
+    let locationQuery = `
       SELECT 
         l.*,
         (SELECT AVG(r.Rating) FROM location_reviews r WHERE r.LocationID = l.LocationID) AS AverageRating,
         (SELECT i.ImageUrl FROM location_images i WHERE i.LocationID = l.LocationID AND i.IsPrimary = 1 LIMIT 1) AS PrimaryImageUrl
       FROM Locations l
+      INNER JOIN courts c ON l.LocationID = c.LocationID
+      INNER JOIN sporttypes s ON c.SportTypeID = s.SportTypeID
+      WHERE 1=1
     `;
-    
-    const [locations] = await pool.query(locationQuery);
-    
+
+    const queryParams = [];
+
+    // Thêm điều kiện lọc nếu có sportcode
+    if (sportcode) {
+      locationQuery += ` AND s.SportCode = ?`;
+      queryParams.push(sportcode);
+    }
+
+    // Thêm DISTINCT để tránh trùng lặp địa điểm
+    locationQuery = locationQuery.replace('SELECT', 'SELECT DISTINCT');
+
+    const [locations] = await pool.query(locationQuery, queryParams);
+
     // Get features for each location
     const featuresQuery = 'SELECT * FROM location_features WHERE LocationID = ?';
     
@@ -139,7 +155,7 @@ app.get('/api/locations', async (req, res) => {
         const [features] = await pool.query(featuresQuery, [location.LocationID]);
         return {
           ...location,
-          features: features[0] || null, // Attach features to the location
+          features: features[0] || null,
         };
       })
     );

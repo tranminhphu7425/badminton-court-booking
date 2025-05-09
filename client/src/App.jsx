@@ -2,8 +2,10 @@ import { Suspense } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { routes } from './routes';
 import Navbar from './components/Navbar';
+import Footer from './components/Footer';
 import LoadingSpinner from './components/LoadingSpinner';
 import './App.css';
+
 
 
 
@@ -26,6 +28,7 @@ function App() {
         </Routes>
         
       </Suspense>
+      <Footer />
     </>
   );
 }

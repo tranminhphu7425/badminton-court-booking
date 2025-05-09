@@ -432,16 +432,11 @@ function Main() {
   const isLoading = loading.courts || loading.bookings;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 p-4 md:p-8">
-      {/* Header */}
-      <div className="max-w-6xl mx-auto">
-        <h1 className="text-3xl md:text-4xl font-bold text-center text-blue-800 mb-2">
-          ĐẶT LỊCH SÂN CẦU LÔNG
-        </h1>
-
-        {/* Loading & Error States */}
-        {isLoading && (
-          <div className="fixed top-0 left-0 right-0 bg-blue-500 text-white p-2 text-center flex items-center justify-center">
+    <div className = "relative">
+    <div>
+      {/* Loading & Error States */}
+      {isLoading && (
+          <div className="absolute bottom-0 left-0 right-0 bg-blue-500 dark:bg-blue-700 text-white p-2 text-center flex items-center justify-center">
             <svg
               className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
               xmlns="http://www.w3.org/2000/svg"
@@ -467,12 +462,22 @@ function Main() {
         )}
 
         {error && (
-          <div className="fixed top-0 left-0 right-0 bg-red-500 text-white p-2 text-center">
+          <div className="bg-red-500 dark:bg-red-700 text-white p-2 text-center">
             Lỗi: {error}
           </div>
         )}
+    </div>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 dark:from-gray-800 dark:to-gray-900 p-4 md:p-8">
+      
+      {/* Header */}
+      <div className="max-w-6xl mx-auto">
+        <h1 className="text-3xl md:text-4xl font-bold text-center text-blue-800 dark:text-blue-300 mb-2">
+          ĐẶT LỊCH SÂN CẦU LÔNG
+        </h1>
 
-        <p className="text-center text-gray-600 mb-8">
+        
+
+        <p className="text-center text-gray-600 dark:text-gray-300 mb-8">
           Sân 1 - 4 | Mở cửa 7h - 22h hàng ngày
         </p>
 
@@ -481,12 +486,12 @@ function Main() {
           <div className="flex items-center justify-center space-x-4 mb-4">
             <button
               onClick={() => changeDate(-1)}
-              className="w-12 h-12 flex items-center justify-center bg-white rounded-full shadow-md hover:shadow-lg hover:bg-blue-50 transition-all duration-300"
+              className="w-12 h-12 flex items-center justify-center bg-white dark:bg-gray-700 rounded-full shadow-md hover:shadow-lg hover:bg-blue-50 dark:hover:bg-gray-600 transition-all duration-300"
               aria-label="Previous day"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6 text-blue-600"
+                className="h-6 w-6 text-blue-600 dark:text-blue-400"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -505,13 +510,13 @@ function Main() {
                 onChange={(date) => setCurrentDate(date)}
                 dateFormat="dd/MM/yyyy"
                 locale={vi}
-                className="px-4 py-2 bg-white text-blue-800 rounded-lg border border-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="px-4 py-2 bg-white dark:bg-gray-700 text-blue-800 dark:text-white rounded-lg border border-blue-200 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholderText="Chọn ngày"
                 aria-label="Select date"
               />
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5 absolute right-3 top-2.5 text-blue-500 pointer-events-none"
+                className="h-5 w-5 absolute right-3 top-2.5 text-blue-500 dark:text-blue-400 pointer-events-none"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -526,12 +531,12 @@ function Main() {
             </div>
             <button
               onClick={() => changeDate(1)}
-              className="w-12 h-12 flex items-center justify-center bg-white rounded-full shadow-md hover:shadow-lg hover:bg-blue-50 transition-all duration-300"
+              className="w-12 h-12 flex items-center justify-center bg-white dark:bg-gray-700 rounded-full shadow-md hover:shadow-lg hover:bg-blue-50 dark:hover:bg-gray-600 transition-all duration-300"
               aria-label="Next day"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6 text-blue-600"
+                className="h-6 w-6 text-blue-600 dark:text-blue-400"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -548,21 +553,21 @@ function Main() {
           <div className="flex space-x-2">
             <button
               onClick={() => changeDate(-7)}
-              className="px-4 py-2 bg-blue-100 text-blue-800 rounded-lg hover:bg-blue-200 transition-colors text-sm"
+              className="px-4 py-2 bg-blue-100 dark:bg-gray-700 text-blue-800 dark:text-gray-200 rounded-lg hover:bg-blue-200 dark:hover:bg-gray-600 transition-colors text-sm"
               aria-label="Previous week"
             >
               Tuần trước
             </button>
             <button
               onClick={() => setCurrentDate(new Date())}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm"
+              className="px-4 py-2 bg-blue-600 dark:bg-blue-700 text-white rounded-lg hover:bg-blue-700 dark:hover:bg-blue-800 transition-colors text-sm"
               aria-label="Today"
             >
               Hôm nay
             </button>
             <button
               onClick={() => changeDate(7)}
-              className="px-4 py-2 bg-blue-100 text-blue-800 rounded-lg hover:bg-blue-200 transition-colors text-sm"
+              className="px-4 py-2 bg-blue-100 dark:bg-gray-700 text-blue-800 dark:text-gray-200 rounded-lg hover:bg-blue-200 dark:hover:bg-gray-600 transition-colors text-sm"
               aria-label="Next week"
             >
               Tuần sau
@@ -571,9 +576,9 @@ function Main() {
         </div>
 
         {/* Booking Table */}
-        <div className="overflow-x-auto bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gradient-to-r from-blue-600 to-blue-500">
+        <div className="overflow-x-auto bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700 overflow-hidden">
+          <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+          <thead className="bg-gradient-to-r from-blue-600 to-blue-500 dark:from-blue-800 dark:to-blue-700">
               <tr>
                 <th className="px-4 py-2 text-center text-xs font-semibold text-white uppercase tracking-wider rounded-tl-2xl">
                   Sân
@@ -582,7 +587,7 @@ function Main() {
                   <th
                     key={hour}
                     className={`px-4 py-3 text-center text-xs font-semibold text-white uppercase tracking-wider ${
-                      selectedTime === hour ? "bg-blue-700/90" : ""
+                      selectedTime === hour ? "bg-blue-700/90 dark:bg-blue-900/90"  : ""
                     }`}
                   >
                     <div className="flex flex-col">
@@ -595,7 +600,7 @@ function Main() {
                 ))}
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100">
+            <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
               {courts.map((court) => {
                 // 
                 // kiểm tra CourtNumber phải bắt đầu bằng "S"
@@ -611,8 +616,8 @@ function Main() {
                     key={courtNumber}
                     className={`${
                       selectedCourt === courtNumber
-                        ? "bg-blue-50"
-                        : "hover:bg-gray-50"
+                        ? "bg-blue-50 dark:bg-gray-700"
+                        : "hover:bg-gray-50 dark:hover:bg-gray-700"
                     } transition-colors`}
                   >
                     <CourtCell court={court} />
@@ -659,6 +664,7 @@ function Main() {
           />
         )}
       </div>
+    </div>
     </div>
   );
 }
