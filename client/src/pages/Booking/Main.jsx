@@ -24,7 +24,7 @@ const CourtCell = ({ court }) => (
           />
         </svg>
       </div>
-      <div className="text-sm font-medium text-gray-900">
+      <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
         Sân {parseInt(court.court.replace("S0", ""))}
       </div>
     </div>
@@ -64,7 +64,7 @@ const TimeSlot = ({ court, hour, isBooked, isSelected, booking, onSelect }) => (
         <>
           <span
             className={`text-sm font-medium ${
-              isSelected ? "text-emerald-700" : "text-gray-600"
+              isSelected ? "text-emerald-700" : "text-gray-600 dark:text-gray-300"
             }`}
           >
             Trống
