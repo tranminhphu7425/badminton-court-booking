@@ -76,9 +76,9 @@ const SportLayout = () => {
   const handleAddressChange = (address) => {
     setFilters({
       ...filters,
-      province: address.province?.name || "",
-      district: address.district?.name || "",
-      ward: address.ward?.name || "",
+      province: address.province || "",
+      district: address.district || "",
+      ward: address.ward || "",
     });
   };
 
@@ -102,7 +102,6 @@ const SportLayout = () => {
   console.log("SportType:", sportType);
   // Dữ liệu mẫu - trong thực tế bạn sẽ fetch từ API
   useEffect(() => {
-   
     const loadLocations = async (sportCode) => {
       try {
         const data = await api.fetchLocations(sportCode);
@@ -177,7 +176,6 @@ const SportLayout = () => {
     setFilteredCourts(results);
     setShowFilters(false);
   };
-
 
   // Reset bộ lọc
   const resetFilters = () => {
@@ -278,7 +276,12 @@ const SportLayout = () => {
             <div className="mt-6 bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg dark:shadow-gray-900">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {/* Lọc theo địa điểm */}
-                <AddressSelector onAddressChange={handleAddressChange} />
+                <AddressSelector
+                  onAddressChange={handleAddressChange}
+                  selectedProvince={filters.province}
+                  selectedDistrict={filters.district}
+                  selectedWard={filters.ward}
+                />
 
                 {/* Lọc theo giá */}
                 <div>

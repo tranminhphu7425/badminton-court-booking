@@ -50,10 +50,11 @@ app.get('/api/bookings', async (req, res) => {
         c.CourtNumber AS court,
         DATE(b.BookingDate) AS date,
         HOUR(b.StartTime) AS time,
-        b.CustomerName AS user,
+        cu.FullName AS user,
         c.HourlyRate AS price,
         l.LocationName AS location
       FROM Bookings b
+      JOIN Customers cu ON b.CustomerID = cu.CustomerID
       JOIN Courts c ON b.CourtID = c.CourtID
       JOIN Locations l ON c.LocationID = l.LocationID
       WHERE b.BookingDate = ? 
@@ -180,49 +181,102 @@ app.post('/api/bookings', async (req, res) => {
   try {
     const { 
       courtId, 
-      locationId, 
-      sportTypeId, 
-      date, 
-      time, 
-      customerName = 'Khách vãng lai', 
-      customerPhone = null 
+      customerId = null, // Cho phép null cho khách vãng lai
+      bookingDate, 
+      startTime, 
+      endTime,
+      notes = null
     } = req.body;
     
     // Validate input
-    if (!courtId || !date || !time) {
-      return res.status(400).json({ error: 'Missing required fields' });
+    if (!courtId || !bookingDate || !startTime || !endTime) {
+      return res.status(400).json({ 
+        error: 'Missing required fields: courtId, bookingDate, startTime, endTime are required' 
+      });
     }
     
-    const startTime = `${time}:00:00`;
-    const endTime = `${parseInt(time) + 1}:00:00`;
-    
-    const insertQuery = `
-      INSERT INTO Bookings 
-        (CourtID, LocationID, SportTypeID, BookingDate, StartTime, EndTime, CustomerName, CustomerPhone, Status) 
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'Confirmed')
-    `;
-    
-    const [result] = await pool.query(
-      insertQuery,
-      [courtId, locationId, sportTypeId, date, startTime, endTime, customerName, customerPhone]
+    // Kiểm tra sân tồn tại và khả dụng
+    const [court] = await pool.query(
+      'SELECT * FROM courts WHERE CourtID = ? AND Status = "Available"',
+      [courtId]
     );
     
-    res.json({ 
+    if (court.length === 0) {
+      return res.status(404).json({ 
+        error: 'Court not found or not available' 
+      });
+    }
+    
+    // Kiểm tra xung đột booking
+    const [conflicts] = await pool.query(
+      `SELECT * FROM bookings 
+       WHERE CourtID = ? AND BookingDate = ? 
+       AND (
+         (StartTime < ? AND EndTime > ?) OR
+         (StartTime >= ? AND StartTime < ?) OR
+         (EndTime > ? AND EndTime <= ?)
+       )`,
+      [courtId, bookingDate, endTime, startTime, startTime, endTime, startTime, endTime]
+    );
+    
+    if (conflicts.length > 0) {
+      return res.status(409).json({ 
+        error: 'Time slot already booked',
+        conflictingBookings: conflicts
+      });
+    }
+    
+    // Nếu có customerId, kiểm tra customer tồn tại
+    if (customerId) {
+      const [customer] = await pool.query(
+        'SELECT * FROM customers WHERE CustomerID = ?',
+        [customerId]
+      );
+      
+      if (customer.length === 0) {
+        return res.status(404).json({ 
+          error: 'Customer not found' 
+        });
+      }
+    }
+    
+    // Tạo booking mới
+    const [result] = await pool.query(
+      `INSERT INTO bookings 
+       (CourtID, CustomerID, BookingDate, StartTime, EndTime, Status, Notes) 
+       VALUES (?, ?, ?, ?, ?, 'Confirmed', ?)`,
+      [courtId, customerId, bookingDate, startTime, endTime, notes]
+    );
+    
+    // Lấy thông tin booking vừa tạo
+    const [newBooking] = await pool.query(
+      `SELECT b.*, c.CourtNumber, l.LocationName 
+       FROM bookings b
+       JOIN courts c ON b.CourtID = c.CourtID
+       JOIN locations l ON c.LocationID = l.LocationID
+       WHERE b.BookingID = ?`,
+      [result.insertId]
+    );
+    
+    res.status(201).json({ 
       success: true, 
-      bookingId: result.insertId,
-      courtId,
-      date,
-      time,
-      customerName
+      booking: newBooking[0],
+      message: 'Booking created successfully'
     });
+    
   } catch (err) {
     console.error('Database error:', err);
     res.status(500).json({ 
       error: 'Failed to create booking',
-      details: err.message 
+      details: process.env.NODE_ENV === 'development' ? err.message : undefined
     });
   }
 });
+
+
+
+
+
 
 // Error handling middleware
 app.use((err, req, res, next) => {

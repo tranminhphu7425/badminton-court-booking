@@ -36,41 +36,43 @@ const TimeSlot = ({ court, hour, isBooked, isSelected, booking, onSelect }) => (
     onClick={() => !isBooked && onSelect(court, hour)}
     className={`px-2 py-1 text-center cursor-pointer transition-all ${
       isBooked
-        ? "bg-rose-50/70 hover:bg-rose-100/70"
+        ? "bg-rose-50/70 hover:bg-rose-100/70 dark:bg-rose-900/30 dark:hover:bg-rose-900/50"
         : isSelected
-        ? "bg-emerald-100 hover:bg-emerald-200"
-        : "hover:bg-emerald-50"
+        ? "bg-emerald-100 hover:bg-emerald-200 dark:bg-emerald-900 dark:hover:bg-emerald-800"
+        : "hover:bg-emerald-50 dark:hover:bg-emerald-900/40"
     }`}
   >
     <div
       className={`inline-flex min-w-17 h-18 flex-col items-center justify-center p-2 rounded-lg min-h-[60px] w-full ${
         isBooked
-          ? "border border-rose-200 bg-white"
+          ? "border border-rose-200 bg-white dark:bg-gray-900 dark:border-rose-800"
           : isSelected
-          ? "border-2 border-emerald-400"
-          : "border border-gray-200"
+          ? "border-2 border-emerald-400 dark:border-emerald-300"
+          : "border border-gray-200 dark:border-gray-700 dark:bg-gray-900"
       }`}
     >
       {isBooked ? (
         <>
-          <span className="text-xs font-semibold text-rose-600" title={booking?.user || "Guest"}>
-            Đã được đặt 
+          <span
+            className="text-xs font-semibold text-rose-600 dark:text-rose-400"
+            title={booking?.user || "Guest"}
+          >
+            Đã được đặt
           </span>
-          {/* <span className="text-xs mt-1 text-rose-500 truncate max-w-[80px]">
-            {booking?.user || "Guest"}
-          </span> */}
         </>
       ) : (
         <>
           <span
             className={`text-sm font-medium ${
-              isSelected ? "text-emerald-700" : "text-gray-600 dark:text-gray-300"
+              isSelected
+                ? "text-emerald-700 dark:text-emerald-300"
+                : "text-gray-600 dark:text-gray-300"
             }`}
           >
             Trống
           </span>
           {!isSelected && (
-            <span className="mt-1 text-[10px] px-1 py-0.5 bg-blue-100 text-blue-700 rounded">
+            <span className="mt-1 text-[10px] px-1 py-0.5 bg-blue-100 text-blue-700 rounded dark:bg-blue-900 dark:text-blue-300">
               Nhấn để đặt
             </span>
           )}
@@ -79,6 +81,7 @@ const TimeSlot = ({ court, hour, isBooked, isSelected, booking, onSelect }) => (
     </div>
   </td>
 );
+
 
 const BookingModal = ({
   selectedCourt,
@@ -134,7 +137,7 @@ const BookingModal = ({
         </div>
         <div className="bg-blue-50 p-4 rounded-lg">
           <p className="text-gray-600">Giá:</p>
-          <p className="text-xl font-bold text-blue-700">
+          {/* <p className="text-xl font-bold text-blue-700">
             {courts && selectedCourt
               ? parseInt(
                   courts.find(
@@ -144,7 +147,7 @@ const BookingModal = ({
                   )?.HourlyRate
                 ) + "đ/giờ"
               : "Đang tải..."}
-          </p>
+          </p> */}
         </div>
       </div>
       <div className="flex space-x-4">
@@ -197,21 +200,21 @@ const BookingModal = ({
 const api = {
   async fetchCourts(locationId, sportTypeId) {
     try {
-      const response = await fetch(`http://localhost:8081/api/courts?locationId=${locationId}&sportTypeId=${sportTypeId}`);
-      
+      const response = await fetch(
+        `http://localhost:8081/api/courts?locationId=${locationId}&sportTypeId=${sportTypeId}`
+      );
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || "Failed to fetch courts");
       }
-  
+
       const data = await response.json();
       return data;
-  
     } catch (error) {
       console.error("Fetch courts error:", error);
       throw new Error(`Lỗi tải danh sách sân: ${error.message}`);
     }
-  
   },
   async fetchBookings(date, locationId, sportTypeId) {
     try {
@@ -232,39 +235,46 @@ const api = {
 
   async createBooking(bookingData) {
     try {
+      // Format thời gian
+      const startTime = `${bookingData.time}:00:00`;
+      const endTime = `${parseInt(bookingData.time) + 1}:00:00`;
+
       const response = await fetch("http://localhost:8081/api/bookings", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          CourtID: bookingData.courtId,
-          LocationID: bookingData.locationId,
-          SportTypeID: bookingData.sportTypeId,
-          BookingDate: bookingData.date,
-          StartTime: `${bookingData.time}:00:00`,
-          EndTime: `${bookingData.time + 1}:00:00`,
-          CustomerName: bookingData.customerName || "Khách vãng lai",
-          CustomerPhone: bookingData.customerPhone || null,
-          Status: "Confirmed"
+          courtId: bookingData.courtId,
+          customerId: bookingData.customerId || null, // Cho phép null nếu là khách vãng lai
+          bookingDate: bookingData.date,
+          startTime: startTime,
+          endTime: endTime,
+          notes: bookingData.notes || null,
         }),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to create booking");
+        throw new Error(errorData.error || "Failed to create booking");
       }
 
-      return await response.json();
+      const result = await response.json();
+      return {
+        success: true,
+        bookingId: result.booking.BookingID,
+        courtNumber: result.booking.CourtNumber,
+        locationName: result.booking.LocationName,
+        date: result.booking.BookingDate,
+        time: result.booking.StartTime,
+        message: result.message,
+      };
     } catch (error) {
       console.error("Create booking error:", error);
       throw new Error(`Lỗi đặt sân: ${error.message}`);
     }
   },
 };
-
-
-
 
 // Utility functions
 const formatDate = (date) => {
@@ -288,7 +298,7 @@ function Main() {
   const [selectedTime, setSelectedTime] = useState(null);
   const [selectedLocation, setSelectedLocation] = useState(1);
   const [selectedSport, setSelectedSport] = useState(1);
-  
+
   const [loading, setLoading] = useState({
     courts: false,
     bookings: false,
@@ -304,7 +314,7 @@ function Main() {
   console.log("Sport Type ID:", sportTypeId);
   // Load courts on component mount
   useEffect(() => {
-    const loadCourts  = async (locationId, sportTypeId) => {
+    const loadCourts = async (locationId, sportTypeId) => {
       try {
         setLoading((prev) => ({ ...prev, courts: true }));
         const data = await api.fetchCourts(locationId, sportTypeId);
@@ -319,8 +329,8 @@ function Main() {
       }
     };
 
-    loadCourts( locationId, sportTypeId );
-  }, [ locationId, sportTypeId ]);
+    loadCourts(locationId, sportTypeId);
+  }, [locationId, sportTypeId]);
 
   // Load bookings when date changes
   useEffect(() => {
@@ -329,6 +339,7 @@ function Main() {
         setLoading((prev) => ({ ...prev, bookings: true }));
         const data = await api.fetchBookings(date, locationId, sportTypeId);
         setBookings(data);
+        console.log(data);
         setError(null);
       } catch (err) {
         setError(err.message);
@@ -338,8 +349,8 @@ function Main() {
       }
     };
 
-    loadBookings(currentDate,  locationId, sportTypeId );
-  }, [currentDate,  locationId, sportTypeId ]);
+    loadBookings(currentDate, locationId, sportTypeId);
+  }, [currentDate, locationId, sportTypeId]);
 
   // Check if a slot is booked
   const isBooked = (court, time) => {
@@ -392,37 +403,56 @@ function Main() {
   const handleSlotSelect = (court, time) => {
     setSelectedCourt(court);
     setSelectedTime(time);
+    console.log("Selected court:", court);
+    console.log("Selected time:", time);
+
   };
 
   // Book court handler with improved error handling and user feedback
   const handleBookCourt = async () => {
-  if (!selectedTime || !selectedCourt) return;
+  if (!selectedTime || !selectedCourt) {
+    toast.error("Vui lòng chọn thời gian và sân");
+    return;
+  }
 
   try {
     setLoading((prev) => ({ ...prev, submission: true }));
-    
-    const courtData = courts.find(c => 
-      parseInt(c.CourtNumber.replace("S0", "")) === selectedCourt
+
+    // Tìm thông tin sân được chọn
+    const courtData = courts.find(
+      (c) => parseInt(c.CourtNumber.replace("S0", "")) === selectedCourt
     );
 
+    if (!courtData) {
+      throw new Error("Không tìm thấy thông tin sân");
+    }
+
+    // Chuẩn bị dữ liệu booking
     const bookingData = {
       courtId: courtData.CourtID,
-      locationId: selectedLocation,
-      sportTypeId: selectedSport,
+      customerId: 1, // Sử dụng ID người dùng nếu đã đăng nhập
       date: formatDate(currentDate),
       time: selectedTime,
-      customerName: "Khách hàng A", // Có thể thay bằng form input
-      customerPhone: "0123456789"   // Có thể thay bằng form input
+      notes: `Đặt sân ${courtData.CourtNumber}` // Có thể thêm ghi chú
     };
 
+    // Gọi API tạo booking
     const newBooking = await api.createBooking(bookingData);
-    setBookings([...bookings, newBooking]);
+    
+    // Cập nhật state và hiển thị thông báo
+    setBookings(prev => [...prev, {
+      id: newBooking.bookingId,
+      courtNumber: newBooking.courtNumber,
+      locationName: newBooking.locationName,
+      date: newBooking.date,
+      time: newBooking.time
+    }]);
+    
     resetSelection();
     toast.success("Đặt sân thành công!");
   } catch (err) {
-    console.error('Error booking court:', err);
-    setError(err.message);
-    toast.error(err.message);
+    console.error("Lỗi khi đặt sân:", err);
+    toast.error(err.message || "Đã xảy ra lỗi khi đặt sân");
   } finally {
     setLoading((prev) => ({ ...prev, submission: false }));
   }
@@ -432,10 +462,10 @@ function Main() {
   const isLoading = loading.courts || loading.bookings;
 
   return (
-    <div className = "relative">
-    <div>
-      {/* Loading & Error States */}
-      {isLoading && (
+    <div className="relative">
+      <div>
+        {/* Loading & Error States */}
+        {isLoading && (
           <div className="absolute bottom-0 left-0 right-0 bg-blue-500 dark:bg-blue-700 text-white p-2 text-center flex items-center justify-center">
             <svg
               className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
@@ -466,205 +496,203 @@ function Main() {
             Lỗi: {error}
           </div>
         )}
-    </div>
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 dark:from-gray-800 dark:to-gray-900 p-4 md:p-8">
-      
-      {/* Header */}
-      <div className="max-w-6xl mx-auto">
-        <h1 className="text-3xl md:text-4xl font-bold text-center text-blue-800 dark:text-blue-300 mb-2">
-          ĐẶT LỊCH SÂN CẦU LÔNG
-        </h1>
-
-        
-
-        <p className="text-center text-gray-600 dark:text-gray-300 mb-8">
-          Sân 1 - 4 | Mở cửa 7h - 22h hàng ngày
-        </p>
-
-        {/* Date Navigator */}
-        <div className="flex flex-col items-center mb-8">
-          <div className="flex items-center justify-center space-x-4 mb-4">
-            <button
-              onClick={() => changeDate(-1)}
-              className="w-12 h-12 flex items-center justify-center bg-white dark:bg-gray-700 rounded-full shadow-md hover:shadow-lg hover:bg-blue-50 dark:hover:bg-gray-600 transition-all duration-300"
-              aria-label="Previous day"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6 text-blue-600 dark:text-blue-400"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M15 19l-7-7 7-7"
-                />
-              </svg>
-            </button>
-            <div className="relative">
-              <DatePicker
-                selected={currentDate}
-                onChange={(date) => setCurrentDate(date)}
-                dateFormat="dd/MM/yyyy"
-                locale={vi}
-                className="px-4 py-2 bg-white dark:bg-gray-700 text-blue-800 dark:text-white rounded-lg border border-blue-200 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholderText="Chọn ngày"
-                aria-label="Select date"
-              />
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5 absolute right-3 top-2.5 text-blue-500 dark:text-blue-400 pointer-events-none"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                />
-              </svg>
-            </div>
-            <button
-              onClick={() => changeDate(1)}
-              className="w-12 h-12 flex items-center justify-center bg-white dark:bg-gray-700 rounded-full shadow-md hover:shadow-lg hover:bg-blue-50 dark:hover:bg-gray-600 transition-all duration-300"
-              aria-label="Next day"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6 text-blue-600 dark:text-blue-400"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 5l7 7-7 7"
-                />
-              </svg>
-            </button>
-          </div>
-          <div className="flex space-x-2">
-            <button
-              onClick={() => changeDate(-7)}
-              className="px-4 py-2 bg-blue-100 dark:bg-gray-700 text-blue-800 dark:text-gray-200 rounded-lg hover:bg-blue-200 dark:hover:bg-gray-600 transition-colors text-sm"
-              aria-label="Previous week"
-            >
-              Tuần trước
-            </button>
-            <button
-              onClick={() => setCurrentDate(new Date())}
-              className="px-4 py-2 bg-blue-600 dark:bg-blue-700 text-white rounded-lg hover:bg-blue-700 dark:hover:bg-blue-800 transition-colors text-sm"
-              aria-label="Today"
-            >
-              Hôm nay
-            </button>
-            <button
-              onClick={() => changeDate(7)}
-              className="px-4 py-2 bg-blue-100 dark:bg-gray-700 text-blue-800 dark:text-gray-200 rounded-lg hover:bg-blue-200 dark:hover:bg-gray-600 transition-colors text-sm"
-              aria-label="Next week"
-            >
-              Tuần sau
-            </button>
-          </div>
-        </div>
-
-        {/* Booking Table */}
-        <div className="overflow-x-auto bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700 overflow-hidden">
-          <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-          <thead className="bg-gradient-to-r from-blue-600 to-blue-500 dark:from-blue-800 dark:to-blue-700">
-              <tr>
-                <th className="px-4 py-2 text-center text-xs font-semibold text-white uppercase tracking-wider rounded-tl-2xl">
-                  Sân
-                </th>
-                {hours.map((hour) => (
-                  <th
-                    key={hour}
-                    className={`px-4 py-3 text-center text-xs font-semibold text-white uppercase tracking-wider ${
-                      selectedTime === hour ? "bg-blue-700/90 dark:bg-blue-900/90"  : ""
-                    }`}
-                  >
-                    <div className="flex flex-col">
-                      <span className="font-bold text-sm">{hour}h - </span>
-                      <span className="text-xs font-normal opacity-90">
-                        {hour + 1}h
-                      </span>
-                    </div>
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
-              {courts.map((court) => {
-                // 
-                // kiểm tra CourtNumber phải bắt đầu bằng "S"
-                if (!court.court.startsWith("S")) {
-                  return null; // bỏ qua court không hợp lệ
-                }
-
-                const courtNumber = parseInt(
-                  court.court.replace("S0", "")
-                );
-                return (
-                  <tr
-                    key={courtNumber}
-                    className={`${
-                      selectedCourt === courtNumber
-                        ? "bg-blue-50 dark:bg-gray-700"
-                        : "hover:bg-gray-50 dark:hover:bg-gray-700"
-                    } transition-colors`}
-                  >
-                    <CourtCell court={court} />
-                    {hours.map((hour) => {
-                      const isSlotBooked = isBooked(courtNumber, hour);
-                      const isSlotSelected =
-                        selectedCourt === courtNumber && selectedTime === hour;
-                      const booking = bookings.find(
-                        (b) =>
-                          parseInt(b.court.replace("S0", "")) === courtNumber &&
-                          parseInt(b.time) === hour
-                      );
-
-                      return (
-                        <TimeSlot
-                          key={`${courtNumber}-${hour}`}
-                          court={courtNumber}
-                          hour={hour}
-                          isBooked={isSlotBooked}
-                          isSelected={isSlotSelected}
-                          booking={booking}
-                          onSelect={handleSlotSelect}
-                        />
-                      );
-                    })}
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-
-        {/* Booking Modal */}
-        {selectedTime && selectedCourt && (
-          <BookingModal
-            selectedCourt={selectedCourt}
-            selectedTime={selectedTime}
-            currentDate={currentDate}
-            formatDate={formatDate}
-            courts={courts}
-            onCancel={resetSelection}
-            onConfirm={handleBookCourt}
-            isSubmitting={loading.submission}
-          />
-        )}
       </div>
-    </div>
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 dark:from-gray-800 dark:to-gray-900 p-4 md:p-8">
+        {/* Header */}
+        <div className="max-w-6xl mx-auto">
+          <h1 className="text-3xl md:text-4xl font-bold text-center text-blue-800 dark:text-blue-300 mb-2">
+            ĐẶT LỊCH SÂN CẦU LÔNG
+          </h1>
+
+          <p className="text-center text-gray-600 dark:text-gray-300 mb-8">
+            Sân 1 - 4 | Mở cửa 7h - 22h hàng ngày
+          </p>
+
+          {/* Date Navigator */}
+          <div className="flex flex-col items-center mb-8">
+            <div className="flex items-center justify-center space-x-4 mb-4">
+              <button
+                onClick={() => changeDate(-1)}
+                className="w-12 h-12 flex items-center justify-center bg-white dark:bg-gray-700 rounded-full shadow-md hover:shadow-lg hover:bg-blue-50 dark:hover:bg-gray-600 transition-all duration-300"
+                aria-label="Previous day"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-6 w-6 text-blue-600 dark:text-blue-400"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M15 19l-7-7 7-7"
+                  />
+                </svg>
+              </button>
+              <div className="relative">
+                <DatePicker
+                  selected={currentDate}
+                  onChange={(date) => setCurrentDate(date)}
+                  dateFormat="dd/MM/yyyy"
+                  locale={vi}
+                  className="px-4 py-2 bg-white dark:bg-gray-700 text-blue-800 dark:text-white rounded-lg border border-blue-200 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholderText="Chọn ngày"
+                  aria-label="Select date"
+                />
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5 absolute right-3 top-2.5 text-blue-500 dark:text-blue-400 pointer-events-none"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                  />
+                </svg>
+              </div>
+              <button
+                onClick={() => changeDate(1)}
+                className="w-12 h-12 flex items-center justify-center bg-white dark:bg-gray-700 rounded-full shadow-md hover:shadow-lg hover:bg-blue-50 dark:hover:bg-gray-600 transition-all duration-300"
+                aria-label="Next day"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-6 w-6 text-blue-600 dark:text-blue-400"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
+              </button>
+            </div>
+            <div className="flex space-x-2">
+              <button
+                onClick={() => changeDate(-7)}
+                className="px-4 py-2 bg-blue-100 dark:bg-gray-700 text-blue-800 dark:text-gray-200 rounded-lg hover:bg-blue-200 dark:hover:bg-gray-600 transition-colors text-sm"
+                aria-label="Previous week"
+              >
+                Tuần trước
+              </button>
+              <button
+                onClick={() => setCurrentDate(new Date())}
+                className="px-4 py-2 bg-blue-600 dark:bg-blue-700 text-white rounded-lg hover:bg-blue-700 dark:hover:bg-blue-800 transition-colors text-sm"
+                aria-label="Today"
+              >
+                Hôm nay
+              </button>
+              <button
+                onClick={() => changeDate(7)}
+                className="px-4 py-2 bg-blue-100 dark:bg-gray-700 text-blue-800 dark:text-gray-200 rounded-lg hover:bg-blue-200 dark:hover:bg-gray-600 transition-colors text-sm"
+                aria-label="Next week"
+              >
+                Tuần sau
+              </button>
+            </div>
+          </div>
+
+          {/* Booking Table */}
+          <div className="overflow-x-auto bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700 overflow-hidden">
+            <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+              <thead className="bg-gradient-to-r from-blue-600 to-blue-500 dark:from-blue-800 dark:to-blue-700">
+                <tr>
+                  <th className="px-4 py-2 text-center text-xs font-semibold text-white uppercase tracking-wider rounded-tl-2xl">
+                    Sân
+                  </th>
+                  {hours.map((hour) => (
+                    <th
+                      key={hour}
+                      className={`px-4 py-3 text-center text-xs font-semibold text-white uppercase tracking-wider ${
+                        selectedTime === hour
+                          ? "bg-blue-700/90 dark:bg-blue-900/90"
+                          : ""
+                      }`}
+                    >
+                      <div className="flex flex-col">
+                        <span className="font-bold text-sm">{hour}h - </span>
+                        <span className="text-xs font-normal opacity-90">
+                          {hour + 1}h
+                        </span>
+                      </div>
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
+                {courts.map((court) => {
+                  //
+                  // kiểm tra CourtNumber phải bắt đầu bằng "S"
+                  if (!court.court.startsWith("S")) {
+                    return null; // bỏ qua court không hợp lệ
+                  }
+
+                  const courtNumber = parseInt(court.court.replace("S0", ""));
+                  return (
+                    <tr
+                      key={courtNumber}
+                      className={`${
+                        selectedCourt === courtNumber
+                          ? "bg-blue-50 dark:bg-gray-700"
+                          : "hover:bg-gray-50 dark:hover:bg-gray-700"
+                      } transition-colors`}
+                    >
+                      <CourtCell court={court} />
+                      {hours.map((hour) => {
+                        const isSlotBooked = isBooked(courtNumber, hour);
+                        const isSlotSelected =
+                          selectedCourt === courtNumber &&
+                          selectedTime === hour;
+                        const booking = bookings.find(
+                          (b) =>
+                            parseInt(b.court.replace("S0", "")) ===
+                              courtNumber && parseInt(b.time) === hour
+                        );
+
+                        return (
+                          <TimeSlot
+                            key={`${courtNumber}-${hour}`}
+                            court={courtNumber}
+                            hour={hour}
+                            isBooked={isSlotBooked}
+                            isSelected={isSlotSelected}
+                            booking={booking}
+                            onSelect={handleSlotSelect}
+                          />
+                        );
+                      })}
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Booking Modal */}
+          {selectedTime && selectedCourt && (
+            <BookingModal
+              selectedCourt={selectedCourt}
+              selectedTime={selectedTime}
+              currentDate={currentDate}
+              formatDate={formatDate}
+              courts={courts}
+              onCancel={resetSelection}
+              onConfirm={handleBookCourt}
+              isSubmitting={loading.submission}
+            />
+          )}
+        </div>
+      </div>
     </div>
   );
 }
