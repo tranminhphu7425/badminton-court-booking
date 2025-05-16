@@ -3,7 +3,7 @@ import { useInView } from "react-intersection-observer";
 import { useEffect } from "react";
 
 // Tạo một component tái sử dụng cho từng phần bài báo
-function Section({ children, resetOnOutOfView = false }) {
+function Div({ children, resetOnOutOfView = false }) {
   const controls = useAnimation();
   const [ref, inView] = useInView({ triggerOnce: !resetOnOutOfView }); 
   // Nếu reset thì triggerOnce: false, còn không thì true
@@ -25,11 +25,10 @@ function Section({ children, resetOnOutOfView = false }) {
         hidden: { opacity: 0, y: 60 },
         visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
       }}
-      style={{ paddingBottom: "80px" }}
     >
       {children}
     </motion.div>
   );
 }
 
-export default Section;
+export default Div;

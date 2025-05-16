@@ -15,6 +15,7 @@ import { sportTypeApi } from "../../api/sportTypeApi";
 import { FaThLarge, FaList } from "react-icons/fa";
 import CourtCard from "../../components/CourtCard";
 import { useParams } from "react-router-dom";
+import Div from "../../components/Div";
 
 const api = {
   async fetchLocations(sportCode) {
@@ -506,7 +507,8 @@ const SportLayout = () => {
                 } gap-8`}
               >
                 {filteredCourts.map((location) => (
-                  <CourtCard
+                  <Div>
+                    <CourtCard
                     key={location.LocationID}
                     name={location.LocationName}
                     image={location.image}
@@ -526,6 +528,7 @@ const SportLayout = () => {
                     }
                     mode={mode}
                   />
+                  </Div>
                 ))}
               </div>
             </>
