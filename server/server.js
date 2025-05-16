@@ -51,7 +51,6 @@ app.get('/api/bookings', async (req, res) => {
         DATE(b.BookingDate) AS date,
         HOUR(b.StartTime) AS time,
         cu.FullName AS user,
-        c.HourlyRate AS price,
         l.LocationName AS location
       FROM Bookings b
       JOIN Customers cu ON b.CustomerID = cu.CustomerID
@@ -81,8 +80,7 @@ app.get('/api/courts', async (req, res) => {
         c.CourtID,
         c.CourtNumber AS court,
         l.LocationName AS location,
-        s.SportName AS sportType,
-        c.HourlyRate AS price
+        s.SportName AS sportType
       FROM Courts c
       JOIN Locations l ON c.LocationID = l.LocationID
       JOIN SportTypes s ON c.SportTypeID = s.SportTypeID

@@ -19,7 +19,7 @@ import { GiTennisBall, GiShuttlecock, GiSoccerBall } from "react-icons/gi";
 import { MdSportsVolleyball } from "react-icons/md";
 import { sportTypeApi } from "../api/sportTypeApi";
 import { FaSignInAlt, FaUserPlus, FaSignOutAlt } from "react-icons/fa";
-const logoSrc = "./public/assets/images/logos/logo.png";
+const logoSrc = "/assets/images/logos/logo.png";
 
 const translateIcon = {
   GiShuttlecock: <GiShuttlecock />,

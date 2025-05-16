@@ -12,7 +12,7 @@ import { GiTennisCourt } from "react-icons/gi";
 import Select from "react-select";
 import AddressSelector from "../../components/AddressSelector";
 import { sportTypeApi } from "../../api/sportTypeApi";
-
+import { FaThLarge, FaList } from "react-icons/fa";
 import CourtCard from "../../components/CourtCard";
 import { useParams } from "react-router-dom";
 
@@ -49,6 +49,7 @@ const SportLayout = () => {
   const [loading, setLoading] = useState(true);
   const [showFilters, setShowFilters] = useState(false);
   const [locations, setLocations] = useState([]);
+  const [mode, setMode] = useState(0);
 
   // State cho bộ lọc
   const [filters, setFilters] = useState({
@@ -73,15 +74,6 @@ const SportLayout = () => {
   console.log("SportCode:", sportCode);
   const [sportType, setSportType] = useState(null);
 
-  const handleAddressChange = (address) => {
-    setFilters({
-      ...filters,
-      province: address.province || "",
-      district: address.district || "",
-      ward: address.ward || "",
-    });
-  };
-
   useEffect(() => {
     const loadSportTypes = async (sportCode) => {
       try {
@@ -99,14 +91,22 @@ const SportLayout = () => {
     loadSportTypes(sportCode);
   }, [sportCode]);
 
-  console.log("SportType:", sportType);
-  // Dữ liệu mẫu - trong thực tế bạn sẽ fetch từ API
+  const handleAddressChange = (address) => {
+    setFilters({
+      ...filters,
+      province: address.province || "",
+      district: address.district || "",
+      ward: address.ward || "",
+    });
+  };
+
   useEffect(() => {
     const loadLocations = async (sportCode) => {
       try {
         const data = await api.fetchLocations(sportCode);
         setLocations(data);
         console.log("Locations:", data);
+        setCourts(data);
         setFilteredCourts(data);
         setLoading(false);
       } catch (err) {
@@ -122,21 +122,25 @@ const SportLayout = () => {
 
     // Lọc theo địa điểm
     if (filters.province) {
-      results = results.filter((court) => court.province === filters.province);
+      results = results.filter(
+        (court) => court.province === filters.province.name
+      );
     }
     if (filters.district) {
-      results = results.filter((court) => court.district === filters.district);
+      results = results.filter(
+        (court) => court.district === filters.district.name
+      );
     }
     if (filters.ward) {
-      results = results.filter((court) => court.ward === filters.ward);
+      results = results.filter((court) => court.ward === filters.ward.name);
     }
 
     // Lọc theo khoảng giá
-    results = results.filter(
-      (court) =>
-        court.priceRange[0] >= filters.priceRange[0] &&
-        court.priceRange[1] <= filters.priceRange[1]
-    );
+    // results = results.filter(
+    //   (court) =>
+    //     court.priceRange[0] >= filters.priceRange[0] &&
+    //     court.priceRange[1] <= filters.priceRange[1]
+    // );
 
     // Lọc theo rating
     if (filters.rating > 0) {
@@ -177,6 +181,8 @@ const SportLayout = () => {
     setShowFilters(false);
   };
 
+  console.log("Filtered courts:", filteredCourts);
+  console.log("Filtered:", filters);
   // Reset bộ lọc
   const resetFilters = () => {
     setFilters({
@@ -210,7 +216,6 @@ const SportLayout = () => {
       Object.values(filters.amenities).some(Boolean)
     );
   };
-  console.log("Filtered:", filters);
 
   return sportType || sportCode === "all" ? (
     <div className="badminton-page min-h-screen dark:bg-gray-800">
@@ -465,20 +470,41 @@ const SportLayout = () => {
                     : null}{" "}
                   phù hợp
                 </h2>
-                <div className="flex items-center">
-                  <span className="text-sm text-gray-600 dark:text-gray-300 mr-2">
-                    Sắp xếp:
-                  </span>
-                  <select className="border border-gray-300 dark:border-gray-600 rounded-md px-3 py-1 text-sm dark:bg-gray-700 dark:text-white">
-                    <option>Phổ biến nhất</option>
-                    <option>Đánh giá cao nhất</option>
-                    <option>Giá thấp đến cao</option>
-                    <option>Giá cao đến thấp</option>
-                  </select>
+
+                <div className="flex items-center space-x-4">
+                  {/* Dropdown sắp xếp */}
+                  <div className="flex items-center">
+                    <span className="text-sm text-gray-600 dark:text-gray-300 mr-2">
+                      Sắp xếp:
+                    </span>
+                    <select className="border border-gray-300 dark:border-gray-600 rounded-md px-3 py-1 text-sm dark:bg-gray-700 dark:text-white">
+                      <option>Phổ biến nhất</option>
+                      <option>Đánh giá cao nhất</option>
+                      <option>Giá thấp đến cao</option>
+                      <option>Giá cao đến thấp</option>
+                    </select>
+                  </div>
+
+                  {/* Nút chuyển chế độ */}
+                  <button
+                    onClick={() => setMode((prev) => (prev === 0 ? 1 : 0))}
+                    className="p-2 border rounded-md text-gray-600 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+                    title={
+                      mode === 0
+                        ? "Chuyển sang dạng danh sách"
+                        : "Chuyển sang dạng lưới"
+                    }
+                  >
+                    {mode === 0 ? <FaList /> : <FaThLarge />}
+                  </button>
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              <div
+                className={`grid grid-cols-1 ${
+                  mode == 0 ? "md:grid-cols-2 lg:grid-cols-3" : ""
+                } gap-8`}
+              >
                 {filteredCourts.map((location) => (
                   <CourtCard
                     key={location.LocationID}
@@ -498,6 +524,7 @@ const SportLayout = () => {
                         {location.ClosingTime.split(":").slice(0, 2).join(":")}
                       </span>
                     }
+                    mode={mode}
                   />
                 ))}
               </div>

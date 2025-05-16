@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý đặt sân thể thao</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            200: '#bae6fd',
+                            300: '#7dd3fc',
+                            400: '#38bdf8',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            800: '#075985',
+                            900: '#0c4a6e',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .time-slot {
+            transition: all 0.2s ease;
+        }
+        .time-slot:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        .court-row:nth-child(odd) {
+            background-color: #f9fafb;
+        }
+        .court-row:nth-child(even) {
+            background-color: #ffffff;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-primary-50 to-primary-100 min-h-screen p-6">
+    <div class="max-w-7xl mx-auto">
+        <!-- Header -->
+        <div class="text-center mb-10">
+            <h1 class="text-4xl font-bold text-primary-800 mb-2">LỊCH ĐẶT SÂN THỂ THAO</h1>
+            <p class="text-lg text-primary-600">Xem và quản lý trạng thái các sân theo từng khung giờ</p>
+        </div>
+        
+        <!-- Date selector -->
+        <div class="flex justify-between items-center mb-8 bg-white rounded-xl shadow-sm p-4">
+            <button class="flex items-center px-5 py-2.5 bg-primary-100 text-primary-700 rounded-lg hover:bg-primary-200 transition duration-300">
+                <i class="fas fa-chevron-left mr-2"></i> Ngày trước
+            </button>
+            <div class="flex flex-col items-center">
+                <div class="text-2xl font-semibold text-primary-800">15 Tháng 6, 2023</div>
+                <div class="text-sm text-primary-600">Thứ Năm</div>
+            </div>
+            <button class="flex items-center px-5 py-2.5 bg-primary-100 text-primary-700 rounded-lg hover:bg-primary-200 transition duration-300">
+                Ngày sau <i class="fas fa-chevron-right ml-2"></i>
+            </button>
+        </div>
+        
+        <!-- Court status table -->
+        <div class="overflow-x-auto bg-white rounded-2xl shadow-lg border border-gray-100">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead>
+                    <tr class="bg-primary-700 text-white">
+                        <th scope="col" class="px-8 py-5 text-left text-sm font-semibold uppercase tracking-wider rounded-tl-2xl">Sân</th>
+                        <th scope="col" class="px-4 py-5 text-center text-sm font-semibold uppercase tracking-wider">7-8h</th>
+                        <th scope="col" class="px-4 py-5 text-center text-sm font-semibold uppercase tracking-wider">8-9h</th>
+                        <th scope="col" class="px-4 py-5 text-center text-sm font-semibold uppercase tracking-wider">9-10h</th>
+                        <th scope="col" class="px-4 py-5 text-center text-sm font-semibold uppercase tracking-wider">10-11h</th>
+                        <th scope="col" class="px-4 py-5 text-center text-sm font-semibold uppercase tracking-wider">11-12h</th>
+                        <th scope="col" class="px-4 py-5 text-center text-sm font-semibold uppercase tracking-wider">12-13h</th>
+                        <th scope="col" class="px-4 py-5 text-center text-sm font-semibold uppercase tracking-wider">13-14h</th>
+                        <th scope="col" class="px-4 py-5 text-center text-sm font-semibold uppercase tracking-wider">14-15h</th>
+                        <th scope="col" class="px-4 py-5 text-center text-sm font-semibold uppercase tracking-wider">15-16h</th>
+                        <th scope="col" class="px-4 py-5 text-center text-sm font-semibold uppercase tracking-wider">16-17h</th>
+                        <th scope="col" class="px-4 py-5 text-center text-sm font-semibold uppercase tracking-wider">17-18h</th>
+                        <th scope="col" class="px-4 py-5 text-center text-sm font-semibold uppercase tracking-wider">18-19h</th>
+                        <th scope="col" class="px-4 py-5 text-center text-sm font-semibold uppercase tracking-wider">19-20h</th>
+                        <th scope="col" class="px-4 py-5 text-center text-sm font-semibold uppercase tracking-wider rounded-tr-2xl">20-21h</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200">
+                    <!-- Court 1 -->
+                    <tr class="court-row hover:bg-primary-50 transition duration-150">
+                        <td class="px-8 py-4 whitespace-nowrap">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0 h-10 w-10 bg-primary-100 rounded-full flex items-center justify-center mr-3">
+                                    <span class="text-primary-800 font-bold">1</span>
+                                </div>
+                                <div>
+                                    <div class="text-sm font-medium text-gray-900">Sân bóng đá 1</div>
+                                    <div class="text-xs text-gray-500">Sân cỏ nhân tạo</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-4 py-4 whitespace-nowrap text-center">
+                            <div class="time-slot cursor-pointer px-3 py-1.5 rounded-full bg-green-100 text-green-800 text-xs font-semibold">Trống</div>
+                        </td>
+                        <td class="px-4 py-4 whitespace-nowrap text-center">
+                            <div class="time-slot cursor-pointer px-3 py-1.5 rounded-full bg-green-100 text-green-800 text-xs font-semibold">Trống</div>
+                        </td>
+                        <td class="px-4 py-4 whitespace-nowrap text-center">
+                            <div class="time-slot cursor-pointer px-3 py-1.5 rounded-full bg-red-100 text-red-800 text-xs font-semibold flex items-center justify-center">
+                                <i class="fas fa-user mr-1"></i> Đã đặt
+                            </div>
+                        </td>
+                        <td class="px-4 py-4 whitespace-nowrap text-center">
+                            <div class="time-slot cursor-pointer px-3 py-1.5 rounded-full bg-red-100 text-red-800 text-xs font-semibold flex items-center justify-center">
+                                <i class="fas fa-user mr-1"></i> Đã đặt
+                            </div>
+                        </td>
+                        <td class="px-4 py-4 whitespace-nowrap text-center">
+                            <div class="time-slot cursor-pointer px-3 py-1.5 rounded-full bg-green-100 text-green-800 text-xs font-semibold">Trống</div>
+                        </td>
+                        <td class="px-4 py-4 whitespace-nowrap text-center">
+                            <div class="time-slot cursor-pointer px-3 py-1.5 rounded-full bg-green-100 text-green-800 text-xs font-semibold">Trống</div>
+                        </td>
+                        <td class="px-4 py-4 whitespace-nowrap text-center">
+                            <div class="time-slot cursor-pointer px-3 py-1.5 rounded-full bg-green-100 text-green-800 text-xs font-semibold">Trống</div>
+                        </td>
+                        <td class="px-4 py-4 whitespace-nowrap text-center">
+                            <div class="time-slot cursor-pointer px-3 py-1.5 rounded-full bg-yellow-100 text-yellow-800 text-xs font-semibold flex items-center justify-center">
+                                <i class="fas fa-lock mr-1"></i> Khóa
+                            </div>
+                        </td>
+                        <td class="px-4 py-4 whitespace-nowrap text-center">
+                            <div class="time-slot cursor-pointer px-3 py-1.5 rounded-full bg-red-100 text-red-800 text-xs font-semibold flex items-center justify-center">
+                                <i class="fas fa-user mr-1"></i> Đã đặt
+                            </div>
+                        </td>
+                        <td class="px-4 py-4 whitespace-nowrap text-center">
+                            <div class="time-slot cursor-pointer px-3 py-1.5 rounded-full bg-red-100 text-red-800 text-xs font-semibold flex items-center justify-center">
+                                <i class="fas fa-user mr-1"></i> Đã đặt
+                            </div>
+                        </td>
+                        <td class="px-4 py-4 whitespace-nowrap text-center">
+                            <div class="time-slot cursor-pointer px-3 py-1.5 rounded-full bg-red-100 text-red-800 text-xs font-semibold flex items-center justify-center">
+                                <i class="fas fa-user mr-1"></i> Đã đặt
+                            </div>
+                        </td>
+                        <td class="px-4 py-4 whitespace-nowrap text-center">
+                            <div class="time-slot cursor-pointer px-3 py-1.5 rounded-full bg-red-100 text-red-800 text-xs font-semibold flex items-center justify-center">
+                                <i class="fas fa-user mr-1"></i> Đã đặt
+                            </div>
+                        </td>
+                        <td class="px-4 py-4 whitespace-nowrap text-center">
+                            <div class="time-slot cursor-pointer px-3 py-1.5 rounded-full bg-green-100 text-green-800 text-xs font-semibold">Trống</div>
+                        </td>
+                        <td class="px-4 py-4 whitespace-nowrap text-center">
+                            <div class="time-slot cursor-pointer px-3 py-1.5 rounded-full bg-green-100 text-green-800 text-xs font-semibold">Trống</div>
+                        </td>
+                    </tr>
+                    
+                    <!-- Court 2 -->
+                    <tr class="court-row hover:bg-primary-50 transition duration-150">
+                        <td class="px-8 py-4 whitespace-nowrap">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0 h-10 w-10 bg-primary-100 rounded-full flex items-center justify-center mr-3">
+                                    <span class="text-primary-800 font-bold">2</span>
+                                </div>
+                                <div>
+                                    <div class="text-sm font-medium text-gray-900">Sân bóng đá 2</div>
+                                    <div class="text-xs text-gray-500">Sân cỏ nhân tạo</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-4 py-4 whitespace-nowrap text-center">
+                            <div class="time-slot cursor-pointer px-3 py-1.5 rounded-full bg-green-100 text-green-800 text-xs font-semibold">Trống</div>
+                        </td>
+                        <td class="px-4 py-4 whitespace-nowrap text-center">
+                            <div class="time-slot cursor-pointer px-3 py-1.5 rounded-full bg-red-100 text-red-800 text-xs font-semibold flex items-center justify-center">
+                                <i class="fas fa-user mr-1"></i> Đã đặt
+                            </div>
+                        </td>
+                        <td class="px-4 py-4 whitespace-nowrap text-center">
+                            <div class="time-slot cursor-pointer px-3 py-1.5 rounded-full bg-red-100 text-red-800 text-xs font-semibold flex items-center justify-center">
+                                <i class="fas fa-user mr-1"></i> Đã đặt
+                            </div>
+                        </td>
+                        <td class="px-4 py-4 whitespace-nowrap text-center">
+                            <div class="time-slot cursor-pointer px-3 py-1.5 rounded-full bg-red-100 text-red-800 text-xs font-semibold flex items-center justify-center">
+                                <i class="fas fa-user mr-1"></i> Đã đặt
+                            </div>
+                        </td>
+                        <td class="px-4 py-4 whitespace-nowrap text-center">
+                            <div class="time-slot cursor-pointer px-3 py-1.5 rounded-full bg-green-100 text-green-800 text-xs font-semibold">Trống</div>
+                        </td>
+                        <td class="px-4 py-4 whitespace-nowrap text-center">
+                            <div class="time-slot cursor-pointer px-3 py-1.5 rounded-full bg-green-100 text-green-800 text-xs font-semibold">Trống</div>
+                        </td>
+                        <td class="px-4 py-4 whitespace-nowrap text-center">
+                            <div class="time-slot cursor-pointer px-3 py-1.5 rounded-full bg-green-100 text-green-800 text-xs font-semibold">Trống</div>
+                        </td>
+                        <td class="px-4 py-4 whitespace-nowrap text-center">
+                            <div class="time-slot cursor-pointer px-3 py-1.5 rounded-full bg-green-100 text-green-800 text-xs font-semibold">Trống</div>
+                        </td>
+                        <td class="px-4 py-4 whitespace-nowrap text-center">
+                            <div class="time-slot cursor-pointer px-3 py-1.5 rounded-full bg-red-100 text-red-800 text-xs font-semibold flex items-center justify-center">
+                                <i class="fas fa-user mr-1"></i> Đã đặt
+                            </div>
+                        </td>
+                        <td class="px-4 py-4 whitespace-nowrap text-center">
+                            <div class="time-slot cursor-pointer px-3 py-1.5 rounded-full bg-red-100 text-red-800 text-xs font-semibold flex items-center justify-center">
+                                <i class="fas fa-user mr-1"></i> Đã đặt
+                            </div>
+                        </td>
+                        <td class="px-4 py-4 whitespace-nowrap text-center">
+                            <div class="time-slot cursor-pointer px-3 py-1.5 rounded-full bg-red-100 text-red-800 text-xs font-semibold flex items-center justify-center">
+                                <i class="fas fa-user mr-1"></i> Đã đặt
+                            </div>
+                        </td>
+                        <td class="px-4 py-4 whitespace-nowrap text-center">
+                            <div class="time-slot cursor-pointer px-3 py-1.5 rounded-full bg-red-100 text-red-800 text-xs font-semibold flex items-center justify-center">
+                                <i class="fas fa-user mr-1"></i> Đã đặt
+                            </div>
+                        </td>
+                        <td class="px-4 py-4 whitespace-nowrap text-center">
+                            <div class="time-slot cursor-pointer px-3 py-1.5 rounded-full bg-red-100 text-red-800 text-xs font-semibold flex items-center justify-center">
+                                <i class="fas fa-user mr-1"></i> Đã đặt
+                            </div>
+                        </td>
+                        <td class="px-4 py-4 whitespace-nowrap text-center">
+                            <div class="time-slot cursor-pointer px-3 py-1.5 rounded-full bg-green-100 text-green-800 text-xs font-semibold">Trống</div>
+                        </td>
+                    </tr>
+                    
+                    <!-- Court 3 -->
+                    <tr class="court-row hover:bg-primary-50 transition duration-150">
+                        <td class="px-8 py-4 whitespace-nowrap">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0 h-10 w-10 bg-primary-100 rounded-full flex items-center justify-center mr-3">
+                                    <span class="text-primary-800 font-bold">3</span>
+                                </div>
+                                <div>
+                                    <div class="text-sm font-medium text-gray-900">Sân tennis 1</div>
+                                    <div class="text-xs text-gray-500">Sân đất nện</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-4 py-4 whitespace-nowrap text-center">
+                            <div class="time-slot cursor-pointer px-3 py-1.5 rounded-full bg-green-100 text-green-800 text-xs font-semibold">Trống</div>
+                        </td>
+                        <td class="px-4 py-4 whitespace-nowrap text-center">
+                            <div class="time-slot cursor-pointer px-3 py-1.5 rounded-full bg-green-100 text-green-800 text-xs font-semibold">Trống</div>
+                        </td>
+                        <td class="px-4 py-4 whitespace-nowrap text-center">
+                            <div class="time-slot cursor-pointer px-3 py-1.5 rounded-full bg-green-100 text-green-800 text-xs font-semibold">Trống</div>
+                        </td>
+                        <td class="px-4 py-4 whitespace-nowrap text-center">
+                            <div class="time-slot cursor-pointer px-3 py-1.5 rounded-full bg-green-100 text-green-800 text-xs font-semibold">Trống</div>
+                        </td>
+                        <td class="px-4 py-4 whitespace-nowrap text-center">
+                            <div class="time-slot cursor-pointer px-3 py-1.5 rounded-full bg-green-100 text-green-800 text-xs font-semibold">Trống</div>
+                        </td>
+                        <td class="px-4 py-4 whitespace-nowrap text-center">
+                            <div class="time-slot cursor-pointer px-3 py-1.5 rounded-full bg-yellow-100 text-yellow-800 text-xs font-semibold flex items-center justify-center">
+                                <i class="fas fa-lock mr-1"></i> Khóa
+                            </div>
+                        </td>
+                        <td class="px-4 py-4 whitespace-nowrap text-center">
+                            <div class="time-slot cursor-pointer px-3 py-1.5 rounded-full bg-yellow-100 text-yellow-800 text-xs font-semibold flex items-center justify-center">
+                                <i class="fas fa-lock mr-1"></i> Khóa
+                            </div>
+                        </td>
+                        <td class="px-4 py-4 whitespace-nowrap text-center">
+                            <div class="time-slot cursor-pointer px-3 py-1.5 rounded-full bg-green-100 text-green-800 text-xs font-semibold">Trống</div>
+                        </td>
+                        <td class="px-4 py-4 whitespace-nowrap text-center">
+                            <div class="time-slot cursor-pointer px-3 py-1.5 rounded-full bg-red-100 text-red-800 text-xs font-semibold flex items-center justify-center">
+                                <i class="fas fa-user mr-1"></i> Đã đặt
+                            </div>
+                        </td>
+                        <td class="px-4 py-4 whitespace-nowrap text-center">
+                            <div class="time-slot cursor-pointer px-3 py-1.5 rounded-full bg-red-100 text-red-800 text-xs font-semibold flex items-center justify-center">
+                                <i class="fas fa-user mr-1"></i> Đã đặt
+                            </div>
+                        </td>
+                        <td class="px-4 py-4 whitespace-nowrap text-center">
+                            <div class="time-slot cursor-pointer px-3 py-1.5 rounded-full bg-red-100 text-red-800 text-xs font-semibold flex items-center justify-center">
+                                <i class="fas fa-user mr-1"></i> Đã đặt
+                            </div>
+                        </td>
+                        <td class="px-4 py-4 whitespace-nowrap text-center">
+                            <div class="time-slot cursor-pointer px-3 py-1.5 rounded-full bg-red-100 text-red-800 text-xs font-semibold flex items-center justify-center">
+                                <i class="fas fa-user mr-1"></i> Đã đặt
+                            </div>
+                        </td>
+                        <td class="px-4 py-4 whitespace-nowrap text-center">
+                            <div class="time-slot cursor-pointer px-3 py-1.5 rounded-full bg-red-100 text-red-800 text-xs font-semibold flex items-center justify-center">
+                                <i class="fas fa-user mr-1"></i> Đã đặt
+                            </div>
+                        </td>
+                        <td class="px-4 py-4 whitespace-nowrap text-center">
+                            <div class="time-slot cursor-pointer px-3 py-1.5 rounded-full bg-red-100 text-red-800 text-xs font-semibold flex items-center justify-center">
+                                <i class="fas fa-user mr-1"></i> Đã đặt
+                            </div>
+                        </td>
+                    </tr>
+                    
+                    <!-- Court 4 -->
+                    <tr class="court-row hover:bg-primary-50 transition duration-150">
+                        <td class="px-8 py-4 whitespace-nowrap">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0 h-10 w-10 bg-primary-100 rounded-full flex items-center justify-center mr-3">
+                                    <span class="text-primary-800 font-bold">4</span>
+                                </div>
+                                <div>
+                                    <div class="text-sm font-medium text-gray-900">Sân cầu lông</div>
+                                    <div class="text-xs text-gray-500">Sân trong nhà</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-4 py-4 whitespace-nowrap text-center">
+                            <div class="time-slot cursor-pointer px-3 py-1.5 rounded-full bg-yellow-100 text-yellow-800 text-xs font-semibold flex items-center justify-center">
+                                <i class="fas fa-lock mr-1"></i> Khóa
+                            </div>
+                        </td>
+                        <td class="px-4 py-4 whitespace-nowrap text-center">
+                            <div class="time-slot cursor-pointer px-3 py-1.5 rounded-full bg-yellow-100 text-yellow-800 text-xs font-semibold flex items-center justify-center">
+                                <i class="fas fa-lock mr-1"></i> Khóa
+                            </div>
+                        </td>
+                        <td class="px-4 py-4 whitespace-nowrap text-center">
+                            <div class="time-slot cursor-pointer px-3 py-1.5 rounded-full bg-green-100 text-green-800 text-xs font-semibold">Trống</div>
+                        </td>
+                        <td class="px-4 py-4 whitespace-nowrap text-center">
+                            <div class="time-slot cursor-pointer px-3 py-1.5 rounded-full bg-green-100 text-green-800 text-xs font-semibold">Trống</div>
+                        </td>
+                        <td class="px-4 py-4 whitespace-nowrap text-center">
+                            <div class="time-slot cursor-pointer px-3 py-1.5 rounded-full bg-green-100 text-green-800 text-xs font-semibold">Trống</div>
+                        </td>
+                        <td class="px-4 py-4 whitespace-nowrap text-center">
+                            <div class="time-slot cursor-pointer px-3 py-1.5 rounded-full bg-green-100 text-green-800 text-xs font-semibold">Trống</div>
+                        </td>
+                        <td class="px-4 py-4 whitespace-nowrap text-center">
+                            <div class="time-slot cursor-pointer px-3 py-1.5 rounded-full bg-green-100 text-green-800 text-xs font-semibold">Trống</div>
+                        </td>
+                        <td class="px-4 py-4 whitespace-nowrap text-center">
+                            <div class="time-slot cursor-pointer px-3 py-1.5 rounded-full bg-green-100 text-green-800 text-xs font-semibold">Trống</div>
+                        </td>
+                        <td class="px-4 py-4 whitespace-nowrap text-center">
+                            <div class="time-slot cursor-pointer px-3 py-1.5 rounded-full bg-red-100 text-red-800 text-xs font-semibold flex items-center justify-center">
+                                <i class="fas fa-user mr-1"></i> Đã đặt
+                            </div>
+                        </td>
+                        <td class="px-4 py-4 whitespace-nowrap text-center">
+                            <div class="time-slot cursor-pointer px-3 py-1.5 rounded-full bg-red-100 text-red-800 text-xs font-semibold flex items-center justify-center">
+                                <i class="fas fa-user mr-1"></i> Đã đặt
+                            </div>
+                        </td>
+                        <td class="px-4 py-4 whitespace-nowrap text-center">
+                            <div class="time-slot cursor-pointer px-3 py-1.5 rounded-full bg-red-100 text-red-800 text-xs font-semibold flex items-center justify-center">
+                                <i class="fas fa-user mr-1"></i> Đã đặt
+                            </div>
+                        </td>
+                        <td class="px-4 py-4 whitespace-nowrap text-center">
+                            <div class="time-slot cursor-pointer px-3 py-1.5 rounded-full bg-red-100 text-red-800 text-xs font-semibold flex items-center justify-center">
+                                <i class="fas fa-user mr-1"></i> Đã đặt
+                            </div>
+                        </td>
+                        <td class="px-4 py-4 whitespace-nowrap text-center">
+                            <div class="time-slot cursor-pointer px-3 py-1.5 rounded-full bg-red-100 text-red-800 text-xs font-semibold flex items-center justify-center">
+                                <i class="fas fa-user mr-1"></i> Đã đặt
+                            </div>
+                        </td>
+                        <td class="px-4 py-4 whitespace-nowrap text-center">
+                            <div class="time-slot cursor-pointer px-3 py-1.5 rounded-full bg-red-100 text-red-800 text-xs font-semibold flex items-center justify-center">
+                                <i class="fas fa-user mr-1"></i> Đã đặt
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Legend and actions -->
+        <div class="mt-8 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex flex-wrap justify-center gap-4">
+                <div class="flex items-center">
+                    <div class="w-4 h-4 rounded-full bg-green-100 border-2 border-green-300 mr-2"></div>
+                    <span class="text-sm text-gray-700 font-medium">Sân trống</span>
+                </div>
+                <div class="flex items-center">
+                    <div class="w-4 h-4 rounded-full bg-red-100 border-2 border-red-300 mr-2"></div>
+                    <span class="text-sm text-gray-700 font-medium">Sân đã đặt</span>
+                </div>
+                <div class="flex items-center">
+                    <div class="w-4 h-4 rounded-full bg-yellow-100 border-2 border-yellow-300 mr-2"></div>
+                    <span class="text-sm text-gray-700 font-medium">Sân tạm khóa</span>
+                </div>
+            </div>
+            
+            <button class="px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-lg shadow-md transition duration-300 flex items-center">
+                <i class="fas fa-plus-circle mr-2"></i> Đặt sân mới
+            </button>
+        </div>
+    </div>
+</body>
+</html>
