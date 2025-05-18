@@ -171,8 +171,125 @@ app.get('/api/locations', async (req, res) => {
 
 
 
+// API lấy chi tiết location theo ID
+app.get('/api/locations/:id', async (req, res) => {
+  try {
+    const locationId = req.params.id;
+    
+    // Query để lấy thông tin cơ bản của location
+    const locationQuery = `
+      SELECT 
+        l.*,
+        (SELECT AVG(r.Rating) FROM location_reviews r WHERE r.LocationID = l.LocationID) AS AverageRating,
+        (SELECT COUNT(*) FROM location_reviews r WHERE r.LocationID = l.LocationID) AS ReviewCount
+      FROM locations l
+      WHERE l.LocationID = ?
+    `;
 
+    // Query để lấy reviews
+    const reviewsQuery = `
+      SELECT 
+        r.ReviewID,
+        r.Rating,
+        r.Comment,
+        r.CreateAT AS ReviewDate,
+        c.FullName AS UserName
+      FROM location_reviews r
+      JOIN customers c ON r.CustomerID = c.CustomerID
+      WHERE r.LocationID = ?
+      ORDER BY r.CreateAT DESC
+    `;
 
+    // Query để lấy features (amenities)
+    const featuresQuery = `
+      SELECT 
+        Parking AS parking,
+        Shower AS shower,
+        Drinks AS drinks,
+        Lights AS lights
+      FROM location_features
+      WHERE LocationID = ?
+    `;
+
+    // Query để lấy danh sách các môn thể thao có tại location
+    const sportsQuery = `
+      SELECT 
+        st.SportTypeID,
+        st.SportName,
+        st.SportCode,
+        COUNT(c.CourtID) AS CourtCount,
+        MIN(p.Price) AS MinPrice,
+        MAX(p.Price) AS MaxPrice
+      FROM courts c
+      JOIN sporttypes st ON c.SportTypeID = st.SportTypeID
+      LEFT JOIN pricing_courttype p ON c.CourtTypeID = p.CourtTypeID
+      WHERE c.LocationID = ?
+      GROUP BY st.SportTypeID, st.SportName, st.SportCode
+    `;
+
+    // Query để lấy hình ảnh
+    const imagesQuery = `
+      SELECT ImageUrl 
+      FROM location_images 
+      WHERE LocationID = ?
+      ORDER BY IsPrimary DESC
+    `;
+
+    // Thực hiện các query
+    const [location] = await pool.query(locationQuery, [locationId]);
+    const [reviews] = await pool.query(reviewsQuery, [locationId]);
+    const [features] = await pool.query(featuresQuery, [locationId]);
+    const [sports] = await pool.query(sportsQuery, [locationId]);
+    const [images] = await pool.query(imagesQuery, [locationId]);
+
+    if (location.length === 0) {
+      return res.status(404).json({ message: 'Location not found' });
+    }
+
+    // Format dữ liệu trả về
+    const locationData = {
+      LocationID: location[0].LocationID,
+      LocationName: location[0].LocationName,
+      Address: location[0].Address,
+      province: location[0].province,
+      district: location[0].district,
+      ward: location[0].ward,
+      ContactPhone: location[0].ContactPhone,
+      ContactEmail: location[0].ContactEmail,
+      OpeningTime: location[0].OpeningTime,
+      ClosingTime: location[0].ClosingTime,
+      Description: location[0].Description,
+      AverageRating: location[0].AverageRating || 0,
+      ReviewCount: location[0].ReviewCount || 0,
+      amenities: features[0] || {
+        parking: false,
+        shower: false,
+        drinks: false,
+        lights: false
+      },
+      Sports: sports,
+      Reviews: reviews,
+      Images: images.length > 0 ? 
+        images.map(img => img.ImageUrl) : 
+        ['https://via.placeholder.com/800x500']
+    };
+
+    // Thêm ảnh chính vào đầu mảng nếu có
+    if (images.length > 0) {
+      locationData.image = images[0].ImageUrl;
+    } else {
+      locationData.image = 'https://via.placeholder.com/800x500';
+    }
+
+    res.json(locationData);
+  } catch (err) {
+    console.error('Database error:', err);
+    res.status(500).json({ 
+      error: 'Database error', 
+      details: err.message 
+    });
+  }
+});
 
 // API tạo booking mới (phiên bản cải tiến)
 app.post('/api/bookings', async (req, res) => {

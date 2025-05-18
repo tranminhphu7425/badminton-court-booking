@@ -13,6 +13,7 @@ const CourtDetail = lazy(() => import('./pages/Courts/Detail'));
 const BookingMain = lazy(() => import('./pages/Booking/Main'));
 const BookingConfirm = lazy(() => import('./pages/Booking/Confirm'));
 const BookingHistory = lazy(() => import('./pages/Booking/History'));
+const Favorite = lazy(() => import('./pages/MyAccount/Favorite'));
 
 export const routes = [
   {
@@ -50,6 +51,11 @@ export const routes = [
     element: <SportLayout />,
     name: 'Danh sách sân theo từng môn thể thao'
   },
+  // {
+  //   path: '/locations/:locationId',
+  //   element: <SportLayout />,
+  //   name: 'Chi tiết địa điểm'
+  // },
   {
     path: '/courts',
     element: <CourtsList />,
@@ -74,5 +80,10 @@ export const routes = [
     path: '/booking/history',
     element: <BookingHistory />,
     name: 'Lịch sử đặt sân'
+  },
+  {
+    path: '/favorite',
+    element: <Favorite/>,
+      name: 'Sân yêu thích'
   }
 ];

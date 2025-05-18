@@ -7,13 +7,13 @@ const CourtCard = ({
   location,
   price,
   rating,
-  link,
   badges,
   mode,
+  onClick
 }) => {
   return (
-   <Link
-  to={link}
+   <div
+   onClick={onClick}
   className="group block focus:outline-none focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:ring-offset-2 rounded-xl"
 >
   {mode === 0 ? (
@@ -76,7 +76,7 @@ const CourtCard = ({
       </div>
     </div>
   )}
-</Link>
+</div>
 
   );
 };

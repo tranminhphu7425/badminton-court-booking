@@ -16,6 +16,12 @@ import { FaThLarge, FaList } from "react-icons/fa";
 import CourtCard from "../../components/CourtCard";
 import { useParams } from "react-router-dom";
 import Div from "../../components/Div";
+import LocationDetail from "./LocationDetail";
+
+function capitalizeFirstLetter(str) {
+  if (!str) return "";
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
 
 const api = {
   async fetchLocations(sportCode) {
@@ -51,6 +57,8 @@ const SportLayout = () => {
   const [showFilters, setShowFilters] = useState(false);
   const [locations, setLocations] = useState([]);
   const [mode, setMode] = useState(0);
+  const [selectedLocation, setSelectedLocation] = useState(null);
+  const [showLocationModal, setShowLocationModal] = useState(false);
 
   // State cho bộ lọc
   const [filters, setFilters] = useState({
@@ -72,8 +80,9 @@ const SportLayout = () => {
   if (sportCode === "all") {
     console.log("SportCode: all");
   }
-  console.log("SportCode:", sportCode);
+
   const [sportType, setSportType] = useState(null);
+  console.log("Sport types: ", sportType);
 
   useEffect(() => {
     const loadSportTypes = async (sportCode) => {
@@ -217,20 +226,44 @@ const SportLayout = () => {
       Object.values(filters.amenities).some(Boolean)
     );
   };
+  const handleLocationClick = (location) => {
+    setSelectedLocation(location);
+    // console.log("Selected location: ", location);
+    setShowLocationModal(true);
+    // Thêm history push nếu muốn thay đổi URL
+    // navigate(`/locations/${location.LocationID}`, { replace: false });
+  };
+  if (sportType) {
+    var backgroundImage = new URL(
+      `../../../public/assets/images/backgrounds/sports/${capitalizeFirstLetter(
+        sportType.SportCode
+      )}.jpg`,
+      import.meta.url
+    ).href;
+  }
 
   return sportType || sportCode === "all" ? (
     <div className="badminton-page min-h-screen dark:bg-gray-800">
       {/* Hero Section */}
-      <section className="hero-section bg-green-700 dark:bg-green-800 text-white py-16">
-        <div className="container mx-auto px-4">
+      <section
+        className="hero-section text-white py-15 md:py-20 lg:py-45 relative"
+        style={{
+          backgroundImage: `url(${backgroundImage})`,
+          backgroundSize: "cover",
+          backgroundRepeat: "no-repeat",
+          backgroundPosition: "center",
+        }}
+      >
+        <div className="absolute inset-0 bg-black opacity-20"></div>
+        <div className="container mx-auto px-4 relative z-10">
           <div className="flex flex-col md:flex-row items-center justify-between">
             <div>
-              <h1 className="text-3xl md:text-4xl font-bold mb-2 text-center md:text-left dark:text-white">
+              <h1 className="text-3xl md:text-4xl font-bold mb-2 text-center md:text-left dark:text-white leading-tight drop-shadow-[2px_2px_0_#000]">
                 {sportCode !== "all"
                   ? `Sân ${sportType.SportName}`
                   : `Danh sách tất cả các sân`}
               </h1>
-              <p className="text-lg dark:text-gray-200">
+              <p className="text-lg dark:text-gray-200 leading-tight drop-shadow-[2px_2px_0_#000]">
                 Tìm và đặt sân{" "}
                 {sportCode !== "all" ? sportType.SportName.toLowerCase() : null}{" "}
                 ưng ý nhất
@@ -249,7 +282,7 @@ const SportLayout = () => {
       </section>
 
       {/* Search and Filter Section */}
-      <section className="py-8 bg-gray-50 dark:bg-gray-700">
+      <section className="py-4 bg-gray-50 dark:bg-gray-700">
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row gap-4">
             <div className="relative flex-grow">
@@ -434,7 +467,7 @@ const SportLayout = () => {
       </section>
 
       {/* Results Section */}
-      <section className="py-8 dark:bg-gray-800">
+      <section className="py-4 dark:bg-gray-800">
         <div className="container mx-auto px-4">
           {loading ? (
             <div className="text-center py-12">
@@ -507,27 +540,28 @@ const SportLayout = () => {
                 } gap-8`}
               >
                 {filteredCourts.map((location) => (
-                  <Div>
+                  <Div key={location.LocationID}>
                     <CourtCard
-                    key={location.LocationID}
-                    name={location.LocationName}
-                    image={location.image}
-                    location={location.Address}
-                    rating={parseFloat(location.AverageRating).toFixed(1)}
-                    sport={sportCode !== "all" ? sportType.SportCode : null}
-                    link={`/court/${location.LocationID}`}
-                    badges={
-                      <span className="bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 text-sm px-2 py-1 rounded mr-1 inline-flex items-center">
-                        <FaClock className="mr-1" />
-                        {location.OpeningTime.split(":")
-                          .slice(0, 2)
-                          .join(":")}{" "}
-                        -{" "}
-                        {location.ClosingTime.split(":").slice(0, 2).join(":")}
-                      </span>
-                    }
-                    mode={mode}
-                  />
+                      name={location.LocationName}
+                      image={location.image}
+                      location={location.Address}
+                      rating={parseFloat(location.AverageRating).toFixed(1)}
+                      sport={sportCode !== "all" ? sportType.SportCode : null}
+                      badges={
+                        <span className="bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 text-sm px-2 py-1 rounded mr-1 inline-flex items-center">
+                          <FaClock className="mr-1" />
+                          {location.OpeningTime.split(":")
+                            .slice(0, 2)
+                            .join(":")}{" "}
+                          -{" "}
+                          {location.ClosingTime.split(":")
+                            .slice(0, 2)
+                            .join(":")}
+                        </span>
+                      }
+                      mode={mode}
+                      onClick={() => handleLocationClick(location)} // Sửa lại thành arrow function
+                    />
                   </Div>
                 ))}
               </div>
@@ -535,6 +569,30 @@ const SportLayout = () => {
           )}
         </div>
       </section>
+      {/* Location Detail Modal */}
+      {selectedLocation && showLocationModal && (
+        <div className="fixed md:w-3/4 h-5/6 m-auto inset-0 z-50 overflow-y-auto">
+          <div className="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            {/* Background overlay */}
+            <div
+              className="fixed inset-0 transition-opacity"
+              aria-hidden="true"
+              onClick={() => setShowLocationModal(false)}
+            >
+              <div className="absolute inset-0 bg-gray-500 dark:bg-gray-900 opacity-75"></div>
+            </div>
+
+            {/* Modal content */}
+            <div className="inline-block align-bottom bg-white dark:bg-gray-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-2 sm:align-middle sm:max-w-6xl sm:w-full">
+              <LocationDetail
+                locationId={selectedLocation.LocationID}
+                onClose={() => setShowLocationModal(false)}
+                isModal={true}
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   ) : null;
 };
