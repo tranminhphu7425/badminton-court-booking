@@ -20,7 +20,7 @@ const pool = mysql.createPool({
   host: process.env.DB_HOST || "localhost",
   user:  "root", // Đảm bảo có giá trị mặc định
   password: process.env.DB_PASSWORD || "TranMinhPhu7425*", // Đặt mật khẩu đúng
-  database: process.env.DB_NAME || "badmintoncourtmanagement",
+  database: process.env.DB_NAME || "sportbookingdatabase",
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0

@@ -234,7 +234,7 @@ const SportLayout = () => {
     // navigate(`/locations/${location.LocationID}`, { replace: false });
   };
   if (sportType) {
-    var backgroundImage = new URL(
+    var backgroundImage1 = new URL(
       `../../../public/assets/images/backgrounds/sports/${capitalizeFirstLetter(
         sportType.SportCode
       )}.jpg`,
@@ -246,15 +246,18 @@ const SportLayout = () => {
     <div className="badminton-page min-h-screen dark:bg-gray-800">
       {/* Hero Section */}
       <section
-        className="hero-section text-white py-15 md:py-20 lg:py-45 relative"
+        className={`hero-section text-white ${backgroundImage1 ? 'py-15 md:py-20 lg:py-45 ': 'py-20 bg-green-700 dark:bg-green-800'} relative`}
         style={{
-          backgroundImage: `url(${backgroundImage})`,
+          backgroundImage: backgroundImage1
+            ? `url(${backgroundImage1})`
+            : undefined,
+     
           backgroundSize: "cover",
           backgroundRepeat: "no-repeat",
           backgroundPosition: "center",
         }}
       >
-        <div className="absolute inset-0 bg-black opacity-20"></div>
+        {!backgroundImage1 ? `` : <div className="absolute inset-0 bg-black opacity-20"></div>}
         <div className="container mx-auto px-4 relative z-10">
           <div className="flex flex-col md:flex-row items-center justify-between">
             <div>

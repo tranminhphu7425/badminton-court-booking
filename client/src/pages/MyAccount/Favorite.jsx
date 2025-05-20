@@ -10,24 +10,43 @@ import LocationDetail from "../Sports/LocationDetail";
 const Favorite = () => {
   const navigate = useNavigate();
   const [favorites, setFavorites] = useState([]);
+  const [favoriteIds, setFavoriteIds] = useState([]);
   const [loading, setLoading] = useState(true);
   const [mode, setMode] = useState(0);
   const [selectedLocation, setSelectedLocation] = useState(null);
   const [showLocationModal, setShowLocationModal] = useState(false);
 
+  // Watch for changes in localStorage
+  useEffect(() => {
+    const handleStorageChange = () => {
+      const savedFavorites = JSON.parse(localStorage.getItem('favoriteLocations')) || [];
+      setFavoriteIds(savedFavorites);
+    };
+
+    // Initial load
+    handleStorageChange();
+
+    // Add event listener for storage changes
+    window.addEventListener('storage', handleStorageChange);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, []);
+
+  // Fetch favorite locations when favoriteIds changes
   useEffect(() => {
     const fetchFavorites = async () => {
       try {
-        const savedFavorites = JSON.parse(localStorage.getItem('favoriteLocations')) || [];
-        
-        if (savedFavorites.length > 0) {
+        if (favoriteIds.length > 0) {
           const response = await Promise.all(
-            savedFavorites.map(id => 
+            favoriteIds.map(id => 
               fetch(`http://localhost:8081/api/locations/${id}`).then(res => res.json())
           ));
           setFavorites(response);
+        } else {
+          setFavorites([]);
         }
-        
         setLoading(false);
       } catch (err) {
         console.error("Error fetching favorites:", err);
@@ -36,7 +55,7 @@ const Favorite = () => {
     };
 
     fetchFavorites();
-  }, []);
+  }, [favoriteIds]);
 
   const handleRemoveFavorite = (locationId) => {
     const updatedFavorites = favorites.filter(loc => loc.LocationID !== locationId);
@@ -54,6 +73,13 @@ const Favorite = () => {
     // navigate(`/locations/${location.LocationID}`, { replace: false });
   };
 
+  const handleCloseModal = () => {
+    setShowLocationModal(false);
+    // Refresh favorites from localStorage
+    const savedFavorites = JSON.parse(localStorage.getItem('favoriteLocations')) || [];
+    setFavoriteIds(savedFavorites);
+  };
+
   if (loading) {
     return (
       <div className="text-center py-12">
@@ -68,7 +94,7 @@ const Favorite = () => {
   return (
     <div className="favorite-page min-h-screen dark:bg-gray-800">
       {/* Hero Section - Giống với SportLayout */}
-      <section className="hero-section bg-green-700 dark:bg-green-800 text-white py-16">
+      <section className="hero-section bg-green-700 dark:bg-green-800 text-white py-16 relative">
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row items-center justify-between">
             <div>
@@ -83,7 +109,7 @@ const Favorite = () => {
             <div className="mt-4 md:mt-0">
               <button
                 className="bg-white dark:bg-gray-100 text-green-700 hover:bg-gray-100 dark:hover:bg-gray-200 px-6 py-3 rounded-lg font-medium flex items-center"
-                onClick={() => navigate('/')}
+                onClick={() => navigate('/sports/all')}
               >
                 <FaMapMarkerAlt className="mr-2" /> Khám phá địa điểm
               </button>
@@ -106,7 +132,7 @@ const Favorite = () => {
               </p>
               <div className="mt-6">
                 <button
-                  onClick={() => navigate('/')}
+                  onClick={() => navigate('/sports/all')}
                   className="px-4 py-2 bg-green-600 dark:bg-green-700 text-white rounded-md text-sm font-medium hover:bg-green-700 dark:hover:bg-green-800"
                 >
                   Khám phá địa điểm
@@ -198,7 +224,7 @@ const Favorite = () => {
             <div
               className="fixed inset-0 transition-opacity"
               aria-hidden="true"
-              onClick={() => setShowLocationModal(false)}
+              onClick={handleCloseModal}
             >
               <div className="absolute inset-0 bg-gray-500 dark:bg-gray-900 opacity-75"></div>
             </div>
@@ -207,15 +233,12 @@ const Favorite = () => {
             <div className="inline-block align-bottom bg-white dark:bg-gray-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-2 sm:align-middle sm:max-w-6xl sm:w-full">
               <LocationDetail
                 locationId={selectedLocation.LocationID}
-                onClose={() => setShowLocationModal(false)}
+                onClose={handleCloseModal}
                 isModal={true}
-           
               />
-             
             </div>
           </div>
         </div>
-    
       )}
     </div>
   );

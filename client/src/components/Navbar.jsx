@@ -15,7 +15,7 @@ import {
   FaBasketballBall,
 } from "react-icons/fa";
 import { GiTennisBall, GiShuttlecock, GiSoccerBall } from "react-icons/gi";
-
+import { FaList } from "react-icons/fa";
 import { MdSportsVolleyball } from "react-icons/md";
 import { sportTypeApi } from "../api/sportTypeApi";
 import { FaSignInAlt, FaUserPlus, FaSignOutAlt } from "react-icons/fa";
@@ -131,6 +131,16 @@ const Navigation = () => {
                     className="absolute left-0 mt-2 w-56 bg-white rounded-md shadow-lg z-50"
                   >
                     <div className="py-1">
+                      <Link
+                          key={0}
+                          to={`/sports/all`}
+                          className="flex px-4 py-2 text-gray-800 hover:bg-green-100 items-center"
+                        >
+                          <span className="mr-2">
+                            <FaList/>
+                          </span>
+                          Tất cả địa điểm
+                        </Link>
                       {sports.map((sport) => (
                         <Link
                           key={sport.SportCode}
@@ -233,6 +243,16 @@ const Navigation = () => {
                         exit={{ opacity: 0, height: 0 }}
                         className="ml-4 mt-2 space-y-1"
                       >
+                        <Link
+                          key={0}
+                          to={`/sports/all`}
+                          className="flex py-2 px-3 text-white hover:bg-green-700 rounded items-center"
+                        >
+                          <span className="mr-2">
+                          <FaList/>
+                          </span>
+                          Tất cả địa điểm
+                        </Link>
                         {sports.map((sport) => (
                           <Link
                             key={sport.SportCode}
