@@ -440,13 +440,13 @@ const LocationDetail = ({ onClose, isModal, locationId }) => {
                               {sport.CourtCount}
                             </div>
                           </div>
-                          <button
-                            onClick={() => handleBookCourt(sport.SportCode)}
+                          <Link
+                             to = {`/booking/${location.LocationID}/${sport.SportTypeID}`}
                             className="mt-4 w-full bg-green-600 dark:bg-green-700 hover:bg-green-700 dark:hover:bg-green-800 text-white py-2 px-4 rounded-lg flex items-center justify-center"
                           >
                             <FaCalendarAlt className="mr-2" />
                             Đặt sân {sport.SportName.toLowerCase()}
-                          </button>
+                          </Link>
                         </div>
                       ))}
                     </div>
@@ -516,13 +516,13 @@ const LocationDetail = ({ onClose, isModal, locationId }) => {
                       Giá: {sport.MinPrice?.toLocaleString()} -{" "}
                       {sport.MaxPrice?.toLocaleString()} VNĐ
                     </div>
-                    <button
-                      onClick={() => handleBookCourt(sport.SportCode)}
+                    <Link
+                      to = {`/booking/${location.LocationID}/${sport.SportTypeID}`}
                       className="w-full bg-green-600 dark:bg-green-700 hover:bg-green-700 dark:hover:bg-green-800 text-white py-2 px-4 rounded-lg flex items-center justify-center"
                     >
                       <FaCalendarAlt className="mr-2" />
                       Đặt sân {sport.SportName.toLowerCase()}
-                    </button>
+                    </Link>
                   </div>
                 ))}
               </div>
