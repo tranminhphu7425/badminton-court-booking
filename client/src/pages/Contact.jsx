@@ -1,15 +1,26 @@
 import { FaPhone, FaEnvelope, FaMapMarkerAlt, FaClock, FaPaperPlane } from 'react-icons/fa';
 import { MdSupportAgent } from 'react-icons/md';
 import Section from '../components/Section';
+import backgroundImage from "../../public/assets/images/backgrounds/contact/contact_bg.jpg";
 
 const Contact = () => {
   return (
     <div className="contact-page dark:bg-gray-800">
   {/* Hero Section */}
-  <section className="hero-section bg-green-700 dark:bg-green-800 text-white py-20">
-    <div className="container mx-auto px-4 text-center">
-      <h1 className="text-4xl md:text-5xl font-bold mb-6 dark:text-white">Liên Hệ Với Chúng Tôi</h1>
-      <p className="text-xl max-w-2xl mx-auto dark:text-gray-200">
+  <section
+    className="hero-section text-white py-20 md:py-30 lg:py-40 relative"
+    style={{
+      backgroundImage: `url(${backgroundImage})`,
+      backgroundSize: 'cover',
+      backgroundRepeat: 'no-repeat',
+      backgroundPosition: 'center',
+    }}
+  >
+    {/* Overlay làm tối background */}
+    <div className="absolute inset-0 bg-black opacity-20"></div>
+    <div className="container relative mx-auto px-4 text-center">
+      <h1 className="text-4xl md:text-5xl font-bold mb-6 dark:text-white leading-tight drop-shadow-[2px_2px_0_#000]">Liên Hệ Với Chúng Tôi</h1>
+      <p className="text-xl max-w-2xl mx-auto dark:text-gray-200 leading-tight drop-shadow-[2px_2px_0_#000]">
         Chúng tôi luôn sẵn sàng hỗ trợ và giải đáp mọi thắc mắc của bạn
       </p>
     </div>

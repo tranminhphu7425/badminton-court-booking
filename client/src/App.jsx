@@ -5,6 +5,7 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import LoadingSpinner from './components/LoadingSpinner';
 import './App.css';
+import ScrollToTop from "./ScrollToTop";
 
 
 
@@ -15,19 +16,24 @@ function App() {
   return (
     <>
       <Navbar />
+      <ScrollToTop />
       
-      <Suspense fallback={<LoadingSpinner />}> 
         <Routes>
           {routes.map((route, index) => (
             <Route
               key={index}
               path={route.path}
-              element={route.element}
+              element={
+                <Suspense fallback={<LoadingSpinner />}>
+                  {route.element}
+                </Suspense>
+              }
             />
+            
           ))}
         </Routes>
         
-      </Suspense>
+      
       <Footer />
     </>
   );

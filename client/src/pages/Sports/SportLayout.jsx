@@ -13,19 +13,26 @@ import Select from "react-select";
 import AddressSelector from "../../components/AddressSelector";
 import { sportTypeApi } from "../../api/sportTypeApi";
 import { FaThLarge, FaList } from "react-icons/fa";
-import CourtCard from "../../components/CourtCard";
+
 import { useParams } from "react-router-dom";
 import Div from "../../components/Div";
 import LocationDetail from "./LocationDetail";
+import CourtCardLoading from "../../components/CourtCardLoading";
+import { Suspense, lazy } from "react";
+const CourtCard = lazy(() => import("../../components/CourtCard"));
 
 function capitalizeFirstLetter(str) {
   if (!str) return "";
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
+
+
+
 const api = {
   async fetchLocations(sportCode) {
     try {
+      // await new Promise(resolve => setTimeout(resolve, 3000));
       var response;
       if (sportCode === "all") {
         response = await fetch(`http://localhost:8081/api/locations`);
@@ -544,6 +551,7 @@ const SportLayout = () => {
               >
                 {filteredCourts.map((location) => (
                   <Div key={location.LocationID}>
+                     <Suspense fallback={<CourtCardLoading mode = {mode} />}>
                     <CourtCard
                       name={location.LocationName}
                       image={location.image}
@@ -565,6 +573,7 @@ const SportLayout = () => {
                       mode={mode}
                       onClick={() => handleLocationClick(location)} // Sửa lại thành arrow function
                     />
+                    </Suspense>
                   </Div>
                 ))}
               </div>

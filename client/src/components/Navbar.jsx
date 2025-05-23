@@ -135,6 +135,7 @@ const Navigation = () => {
                           key={0}
                           to={`/sports/all`}
                           className="flex px-4 py-2 text-gray-800 hover:bg-green-100 items-center"
+                          onClick={() => setActiveSport(null)}
                         >
                           <span className="mr-2">
                             <FaList/>
@@ -146,6 +147,7 @@ const Navigation = () => {
                           key={sport.SportCode}
                           to={`/sports/${sport.SportCode}`}
                           className="flex px-4 py-2 text-gray-800 hover:bg-green-100 items-center"
+                          onClick={() => setActiveSport(null)}
                         >
                           <span className="mr-2">
                             {translateIcon[sport.Icon]}
@@ -247,6 +249,10 @@ const Navigation = () => {
                           key={0}
                           to={`/sports/all`}
                           className="flex py-2 px-3 text-white hover:bg-green-700 rounded items-center"
+                          onClick={() => {
+                            setActiveSport(null);
+                            setIsOpen(false);
+                          }}
                         >
                           <span className="mr-2">
                           <FaList/>
@@ -258,6 +264,10 @@ const Navigation = () => {
                             key={sport.SportCode}
                             to={`/sports/${sport.SportCode}`}
                             className="flex py-2 px-3 text-white hover:bg-green-700 rounded items-center"
+                            onClick={() => {
+                              setActiveSport(null);
+                              setIsOpen(false);
+                            }}
                           >
                             <span className="mr-2">
                               {translateIcon[sport.Icon]}

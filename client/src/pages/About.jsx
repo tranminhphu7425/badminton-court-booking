@@ -27,8 +27,8 @@ const About = () => {
 
     {/* Nội dung section */}
     <div className="container relative z-10 mx-auto px-4 text-center">
-      <h1 className="text-4xl md:text-5xl font-bold mb-6 text-shadow-lg dark:text-white">Về Chúng Tôi</h1>
-      <p className="text-xl max-w-2xl mx-auto text-shadow-lg dark:text-gray-200">
+      <h1 className="text-4xl md:text-5xl font-bold mb-6 text-shadow-lg dark:text-white leading-tight drop-shadow-[2px_2px_0_#000]">Về Chúng Tôi</h1>
+      <p className="text-xl max-w-2xl mx-auto text-shadow-lg dark:text-gray-200 leading-tight drop-shadow-[2px_2px_0_#000]">
         Kết nối cộng đồng yêu thể thao với những sân chơi chất lượng
       </p>
     </div>

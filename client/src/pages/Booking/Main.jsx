@@ -4,6 +4,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { vi } from "date-fns/locale";
 import { toast } from "react-toastify"; // Added for better notifications
 import { useParams } from "react-router-dom";
+import LocationDetail from "../Sports/LocationDetail";
 
 // Extract reusable components
 const CourtCell = ({ court }) => (
@@ -120,7 +121,9 @@ const BookingModal = ({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
         <div className="bg-green-50 p-4 rounded-lg">
           <p className="text-gray-600">Sân:</p>
-          <p className="text-xl font-bold text-green-700">Sân {selectedCourt}</p>
+          <p className="text-xl font-bold text-green-700">
+            Sân {selectedCourt}
+          </p>
         </div>
         <div className="bg-green-50 p-4 rounded-lg">
           <p className="text-gray-600">Thời gian:</p>
@@ -318,7 +321,7 @@ function Main() {
         setLoading((prev) => ({ ...prev, courts: true }));
         const data = await api.fetchCourts(locationId, sportTypeId);
         setCourts(data);
-        console.log(data);
+
         setError(null);
       } catch (err) {
         setError(err.message);
@@ -338,7 +341,7 @@ function Main() {
         setLoading((prev) => ({ ...prev, bookings: true }));
         const data = await api.fetchBookings(date, locationId, sportTypeId);
         setBookings(data);
-        console.log(data);
+        // console.log(data);
         setError(null);
       } catch (err) {
         setError(err.message);
@@ -410,57 +413,62 @@ function Main() {
 
   // Book court handler with improved error handling and user feedback
   const handleBookCourt = async () => {
-  if (!selectedTime || !selectedCourt) {
-    toast.error("Vui lòng chọn thời gian và sân");
-    return;
-  }
-
-  try {
-    setLoading((prev) => ({ ...prev, submission: true }));
-    console.log("Selected court data:", courts);
-    
-    // Tìm thông tin sân được chọn
-    const courtData = courts.find(
-      (c) => c.court && parseInt(c.court.replace("S0", "")) === selectedCourt
-    );
-    console.log("Selected court data1:", selectedCourt);
-
-    console.log("Court data:", courtData);
-
-    if (!courtData) {
-      throw new Error("Không tìm thấy thông tin sân");
+    if (!selectedTime || !selectedCourt) {
+      toast.error("Vui lòng chọn thời gian và sân");
+      return;
     }
 
-    // Chuẩn bị dữ liệu booking
-    const bookingData = {
-      courtId: courtData.CourtID,
-      customerId: 1, // Sử dụng ID người dùng nếu đã đăng nhập
-      date: formatDate(currentDate),
-      time: selectedTime,
-      notes: `Đặt sân ${courtData.CourtNumber}`,
-    };
+    try {
+      setLoading((prev) => ({ ...prev, submission: true }));
+      console.log("Selected court data:", courts);
 
-    // Gọi API tạo booking
-    const newBooking = await api.createBooking(bookingData);
+      // Tìm thông tin sân được chọn
+      const courtData = courts.find(
+        (c) => c.court && parseInt(c.court.replace("S0", "")) === selectedCourt
+      );
+      console.log("Selected court data1:", selectedCourt);
 
-    // Thay vì thêm booking vào state hiện tại, hãy tải lại toàn bộ dữ liệu
-    const updatedBookings = await api.fetchBookings(currentDate, locationId, sportTypeId);
-    setBookings(updatedBookings);
+      console.log("Court data:", courtData);
 
-    resetSelection();
-    toast.success("Đặt sân thành công!");
-  } catch (err) {
-    console.error("Lỗi khi đặt sân:", err);
-    toast.error(err.message || "Đã xảy ra lỗi khi đặt sân");
-  } finally {
-    setLoading((prev) => ({ ...prev, submission: false }));
-  }
-};
+      if (!courtData) {
+        throw new Error("Không tìm thấy thông tin sân");
+      }
+
+      // Chuẩn bị dữ liệu booking
+      const bookingData = {
+        courtId: courtData.CourtID,
+        customerId: 1, // Sử dụng ID người dùng nếu đã đăng nhập
+        date: formatDate(currentDate),
+        time: selectedTime,
+        notes: `Đặt sân ${courtData.CourtNumber}`,
+      };
+
+      // Gọi API tạo booking
+      const newBooking = await api.createBooking(bookingData);
+
+      // Thay vì thêm booking vào state hiện tại, hãy tải lại toàn bộ dữ liệu
+      const updatedBookings = await api.fetchBookings(
+        currentDate,
+        locationId,
+        sportTypeId
+      );
+      setBookings(updatedBookings);
+
+      resetSelection();
+      toast.success("Đặt sân thành công!");
+    } catch (err) {
+      console.error("Lỗi khi đặt sân:", err);
+      toast.error(err.message || "Đã xảy ra lỗi khi đặt sân");
+    } finally {
+      setLoading((prev) => ({ ...prev, submission: false }));
+    }
+  };
 
   // Show loading indicators
   const isLoading = loading.courts || loading.bookings;
 
-  return (
+  console.log("ahsgda", courts);
+  return courts ? (
     <div className="relative">
       <div>
         {/* Loading & Error States */}
@@ -500,7 +508,8 @@ function Main() {
         {/* Header */}
         <div className="max-w-6xl mx-auto">
           <h1 className="text-3xl md:text-4xl font-bold text-center text-green-800 dark:text-green-300 mb-2">
-            ĐẶT LỊCH SÂN CẦU LÔNG
+            ĐẶT LỊCH SÂN{" "}
+            {courts && courts.length > 0 ? courts[0].sportType.toUpperCase() : ""}
           </h1>
 
           <p className="text-center text-gray-600 dark:text-gray-300 mb-8">
@@ -602,7 +611,7 @@ function Main() {
           </div>
 
           {/* Booking Table */}
-          <div className="overflow-x-auto bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700 overflow-hidden">
+          <div className="overflow-x-auto bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700 overflow-hidden my-8">
             <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
               <thead className="bg-gradient-to-r from-green-600 to-green-500 dark:from-green-800 dark:to-green-700">
                 <tr>
@@ -654,8 +663,10 @@ function Main() {
                           selectedTime === hour;
                         const booking = bookings.find(
                           (b) =>
-                            b.court && parseInt(b.court.replace("S0", "")) ===
-                              courtNumber && parseInt(b.time) === hour
+                            b.court &&
+                            parseInt(b.court.replace("S0", "")) ===
+                              courtNumber &&
+                            parseInt(b.time) === hour
                         );
 
                         return (
@@ -676,6 +687,14 @@ function Main() {
               </tbody>
             </table>
           </div>
+          <div className="inline-block align-bottom bg-white dark:bg-gray-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-2 sm:align-middle sm:max-w-6xl sm:w-full">
+              <LocationDetail
+                locationId={locationId}
+              
+                isModal={true}
+              />
+            </div>
+            
 
           {/* Booking Modal */}
           {selectedTime && selectedCourt && (
@@ -693,7 +712,7 @@ function Main() {
         </div>
       </div>
     </div>
-  );
+  ) : null;
 }
 
 export default Main;
