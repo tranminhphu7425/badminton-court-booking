@@ -84,7 +84,7 @@ const ForgotPassword = () => {
               {/* Nút Gửi liên kết */}
               <button
                 type="submit"
-                className="w-full bg-gradient-to-r from-green-500 to-brand-green hover:from-green-600 hover:to-brand-green-dark dark:from-green-600 dark:to-green-700 dark:hover:from-green-700 dark:hover:to-green-800 text-white py-3.5 px-4 rounded-xl font-semibold flex items-center justify-center shadow-md hover:shadow-lg transition-all duration-300 ease-in-out transform hover:-translate-y-0.5"
+                className="w-full bg-gradient-to-r bg-gradient-to-r from-green-500 to-lime-400 hover:from-green-600 hover:to-brand-green-dark dark:from-green-600 dark:to-green-700 dark:hover:from-green-700 dark:hover:to-green-800 text-white py-3.5 px-4 rounded-xl font-semibold flex items-center justify-center shadow-md hover:shadow-lg transition-all duration-300 ease-in-out transform hover:-translate-y-0.5"
               >
                 Gửi liên kết đặt lại
               </button>

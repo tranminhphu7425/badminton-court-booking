@@ -18,7 +18,7 @@ import {
 } from "react-icons/gi";
 import { IoIosFitness } from "react-icons/io";
 import { MdPool } from "react-icons/md";
-import ReviewCard from "../../components/ReviewCard";
+import ReviewCard from "./ReviewCard";
 
 const api = {
   async fetchLocations(locationId) {
@@ -41,7 +41,7 @@ const api = {
   },
 };
 
-const LocationDetail = ({ onClose, isModal, locationId }) => {
+const LocationDetail = ({ onClose, isModal, locationId, isFavoritePage }) => {
   const [isFavorite, setIsFavorite] = useState(false);
   const [showFavoritesList, setShowFavoritesList] = useState(false);
   const [favorites, setFavorites] = useState([]);
@@ -70,6 +70,8 @@ const LocationDetail = ({ onClose, isModal, locationId }) => {
     // Check if location is in favorites when component mounts
     const favorites = JSON.parse(localStorage.getItem('favoriteLocations')) || [];
     setIsFavorite(favorites.includes(locationId));
+    console.log(favorites);
+    console.log(locationId)
   }, [locationId]);
 
   const getSportIcon = (sportCode) => {
@@ -91,10 +93,7 @@ const LocationDetail = ({ onClose, isModal, locationId }) => {
     }
   };
 
-  const handleBookCourt = (sportCode) => {
-    setSelectedSport(sportCode);
-    setShowBookingForm(true);
-  };
+
 
   const handleFavoriteToggle = () => {
     setIsFavorite(!isFavorite);
@@ -164,21 +163,23 @@ const LocationDetail = ({ onClose, isModal, locationId }) => {
   return (
     <div className={`${isModal ? "" : "min-h-screen dark:bg-gray-800"}`}>
       {/* Header - Chỉ hiển thị nút đóng khi là modal */}
-      {isModal && (
+       
         <div className="bg-white dark:bg-gray-800 shadow-sm py-4 px-4 sticky top-0 z-10">
           <div className="container mx-auto flex items-center justify-between">
             <h1 className="text-xl font-bold text-gray-800 dark:text-white">
               {location?.LocationName}
             </h1>
             <div className="flex items-center gap-4">
-              <Link
+             {!isFavoritePage && 
+             ( <Link
                 to = "/favorite"
                 className="p-2 rounded-full text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2"
               >
                 <FaList className="w-5 h-5" />
                 <span className="text-sm font-medium">Danh sách yêu thích</span>
-              </Link>
-              <button
+              </Link>)}
+              
+                <button
                 onClick={() => handleAddFavorite(locationId)}
                 className={`p-2 rounded-full transition-colors ${
                   isFavorite
@@ -188,28 +189,33 @@ const LocationDetail = ({ onClose, isModal, locationId }) => {
               >
                 <FaHeart className="w-6 h-6" />
               </button>
-              <button
-                onClick={onClose}
-                className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
-              >
-                <svg
-                  className="w-6 h-6 text-gray-600 dark:text-gray-300"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
+              
+
+          
+              {
+                isModal && (<button
+                  onClick={onClose}
+                  className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              </button>
+                  <svg
+                    className="w-6 h-6 text-gray-600 dark:text-gray-300"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </button>)
+              }
             </div>
           </div>
         </div>
-      )}
+      
 
       {/* Main content */}
       <div className="container mx-auto px-4 py-8">
@@ -217,7 +223,7 @@ const LocationDetail = ({ onClose, isModal, locationId }) => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-8">
           <div className="lg:col-span-2">
             <img
-              src={location.image || "https://via.placeholder.com/800x500"}
+              src={location.image || "https://scontent-hkg1-2.xx.fbcdn.net/v/t39.30808-6/495958050_1017980043814723_5626933874150903583_n.jpg?stp=dst-jpg_s600x600_tt6&_nc_cat=102&ccb=1-7&_nc_sid=127cfc&_nc_eui2=AeFzelKbwhjOIvvs-ZT6rn1mRO31um_gkVpE7fW6b-CRWhHMeS0XWieRbAr9flfhblf-IvZl8EJoZnA4ak9QMWwI&_nc_ohc=A4zMW4igbCYQ7kNvwGNd_i3&_nc_oc=AdlTJId8hokB1aaGAhhI2lJdAj4pYRpMda8D3gPnaObwQgcGp-xMIYF5dhdWJth2aqQ&_nc_zt=23&_nc_ht=scontent-hkg1-2.xx&_nc_gid=GZg2X7GGhYIFk05X-5NYHQ&oh=00_AfJffIJrBmC3irZGT-ZVtgJkPPq9mkBVTB9psEeArcvO_w&oe=683B073E"}
               alt={location.LocationName}
               className="w-full h-64 lg:h-96 object-cover rounded-lg"
             />
@@ -227,7 +233,7 @@ const LocationDetail = ({ onClose, isModal, locationId }) => {
               <img
                 key={i}
                 src={
-                  location[`image${i}`] || "https://via.placeholder.com/400x300"
+                  location[`image${i}`] || "https://scontent-hkg1-2.xx.fbcdn.net/v/t39.30808-6/495958050_1017980043814723_5626933874150903583_n.jpg?stp=dst-jpg_s600x600_tt6&_nc_cat=102&ccb=1-7&_nc_sid=127cfc&_nc_eui2=AeFzelKbwhjOIvvs-ZT6rn1mRO31um_gkVpE7fW6b-CRWhHMeS0XWieRbAr9flfhblf-IvZl8EJoZnA4ak9QMWwI&_nc_ohc=A4zMW4igbCYQ7kNvwGNd_i3&_nc_oc=AdlTJId8hokB1aaGAhhI2lJdAj4pYRpMda8D3gPnaObwQgcGp-xMIYF5dhdWJth2aqQ&_nc_zt=23&_nc_ht=scontent-hkg1-2.xx&_nc_gid=GZg2X7GGhYIFk05X-5NYHQ&oh=00_AfJffIJrBmC3irZGT-ZVtgJkPPq9mkBVTB9psEeArcvO_w&oe=683B073E"
                 }
                 alt={`${location.LocationName} ${i}`}
                 className="w-full h-32 object-cover rounded-lg"

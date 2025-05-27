@@ -14,6 +14,7 @@ const BookingMain = lazy(() => import('./pages/Booking/Main'));
 const BookingConfirm = lazy(() => import('./pages/Booking/Confirm'));
 const BookingHistory = lazy(() => import('./pages/Booking/History'));
 const Favorite = lazy(() => import('./pages/MyAccount/Favorite'));
+const Profile = lazy(() => import('./pages/MyAccount/Profile'));
 
 export const routes = [
   {
@@ -85,5 +86,10 @@ export const routes = [
     path: '/favorite',
     element: <Favorite/>,
       name: 'Sân yêu thích'
+  },
+  {
+    path: '/profile',
+    element: <Profile/>,
+    name: 'Trang hồ sơ'
   }
 ];

@@ -16,7 +16,7 @@ import { FaThLarge, FaList } from "react-icons/fa";
 
 import { useParams } from "react-router-dom";
 import Div from "../../components/Div";
-import LocationDetail from "./LocationDetail";
+import LocationDetail from "../../components/LocationDetail";
 import CourtCardLoading from "../../components/CourtCardLoading";
 import { Suspense, lazy } from "react";
 const CourtCard = lazy(() => import("../../components/CourtCard"));

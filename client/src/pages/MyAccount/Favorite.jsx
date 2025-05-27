@@ -5,7 +5,7 @@ import { GiTennisCourt } from "react-icons/gi";
 import CourtCard from "../../components/CourtCard";
 import Div from "../../components/Div";
 import { FaThLarge, FaList } from "react-icons/fa";
-import LocationDetail from "../Sports/LocationDetail";
+import LocationDetail from "../../components/LocationDetail";
 
 const Favorite = () => {
   const navigate = useNavigate();
@@ -235,6 +235,7 @@ const Favorite = () => {
                 locationId={selectedLocation.LocationID}
                 onClose={handleCloseModal}
                 isModal={true}
+                isFavoritePage = {true}
               />
             </div>
           </div>

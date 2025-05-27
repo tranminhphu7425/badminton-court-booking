@@ -4,7 +4,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { vi } from "date-fns/locale";
 import { toast } from "react-toastify"; // Added for better notifications
 import { useParams } from "react-router-dom";
-import LocationDetail from "../Sports/LocationDetail";
+import LocationDetail from "../../components/LocationDetail";
 
 // Extract reusable components
 const CourtCell = ({ court }) => (
@@ -689,9 +689,9 @@ function Main() {
           </div>
           <div className="inline-block align-bottom bg-white dark:bg-gray-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-2 sm:align-middle sm:max-w-6xl sm:w-full">
               <LocationDetail
-                locationId={locationId}
+                locationId={parseInt(locationId)}
               
-                isModal={true}
+                isModal={false}
               />
             </div>
             

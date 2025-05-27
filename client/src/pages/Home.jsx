@@ -12,7 +12,13 @@ import SportCard from "../components/SportCard";
 import CourtCard from "../components/CourtCard";
 import TestimonialCard from "../components/TestimonialCard";
 import Section from "../components/Section";
-import backgroundImage from "../../public/assets/images/backgrounds/home/home_bg.jpg";
+import backgroundImage from "../../public/assets/images/backgrounds/home/home_bg1.jpg";
+import blurIndigo from "../../public/assets/images/backgrounds/home/blur-indigo.b752cf77.png";
+import blurCyan from "../../public/assets/images/backgrounds/home/blur-cyan.d28a5585.png";
+import {Link} from "react-router-dom";
+
+
+
 
 const Home = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -114,9 +120,67 @@ const Home = () => {
   ];
 
   return (
-    <div className="home-page dark:bg-gray-800">
+    <div className=" home-page dark:bg-gray-800">
       {/* Hero Section */}
-      <section
+      <div className="bg-gradient-to-r from-orange-50 to-stone-50 dark:bg-gradient-to-r dark:from-gray-800 dark:to-gray-800">
+        <div className=" relative container max-w-7xl mx-auto px-6 py-20 flex flex-col md:flex-row items-center md:items-center justify-between gap-8 md:gap-12">
+        <div className="max-w-xl text-center md:text-left">
+          <h1 className="text-[2.75rem] md:text-[3rem] font-semibold bg-gradient-to-r  from-green-500 to-sky-800 bg-clip-text text-transparent leading-tight drop-shadow-[2px_2px_0_#fga] dark:drop-shadow-[2px_2px_0_#000] dark:bg-gradient-to-r dark:from-green-400 dark:to-teal-500 dark:bg-clip-text dark:text-transparent">
+            Đặt sân&nbsp;
+            <span className="bg-gradient-to-r from-pink-500 to-violet-800 bg-clip-text text-transparent leading-tight dark:bg-gradient-to-r dark:from-pink-400 dark:to-purple-500 dark:bg-clip-text dark:text-transparent">
+              thể thao&nbsp;
+            </span>
+            dễ dàng
+          </h1>
+
+          <p class="mt-6 text-xl  dark:text-white max-w-lg leading-relaxed">
+            Tìm và đặt sân bóng đá, cầu lông, tennis,... nhanh chóng với giá tốt
+            nhất
+          </p>
+          <div class="mt-8 flex justify-center md:justify-start gap-4">
+            <Link to = "" className="bg-green-500 text-white dark:text-black font-semibold rounded-full px-6 py-2.5 hover:bg-green-900 transition">
+              Giới thiệu
+            </Link>
+            <Link to = "" className="bg-[#1B243B] text-white font-semibold rounded-full px-6 py-2.5 hover:bg-[#2a3a5a] transition">
+              Liên hệ
+            </Link>
+          </div>
+        </div>
+
+        <div class="relative z-2 max-w-xl w-full">
+        <div class="absolute -top-px right-11 left-20 h-px bg-linear-to-r from-sky-300/0 via-sky-300/70 to-sky-300/0"></div>
+          <img
+            src={backgroundImage}
+            alt="Hero Image"
+            class="rounded-2xl border border-white/30 shadow-lg"
+          />
+          <div class="absolute -bottom-px right-11 left-20 h-px bg-linear-to-r from-sky-300/0 via-sky-300/70 to-sky-300/0"></div>
+        </div>
+
+        <img
+          src={blurIndigo}
+          alt="Hero blurIndigo"
+          width={500}
+          height={500}
+          className="z-1 absolute -right-30 top-50 md:top-0 xl:-right-10 object-cover"
+        />
+        <img
+          src={blurCyan}
+          alt="Hero blurIndigo"
+          width={500}
+          height={500}
+          className="z-1 absolute right-40 top-50 md:top-10 xl:right-40 object-cover"
+        />
+        <img
+          src={blurCyan}
+          alt="Hero blurIndigo"
+          width={300}
+          height={300}
+          className="z-1 absolute -top-30 -left-30  object-cover opacity-40"
+        />
+      </div>
+      </div>
+      {/* <section
         className="hero-section text-white py-20 md:py-30 lg:py-40 relative mb-10"
         style={{
           backgroundImage: `url(${backgroundImage})`,
@@ -153,7 +217,7 @@ const Home = () => {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Popular Sports Section */}
       <Section>
