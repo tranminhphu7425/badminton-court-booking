@@ -427,3 +427,63 @@ const PORT = process.env.PORT || 8081;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
+
+
+// POST /api/login
+app.post("/api/login", async (req, res) => {
+  const { identifier, password } = req.body;
+
+  if (!identifier || !password) {
+    return res.status(400).json({ success: false, message: "Thiếu thông tin đăng nhập" });
+  }
+
+  try {
+    const sql = `
+      SELECT * FROM users
+      WHERE (Username = ? OR Email = ?) AND PasswordHash = ?
+    `;
+    const [rows] = await pool.execute(sql, [identifier, identifier, password]);
+
+    if (rows.length > 0) {
+      const user = rows[0];
+      res.json({ success: true, user: { UserID: user.UserID, Username: user.Username } });
+    } else {
+      res.status(401).json({ success: false, message: "Sai tên đăng nhập hoặc mật khẩu" });
+    }
+  } catch (err) {
+    console.error("Lỗi truy vấn:", err);
+    res.status(500).json({ success: false, message: "Lỗi server" });
+  }
+});
+
+
+
+// GET /api/profile/:userId
+app.get("/api/profile/:userId", async (req, res) => {
+  const userId = req.params.userId;
+
+  if (!userId) {
+    return res.status(400).json({ success: false, message: "Thiếu UserID" });
+  }
+
+  try {
+    const [users] = await pool.query(
+      `SELECT u.UserID, u.Username, u.Email, u.FullName, u.Phone, u.IsActive, u.CreatedAt, 
+              c.Address
+       FROM users u
+       LEFT JOIN customers c ON u.UserID = c.UserID
+       WHERE u.UserID = ?`,
+      [userId]
+    );
+
+    if (users.length === 0) {
+      return res.status(404).json({ success: false, message: "Không tìm thấy người dùng" });
+    }
+
+    res.json({ success: true, profile: users[0] });
+  } catch (err) {
+    console.error("Lỗi khi truy vấn profile:", err);
+    res.status(500).json({ success: false, message: "Lỗi server" });
+  }
+});

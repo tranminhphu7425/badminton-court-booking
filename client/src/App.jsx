@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
 import { Routes, Route } from 'react-router-dom';
-import { routes } from './routes';
+import { getRoutes  } from './routes';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import LoadingSpinner from './components/LoadingSpinner';
@@ -18,6 +18,7 @@ function App() {
       setIsLoggedIn(true);
     }
   }, []);
+  const routes  = getRoutes(isLoggedIn, setIsLoggedIn);
 
   return (
     <>
@@ -29,8 +30,9 @@ function App() {
             <Route
               key={index}
               path={route.path}
+              
               element={
-                <Suspense fallback={<LoadingSpinner />}>
+                <Suspense fallback={<LoadingSpinner />}   >
                   {route.element}
                 </Suspense>
               }

@@ -1,16 +1,48 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { FaUser, FaEnvelope, FaPhone, FaCamera, FaEdit, FaSave } from 'react-icons/fa';
 import Section from '../../components/Section';
 import { Link } from 'react-router-dom';
 
 const Profile = () => {
   const [isEditing, setIsEditing] = useState(false);
-  const [userData, setUserData] = useState({
-    name: 'Nguyễn Văn A',
-    email: 'nguyenvana@example.com',
-    phone: '0123456789',
-    avatar: 'https://via.placeholder.com/150',
-  });
+  const [loading, setLoading] = useState(true);   // Trạng thái loading
+  const [error, setError] = useState(null);       // Trạng thái lỗi (nếu có)
+  const [userData, setUserData] = useState();
+  useEffect(() => {
+      const fetchProfile = async () => {
+        const userId = localStorage.getItem('UserID');
+        if(!userId){
+          setError("Không tìm thấy UserID trong localStorage");
+         setLoading(false);
+          return;
+        }
+      
+      try {
+        const response = await fetch(`http://localhost:8081/api/profile/${userId}`);
+        const data = await response.json();
+
+        if (response.ok && data.success) {
+          setUserData(data.profile); // Lưu dữ liệu vào biến userData
+          console.log(data.profile);
+        } else {
+          setError(data.message || "Lỗi không xác định");
+        }
+      } catch (err) {
+        setError("Không thể kết nối đến server");
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+  };
+  fetchProfile();
+  }, []);
+
+  if (loading) return <p>Đang tải thông tin...</p>;
+  if (error) return <p className="text-red-500">Lỗi: {error}</p>;
+
+
+
+ 
 
   const handleEdit = () => {
     setIsEditing(true);
@@ -88,7 +120,7 @@ const Profile = () => {
                         <input
                           type="text"
                           name="name"
-                          value={userData.name}
+                          value={userData.FullName}
                           onChange={handleChange}
                           disabled={!isEditing}
                           className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:border-transparent disabled:bg-gray-100 dark:disabled:bg-gray-700 disabled:cursor-not-allowed"
@@ -108,7 +140,7 @@ const Profile = () => {
                         <input
                           type="email"
                           name="email"
-                          value={userData.email}
+                          value={userData.Email}
                           onChange={handleChange}
                           disabled={!isEditing}
                           className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:border-transparent disabled:bg-gray-100 dark:disabled:bg-gray-700 disabled:cursor-not-allowed"
@@ -128,7 +160,7 @@ const Profile = () => {
                         <input
                           type="tel"
                           name="phone"
-                          value={userData.phone}
+                          value={userData.Phone}
                           onChange={handleChange}
                           disabled={!isEditing}
                           className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:border-transparent disabled:bg-gray-100 dark:disabled:bg-gray-700 disabled:cursor-not-allowed"
@@ -163,7 +195,7 @@ const Profile = () => {
                 <p className="text-gray-600 dark:text-gray-300">
                   Quản lý danh sách sân yêu thích
                 </p>
-                <Link  to = "/"
+                <Link  to = "/favorites"
                 className="mt-4 text-green-500 hover:text-green-600 dark:text-green-400 dark:hover:text-green-300">
                   Xem chi tiết →
                 </Link>

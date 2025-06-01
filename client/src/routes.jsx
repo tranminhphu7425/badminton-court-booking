@@ -16,7 +16,7 @@ const BookingHistory = lazy(() => import('./pages/Booking/History'));
 const Favorite = lazy(() => import('./pages/MyAccount/Favorite'));
 const Profile = lazy(() => import('./pages/MyAccount/Profile'));
 
-export const routes = [
+export const getRoutes  =  (isLoggedIn, setIsLoggedIn) => [
   {
     path: '/',
     element: <Home />,
@@ -34,7 +34,7 @@ export const routes = [
   },
   {
     path: '/login',
-    element: <Login />,
+    element: <Login isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />,
     name: 'Đăng nhập'
   },
   {
@@ -83,7 +83,7 @@ export const routes = [
     name: 'Lịch sử đặt sân'
   },
   {
-    path: '/favorite',
+    path: '/favorites',
     element: <Favorite/>,
       name: 'Sân yêu thích'
   },

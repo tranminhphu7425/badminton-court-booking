@@ -1,19 +1,44 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { FaSignInAlt, FaLock, FaEnvelope, FaArrowLeft } from 'react-icons/fa';
 import { FcGoogle } from 'react-icons/fc'; // Icon Google
 import Section from '../../components/Section'; // Giả sử Section là một component wrapper
 
-const Login = () => {
+const Login = ({isLoggedIn, setIsLoggedIn} ) => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Xử lý đăng nhập ở đây (ví dụ: gọi API)
-    console.log('Login Data Submitted:', { email, password, rememberMe });
-    // Thêm logic gửi dữ liệu đăng nhập lên server
+
+    try {
+      // Gọi API đăng nhập - giả lập ví dụ dùng fetch
+      const response = await fetch('http://localhost:8081/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ identifier: email, password }), // identifier có thể là username/email
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data?.success) {
+        // Đăng nhập thành công
+        const userId = data.user.UserID; // giả sử API trả về { user: { UserID: ..., Username: ... }, success: true }
+
+        // Lưu vào localStorage
+        localStorage.setItem('isLoggedIn', 'true');
+        localStorage.setItem('UserID', userId);
+        setIsLoggedIn(true);
+        // Điều hướng về trang chủ
+        navigate('/');
+      } else {
+        alert('Đăng nhập thất bại: Sai thông tin hoặc tài khoản không tồn tại');
+      }
+    } catch (err) {
+      console.error('Lỗi khi đăng nhập:', err);
+      alert('Đã xảy ra lỗi khi đăng nhập.');
+    }
   };
 
   const handleGoogleSignIn = () => {

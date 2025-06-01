@@ -138,10 +138,10 @@ const Home = () => {
             nhất
           </p>
           <div class="mt-8 flex justify-center md:justify-start gap-4">
-            <Link to = "" className="bg-green-500 text-white dark:text-black font-semibold rounded-full px-6 py-2.5 hover:bg-green-900 transition">
+            <Link to = "/about" className="bg-green-500 text-white dark:text-black font-semibold rounded-full px-6 py-2.5 hover:bg-green-900 transition">
               Giới thiệu
             </Link>
-            <Link to = "" className="bg-[#1B243B] text-white font-semibold rounded-full px-6 py-2.5 hover:bg-[#2a3a5a] transition">
+            <Link to = "/contact" className="bg-[#1B243B] text-white font-semibold rounded-full px-6 py-2.5 hover:bg-[#2a3a5a] transition">
               Liên hệ
             </Link>
           </div>
@@ -285,60 +285,52 @@ const Home = () => {
 
       {/* How It Works Section */}
       <Section>
-        <div className="bg-gray-50 dark:bg-gray-700 container mx-auto px-4 py-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-800 dark:text-white mb-4">
-              Cách Đặt Sân
-            </h2>
-            <p className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-              Chỉ với 3 bước đơn giản để có sân chơi như ý
-            </p>
-          </div>
+      <div className="bg-gray-50 dark:bg-gray-700 container mx-auto px-4 py-8">
+  <div className="text-center mb-12">
+    <h2 className="text-3xl font-bold text-gray-800 dark:text-white mb-4">
+      Cách Đặt Sân
+    </h2>
+    <p className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+      Chỉ với 3 bước đơn giản để có sân chơi như ý
+    </p>
+  </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="text-center p-6">
-              <div className="bg-green-100 dark:bg-green-900 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-green-700 dark:text-green-300 text-2xl font-bold">
-                  1
-                </span>
-              </div>
-              <h3 className="text-xl font-semibold mb-3 dark:text-white">
-                Tìm sân
-              </h3>
-              <p className="text-gray-600 dark:text-gray-300">
-                Chọn môn thể thao, địa điểm và thời gian bạn muốn chơi
-              </p>
-            </div>
+  <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+    {/* BƯỚC 1 */}
+    <div className="text-center p-6 rounded-xl bg-white dark:bg-gray-800 shadow-md hover:shadow-2xl transform transition-all duration-300 hover:scale-102 hover:bg-green-50 dark:hover:bg-green-800">
+      <div className="bg-green-100 dark:bg-green-900 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 transition-transform duration-300 group-hover:rotate-12">
+        <span className="text-green-700 dark:text-green-300 text-2xl font-bold">1</span>
+      </div>
+      <h3 className="text-xl font-semibold mb-3 dark:text-white">Tìm sân</h3>
+      <p className="text-gray-600 dark:text-gray-300">
+        Chọn môn thể thao, địa điểm và thời gian bạn muốn chơi
+      </p>
+    </div>
 
-            <div className="text-center p-6">
-              <div className="bg-green-100 dark:bg-green-900 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-green-700 dark:text-green-300 text-2xl font-bold">
-                  2
-                </span>
-              </div>
-              <h3 className="text-xl font-semibold mb-3 dark:text-white">
-                Đặt sân
-              </h3>
-              <p className="text-gray-600 dark:text-gray-300">
-                Xác nhận thông tin và thanh toán đơn giản
-              </p>
-            </div>
+    {/* BƯỚC 2 */}
+    <div className="text-center p-6 rounded-xl bg-white dark:bg-gray-800 shadow-md hover:shadow-2xl transform transition-all duration-300 hover:scale-102 hover:bg-green-50 dark:hover:bg-green-800">
+      <div className="bg-green-100 dark:bg-green-900 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 transition-transform duration-300 group-hover:rotate-12">
+        <span className="text-green-700 dark:text-green-300 text-2xl font-bold">2</span>
+      </div>
+      <h3 className="text-xl font-semibold mb-3 dark:text-white">Đặt sân</h3>
+      <p className="text-gray-600 dark:text-gray-300">
+        Xác nhận thông tin và thanh toán đơn giản
+      </p>
+    </div>
 
-            <div className="text-center p-6">
-              <div className="bg-green-100 dark:bg-green-900 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-green-700 dark:text-green-300 text-2xl font-bold">
-                  3
-                </span>
-              </div>
-              <h3 className="text-xl font-semibold mb-3 dark:text-white">
-                Chơi thôi!
-              </h3>
-              <p className="text-gray-600 dark:text-gray-300">
-                Đến sân và tận hưởng trận đấu của bạn
-              </p>
-            </div>
-          </div>
-        </div>
+    {/* BƯỚC 3 */}
+    <div className="text-center p-6 rounded-xl bg-white dark:bg-gray-800 shadow-md hover:shadow-2xl transform transition-all duration-300 hover:scale-102 hover:bg-green-50 dark:hover:bg-green-800">
+      <div className="bg-green-100 dark:bg-green-900 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 transition-transform duration-300 group-hover:rotate-12">
+        <span className="text-green-700 dark:text-green-300 text-2xl font-bold">3</span>
+      </div>
+      <h3 className="text-xl font-semibold mb-3 dark:text-white">Chơi thôi!</h3>
+      <p className="text-gray-600 dark:text-gray-300">
+        Đến sân và tận hưởng trận đấu của bạn
+      </p>
+    </div>
+  </div>
+</div>
+
       </Section>
 
       {/* Testimonials Section */}

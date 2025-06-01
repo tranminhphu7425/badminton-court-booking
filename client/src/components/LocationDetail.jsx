@@ -172,7 +172,7 @@ const LocationDetail = ({ onClose, isModal, locationId, isFavoritePage }) => {
             <div className="flex items-center gap-4">
              {!isFavoritePage && 
              ( <Link
-                to = "/favorite"
+                to = "/favorites"
                 className="p-2 rounded-full text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2"
               >
                 <FaList className="w-5 h-5" />
