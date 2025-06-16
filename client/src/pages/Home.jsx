@@ -40,6 +40,7 @@ const Home = () => {
   const [showLocationModal, setShowLocationModal] = useState(false);
   const [sports, setSports] = useState([]);
   const [error, setError] = useState(null);
+  const [numberLocation, setNumberLocation] = useState([0]);
 
 
   useEffect(() => {
@@ -57,11 +58,6 @@ const Home = () => {
     loadLocations();
   }, []);
 
-  
-  
-
-
-
   useEffect ( () => {
     const loadSportTypes = async () => {
       try {
@@ -76,6 +72,43 @@ const Home = () => {
     };
     loadSportTypes();
   }, []);
+
+  useEffect(() => {
+    const loadAllLocations = async () => {
+      try {
+        setLoading(true); // ⏳ bắt đầu loading
+  
+        // Tạo danh sách promise
+        const locationPromises = sports.map((sport) =>
+          locationApi.fetchLocationsBySport(sport.SportCode)
+        );
+  
+        // Đợi tất cả promise hoàn thành (giữ nguyên thứ tự)
+        const allLocationData = await Promise.all(locationPromises);
+  
+        // Tạo mảng số lượng từng địa điểm theo đúng thứ tự
+        const locationCounts = allLocationData.map((data) => data.length);
+  
+        // Cập nhật state một lần duy nhất
+        setNumberLocation(locationCounts);
+        setLoading(false); // ✅ Tất cả đã xong
+      } catch (err) {
+        console.error(err);
+        setLoading(false); // Dù lỗi vẫn tắt loading
+      }
+    };
+  
+    if (sports.length === 6) {
+      loadAllLocations();
+    }
+  }, [sports]);
+  
+  
+
+  console.log(numberLocation);
+
+
+  
 
 
   const handleLocationClick = (location) => {
@@ -241,8 +274,8 @@ const Home = () => {
                 key={sport.SportTypeID}
                 icon={translateIcon[sport.Icon]}
                 name={sport.SportName}
-                // count={sport.count}
-                link={`/sports/${sport.SportTypeID}`}
+                count={numberLocation[sport.SportTypeID-1]}
+                link={`/sports/${sport.SportCode}`}
               />
             ))}
           </div>
