@@ -1,60 +1,32 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+
 import {
   FaSearch,
   FaFilter,
-  FaMapMarkerAlt,
-  FaStar,
   FaCalendarAlt,
   FaClock,
+  FaThLarge,
+  FaList,
 } from "react-icons/fa";
 import { GiTennisCourt } from "react-icons/gi";
-import Select from "react-select";
-import AddressSelector from "../../components/AddressSelector";
-import { sportTypeApi } from "../../api/sportTypeApi";
-import { FaThLarge, FaList } from "react-icons/fa";
 
-import { useParams } from "react-router-dom";
-import Div from "../../components/Div";
+import sportTypeApi from "../../api/sportTypeApi";
+
+import AddressSelector from "../../components/AddressSelector";
+
 import LocationDetail from "../../components/LocationDetail";
-import CourtCardLoading from "../../components/CourtCardLoading";
-import { Suspense, lazy } from "react";
-const CourtCard = lazy(() => import("../../components/CourtCard"));
+
+import ShowList from "../../components/ShowList";
+
+import locationApi from "../../api/locationApi";
+
+
 
 function capitalizeFirstLetter(str) {
   if (!str) return "";
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
-
-
-
-
-const api = {
-  async fetchLocations(sportCode) {
-    try {
-      // await new Promise(resolve => setTimeout(resolve, 3000));
-      var response;
-      if (sportCode === "all") {
-        response = await fetch(`http://localhost:8081/api/locations`);
-      } else {
-        response = await fetch(
-          `http://localhost:8081/api/locations?sportcode=${sportCode}`
-        );
-      }
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to fetch locations");
-      }
-
-      const data = await response.json();
-      return data;
-    } catch (error) {
-      console.error("Fetch locations error: ", error);
-      throw new Error(`Lỗi tải danh sách các địa điểm: ${error.message}`);
-    }
-  },
-};
 
 const SportLayout = () => {
   const navigate = useNavigate();
@@ -66,7 +38,7 @@ const SportLayout = () => {
   const [mode, setMode] = useState(0);
   const [selectedLocation, setSelectedLocation] = useState(null);
   const [showLocationModal, setShowLocationModal] = useState(false);
-
+  
   // State cho bộ lọc
   const [filters, setFilters] = useState({
     province: null,
@@ -120,7 +92,7 @@ const SportLayout = () => {
   useEffect(() => {
     const loadLocations = async (sportCode) => {
       try {
-        const data = await api.fetchLocations(sportCode);
+        const data = await locationApi.fetchLocationsBySport(sportCode);
         setLocations(data);
         console.log("Locations:", data);
         setCourts(data);
@@ -242,7 +214,7 @@ const SportLayout = () => {
   };
   if (sportType) {
     var backgroundImage1 = new URL(
-      `../../../public/assets/images/backgrounds/sports/${capitalizeFirstLetter(
+      `../../assets/images/backgrounds/sports/${capitalizeFirstLetter(
         sportType.SportCode
       )}.jpg`,
       import.meta.url
@@ -253,18 +225,26 @@ const SportLayout = () => {
     <div className="badminton-page min-h-screen dark:bg-gray-800">
       {/* Hero Section */}
       <section
-        className={`hero-section text-white ${backgroundImage1 ? 'py-15 md:py-20 lg:py-45 ': 'py-20 bg-green-700 dark:bg-green-800'} relative`}
+        className={`hero-section text-white ${
+          backgroundImage1
+            ? "py-15 md:py-20 lg:py-45 "
+            : "py-20 bg-green-700 dark:bg-green-800"
+        } relative`}
         style={{
           backgroundImage: backgroundImage1
             ? `url(${backgroundImage1})`
             : undefined,
-     
+
           backgroundSize: "cover",
           backgroundRepeat: "no-repeat",
           backgroundPosition: "center",
         }}
       >
-        {!backgroundImage1 ? `` : <div className="absolute inset-0 bg-black opacity-20"></div>}
+        {!backgroundImage1 ? (
+          ``
+        ) : (
+          <div className="absolute inset-0 bg-black opacity-20"></div>
+        )}
         <div className="container mx-auto px-4 relative z-10">
           <div className="flex flex-col md:flex-row items-center justify-between">
             <div>
@@ -506,77 +486,14 @@ const SportLayout = () => {
             </div>
           ) : (
             <>
-              <div className="flex justify-between items-center mb-8">
-                <h2 className="text-xl font-semibold text-gray-800 dark:text-white">
-                  {filteredCourts.length} sân{" "}
-                  {sportCode !== "all"
-                    ? sportType.SportName.toLowerCase()
-                    : null}{" "}
-                  phù hợp
-                </h2>
-
-                <div className="flex items-center space-x-4">
-                  {/* Dropdown sắp xếp */}
-                  <div className="flex items-center">
-                    <span className="text-sm text-gray-600 dark:text-gray-300 mr-2">
-                      Sắp xếp:
-                    </span>
-                    <select className="border border-gray-300 dark:border-gray-600 rounded-md px-3 py-1 text-sm dark:bg-gray-700 dark:text-white">
-                      <option>Phổ biến nhất</option>
-                      <option>Đánh giá cao nhất</option>
-                      <option>Giá thấp đến cao</option>
-                      <option>Giá cao đến thấp</option>
-                    </select>
-                  </div>
-
-                  {/* Nút chuyển chế độ */}
-                  <button
-                    onClick={() => setMode((prev) => (prev === 0 ? 1 : 0))}
-                    className="p-2 border rounded-md text-gray-600 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
-                    title={
-                      mode === 0
-                        ? "Chuyển sang dạng danh sách"
-                        : "Chuyển sang dạng lưới"
-                    }
-                  >
-                    {mode === 0 ? <FaList /> : <FaThLarge />}
-                  </button>
-                </div>
-              </div>
-
-              <div
-                className={`grid grid-cols-1 ${
-                  mode == 0 ? "md:grid-cols-2 lg:grid-cols-3" : ""
-                } gap-8`}
-              >
-                {filteredCourts.map((location) => (
-                  <Div key={location.LocationID}>
-                     <Suspense fallback={<CourtCardLoading mode = {mode} />}>
-                    <CourtCard
-                      name={location.LocationName}
-                      image={location.image}
-                      location={location.Address}
-                      rating={parseFloat(location.AverageRating).toFixed(1)}
-                      sport={sportCode !== "all" ? sportType.SportCode : null}
-                      badges={
-                        <span className="bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 text-sm px-2 py-1 rounded mr-1 inline-flex items-center">
-                          <FaClock className="mr-1" />
-                          {location.OpeningTime.split(":")
-                            .slice(0, 2)
-                            .join(":")}{" "}
-                          -{" "}
-                          {location.ClosingTime.split(":")
-                            .slice(0, 2)
-                            .join(":")}
-                        </span>
-                      }
-                      mode={mode}
-                      onClick={() => handleLocationClick(location)} // Sửa lại thành arrow function
-                    />
-                    </Suspense>
-                  </Div>
-                ))}
-              </div>
+              <ShowList
+                filteredCourts={filteredCourts}
+                sportCode={sportCode}
+                sportType={sportType}
+                mode={mode}
+                setMode={setMode}
+                handleLocationClick={handleLocationClick}
+              />
             </>
           )}
         </div>

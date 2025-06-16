@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import {  useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import {
   FaStar,
@@ -19,27 +19,8 @@ import {
 import { IoIosFitness } from "react-icons/io";
 import { MdPool } from "react-icons/md";
 import ReviewCard from "./ReviewCard";
+import locationApi from "../api/locationApi";
 
-const api = {
-  async fetchLocations(locationId) {
-    try {
-      var response = await fetch(
-        `http://localhost:8081/api/locations/${locationId}`
-      );
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to fetch locations");
-      }
-
-      const data = await response.json();
-      return data;
-    } catch (error) {
-      console.error("Fetch locations error: ", error);
-      throw new Error(`Lỗi tải danh sách các địa điểm: ${error.message}`);
-    }
-  },
-};
 
 const LocationDetail = ({ onClose, isModal, locationId, isFavoritePage }) => {
   const [isFavorite, setIsFavorite] = useState(false);
@@ -56,10 +37,11 @@ const LocationDetail = ({ onClose, isModal, locationId, isFavoritePage }) => {
   useEffect(() => {
     const loadLocationDetail = async (locationId) => {
       try {
-        const data = await api.fetchLocations(locationId);
+        const data = await locationApi.fetchLocationById(locationId);
         setLocation(data);
         setLoading(false);
       } catch (err) {
+        setError(err);
         console.log(err);
       }
     };

@@ -1,7 +1,10 @@
 import { FaPhone, FaEnvelope, FaMapMarkerAlt, FaClock, FaPaperPlane } from 'react-icons/fa';
 import { MdSupportAgent } from 'react-icons/md';
-import Section from '../components/Section';
+
 import backgroundImage from "../../public/assets/images/backgrounds/contact/contact_bg.jpg";
+
+import Section from '../components/Section';
+
 
 const Contact = () => {
   return (

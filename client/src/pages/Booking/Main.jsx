@@ -26,7 +26,7 @@ const CourtCell = ({ court }) => (
         </svg>
       </div>
       <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
-        Sân {parseInt(court.court.replace("S0", ""))}
+        Sân {court.court}
       </div>
     </div>
   </td>
@@ -362,7 +362,7 @@ function Main() {
     const confirmedBooked = bookings.some((booking) => {
       if (!booking?.court || !booking?.time || !booking?.date) return false;
 
-      const bookingCourt = parseInt(booking.court.replace("S0", ""));
+      const bookingCourt = parseInt(booking.court.replace(booking.court.slice(0, 2), ""));
       const bookingTime = parseInt(booking.time);
       const bookingFormattedDate = formatDate(booking.date);
 
@@ -375,7 +375,7 @@ function Main() {
 
     // Check in pending bookings
     const pendingBooked = pendingBookings.some((booking) => {
-      const bookingCourt = parseInt(booking.court.replace("S0", ""));
+      const bookingCourt = parseInt(booking.court.replace(booking.court.slice(0, 2), ""));
       const bookingTime = parseInt(booking.time);
       const bookingFormattedDate = formatDate(booking.date);
 
@@ -424,7 +424,7 @@ function Main() {
 
       // Tìm thông tin sân được chọn
       const courtData = courts.find(
-        (c) => c.court && parseInt(c.court.replace("S0", "")) === selectedCourt
+        (c) => c.court && parseInt(c.court.replace(c.court.slice(0, 2), "")) === selectedCourt
       );
       console.log("Selected court data1:", selectedCourt);
 
@@ -440,7 +440,7 @@ function Main() {
         customerId: 1, // Sử dụng ID người dùng nếu đã đăng nhập
         date: formatDate(currentDate),
         time: selectedTime,
-        notes: `Đặt sân ${courtData.CourtNumber}`,
+        notes: `Đặt sân ${courtData.court}`,
       };
 
       // Gọi API tạo booking
@@ -641,11 +641,11 @@ function Main() {
                 {courts.map((court) => {
                   //
                   // kiểm tra CourtNumber phải bắt đầu bằng "S"
-                  if (!court.court.startsWith("S")) {
+                  if (!court.court) {
                     return null; // bỏ qua court không hợp lệ
                   }
 
-                  const courtNumber = parseInt(court.court.replace("S0", ""));
+                  const courtNumber = parseInt(court.court.replace(court.court.slice(0, 2), ""));
                   return (
                     <tr
                       key={courtNumber}
@@ -664,7 +664,7 @@ function Main() {
                         const booking = bookings.find(
                           (b) =>
                             b.court &&
-                            parseInt(b.court.replace("S0", "")) ===
+                          parseInt(b.court.replace(b.court.slice(0, 2), "")) ===
                               courtNumber &&
                             parseInt(b.time) === hour
                         );

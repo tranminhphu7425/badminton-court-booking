@@ -5,9 +5,13 @@ import {
   FaMapMarkedAlt,
 } from "react-icons/fa";
 import { GiSoccerField } from "react-icons/gi";
-import teamMembers from "../data/teamMembers"; // Tạo file này sau
+
+import backgroundImage from "../assets/images/backgrounds/about/about_bg.jpg";
+
+import teamMembers from "../data/teamMembers";
 import Section from "../components/Section";
-import backgroundImage from "../../public/assets/images/backgrounds/about/about_bg.jpg";
+import gioi_thieu_sportbooking from "../assets/images/backgrounds/about/gioi_thieu_sportbooking.png";
+
 
 const About = () => {
   return (
@@ -40,7 +44,7 @@ const About = () => {
       <div className="flex flex-col lg:flex-row items-center gap-12">
         <div className="lg:w-1/2">
           <img
-            src="./public\assets\images\backgrounds\about\gioi_thieu_sportbooking.png"
+            src={gioi_thieu_sportbooking}
             alt="Our story"
             className="rounded-lg shadow-lg w-full"
           />

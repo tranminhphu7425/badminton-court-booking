@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { FaSignInAlt, FaLock, FaEnvelope, FaArrowLeft } from 'react-icons/fa';
-import { FcGoogle } from 'react-icons/fc'; // Icon Google
-import Section from '../../components/Section'; // Giả sử Section là một component wrapper
+import { FcGoogle } from 'react-icons/fc';
+
+import Section from '../../components/Section';
+
 
 const Login = ({isLoggedIn, setIsLoggedIn} ) => {
   const navigate = useNavigate();

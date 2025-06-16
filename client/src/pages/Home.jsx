@@ -1,97 +1,95 @@
-import { useState } from "react";
-import {
-  FaSearch,
-  FaCalendarAlt,
-  FaMapMarkerAlt,
-  FaStar,
-  FaArrowRight,
-} from "react-icons/fa";
+import { useState, useEffect } from "react";
+
+import { Link } from "react-router-dom";
+
+import { FaArrowRight, FaClock } from "react-icons/fa";
 import { GiTennisCourt, GiSoccerBall, GiBasketballBall } from "react-icons/gi";
 import { MdSportsTennis, MdSportsVolleyball } from "react-icons/md";
+
+import backgroundImage from "../assets/images/backgrounds/home/home_bg1.jpg";
+import blurIndigo from "../assets/images/backgrounds/home/blur-indigo.b752cf77.png";
+import blurCyan from "../assets/images/backgrounds/home/blur-cyan.d28a5585.png";
+
 import SportCard from "../components/SportCard";
 import CourtCard from "../components/CourtCard";
 import TestimonialCard from "../components/TestimonialCard";
+import LocationDetail from "../components/LocationDetail";
 import Section from "../components/Section";
-import backgroundImage from "../../public/assets/images/backgrounds/home/home_bg1.jpg";
-import blurIndigo from "../../public/assets/images/backgrounds/home/blur-indigo.b752cf77.png";
-import blurCyan from "../../public/assets/images/backgrounds/home/blur-cyan.d28a5585.png";
-import {Link} from "react-router-dom";
+import locationApi from "../api/locationApi";
+import sportTypeApi from "../api/sportTypeApi";
 
+
+const translateIcon = {
+  GiShuttlecock: <MdSportsTennis size={24} />,
+  GiSoccerBall: <GiSoccerBall size={24}  />,
+  FaBasketballBall: <GiTennisCourt size={24} />,
+  MdSportsVolleyball: <GiBasketballBall size={24} />,
+  GiTennisBall: <MdSportsVolleyball size={24}  />,
+  FaTableTennis: <GiTennisCourt size={24} />,
+};
 
 
 
 const Home = () => {
   const [searchQuery, setSearchQuery] = useState("");
+  const [locations, setLocations] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const PAGE_SIZE = 3;
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+  const [selectedLocation, setSelectedLocation] = useState(null);
+  const [showLocationModal, setShowLocationModal] = useState(false);
+  const [sports, setSports] = useState([]);
+  const [error, setError] = useState(null);
 
-  // Dữ liệu mẫu
-  const popularSports = [
-    {
-      id: "football",
-      name: "Bóng đá",
-      icon: <GiSoccerBall size={24} />,
-      count: 32,
-    },
-    {
-      id: "badminton",
-      name: "Cầu lông",
-      icon: <MdSportsTennis size={24} />,
-      count: 28,
-    },
-    {
-      id: "pickleball",
-      name: "Pickleball",
-      icon: <GiTennisCourt size={24} />,
-      count: 25,
-    },
-    {
-      id: "basketball",
-      name: "Bóng rổ",
-      icon: <GiBasketballBall size={24} />,
-      count: 18,
-    },
-    {
-      id: "volleyball",
-      name: "Bóng chuyền",
-      icon: <MdSportsVolleyball size={24} />,
-      count: 15,
-    },
-    {
-      id: "tennis",
-      name: "Tennis",
-      icon: <GiTennisCourt size={24} />,
-      count: 12,
-    },
-  ];
 
-  const popularCourts = [
-    {
-      id: 1,
-      name: "Sân bóng đá Hoa Lư",
-      image: "/images/football-court.jpg",
-      location: "Quận 1, TP.HCM",
-      price: "300.000 - 500.000đ/giờ",
-      rating: 4.8,
-      sport: "football",
-    },
-    {
-      id: 2,
-      name: "Sân cầu lông Phú Thọ",
-      image: "/images/badminton-court.jpg",
-      location: "Quận 11, TP.HCM",
-      price: "100.000 - 200.000đ/giờ",
-      rating: 4.5,
-      sport: "badminton",
-    },
-    {
-      id: 3,
-      name: "Sân bóng rổ Quận 7",
-      image: "/images/basketball-court.jpg",
-      location: "Quận 7, TP.HCM",
-      price: "150.000đ/giờ",
-      rating: 4.7,
-      sport: "basketball",
-    },
-  ];
+  useEffect(() => {
+    const loadLocations = async () => {
+      try {
+        const data = await locationApi.fetchLocationsBySport("all");
+        setLocations(data);
+        console.log("Locations:", data);
+        setLoading(false);
+      } catch (err) {
+        console.error(err);
+        setError(err.message);
+      }
+    };
+    loadLocations();
+  }, []);
+
+  
+  
+
+
+
+  useEffect ( () => {
+    const loadSportTypes = async () => {
+      try {
+        const data = await sportTypeApi.fetchSportTypes();
+        setSports(data);
+        console.log("Danh sach cac mon the thao (Home.jsx): " , data);
+      }
+      catch (err) {
+          console.log(err);
+          setError(err.message);
+      }
+    };
+    loadSportTypes();
+  }, []);
+
+
+  const handleLocationClick = (location) => {
+    setSelectedLocation(location);
+    // console.log("Selected location: ", location);
+    setShowLocationModal(true);
+    // Thêm history push nếu muốn thay đổi URL
+    // navigate(`/locations/${location.LocationID}`, { replace: false });
+  };
+
+
+
+
+  
 
   const testimonials = [
     {
@@ -124,61 +122,67 @@ const Home = () => {
       {/* Hero Section */}
       <div className="bg-gradient-to-r from-orange-50 to-stone-50 dark:bg-gradient-to-r dark:from-gray-800 dark:to-gray-800">
         <div className=" relative container max-w-7xl mx-auto px-6 py-20 flex flex-col md:flex-row items-center md:items-center justify-between gap-8 md:gap-12">
-        <div className="max-w-xl text-center md:text-left">
-          <h1 className="text-[2.75rem] md:text-[3rem] font-semibold bg-gradient-to-r  from-green-500 to-sky-800 bg-clip-text text-transparent leading-tight drop-shadow-[2px_2px_0_#fga] dark:drop-shadow-[2px_2px_0_#000] dark:bg-gradient-to-r dark:from-green-400 dark:to-teal-500 dark:bg-clip-text dark:text-transparent">
-            Đặt sân&nbsp;
-            <span className="bg-gradient-to-r from-pink-500 to-violet-800 bg-clip-text text-transparent leading-tight dark:bg-gradient-to-r dark:from-pink-400 dark:to-purple-500 dark:bg-clip-text dark:text-transparent">
-              thể thao&nbsp;
-            </span>
-            dễ dàng
-          </h1>
+          <div className="max-w-xl text-center md:text-left">
+            <h1 className="text-[2.75rem] md:text-[3rem] font-semibold bg-gradient-to-r  from-green-500 to-sky-800 bg-clip-text text-transparent leading-tight drop-shadow-[2px_2px_0_#fga] dark:drop-shadow-[2px_2px_0_#000] dark:bg-gradient-to-r dark:from-green-400 dark:to-teal-500 dark:bg-clip-text dark:text-transparent">
+              Đặt sân&nbsp;
+              <span className="bg-gradient-to-r from-pink-500 to-violet-800 bg-clip-text text-transparent leading-tight dark:bg-gradient-to-r dark:from-pink-400 dark:to-purple-500 dark:bg-clip-text dark:text-transparent">
+                thể thao&nbsp;
+              </span>
+              dễ dàng
+            </h1>
 
-          <p class="mt-6 text-xl  dark:text-white max-w-lg leading-relaxed">
-            Tìm và đặt sân bóng đá, cầu lông, tennis,... nhanh chóng với giá tốt
-            nhất
-          </p>
-          <div class="mt-8 flex justify-center md:justify-start gap-4">
-            <Link to = "/about" className="bg-green-500 text-white dark:text-black font-semibold rounded-full px-6 py-2.5 hover:bg-green-900 transition">
-              Giới thiệu
-            </Link>
-            <Link to = "/contact" className="bg-[#1B243B] text-white font-semibold rounded-full px-6 py-2.5 hover:bg-[#2a3a5a] transition">
-              Liên hệ
-            </Link>
+            <p class="mt-6 text-xl  dark:text-white max-w-lg leading-relaxed">
+              Tìm và đặt sân bóng đá, cầu lông, tennis,... nhanh chóng với giá
+              tốt nhất
+            </p>
+            <div class="mt-8 flex justify-center md:justify-start gap-4">
+              <Link
+                to="/about"
+                className="bg-green-500 text-white dark:text-black font-semibold rounded-full px-6 py-2.5 hover:bg-green-900 transition"
+              >
+                Giới thiệu
+              </Link>
+              <Link
+                to="/contact"
+                className="bg-[#1B243B] text-white font-semibold rounded-full px-6 py-2.5 hover:bg-[#2a3a5a] transition"
+              >
+                Liên hệ
+              </Link>
+            </div>
           </div>
-        </div>
 
-        <div class="relative z-2 max-w-xl w-full">
-        <div class="absolute -top-px right-11 left-20 h-px bg-linear-to-r from-sky-300/0 via-sky-300/70 to-sky-300/0"></div>
+          <div class="relative z-2 max-w-xl w-full">
+            <div class="absolute -top-px right-11 left-20 h-px bg-linear-to-r from-sky-300/0 via-sky-300/70 to-sky-300/0"></div>
+            <img
+              src={backgroundImage}
+              alt="Hero Image"
+              class="rounded-2xl border border-white/30 shadow-lg"
+            />
+            <div class="absolute -bottom-px right-11 left-20 h-px bg-linear-to-r from-sky-300/0 via-sky-300/70 to-sky-300/0"></div>
+          </div>
+
           <img
-            src={backgroundImage}
-            alt="Hero Image"
-            class="rounded-2xl border border-white/30 shadow-lg"
+            src={blurIndigo}
+            alt="Hero blurIndigo"
+            width={500}
+            height={500}
+            className="z-1 absolute -right-30 top-50 md:top-0 xl:-right-10 object-cover"
           />
-          <div class="absolute -bottom-px right-11 left-20 h-px bg-linear-to-r from-sky-300/0 via-sky-300/70 to-sky-300/0"></div>
+          <img
+            src={blurCyan}
+            alt="Hero blurIndigo"
+            width={500}
+            height={500}
+            className="z-1 absolute right-40 top-50 md:top-10 xl:right-40 object-cover"
+          />
+          <img
+            src={blurCyan}
+            alt="Hero blurIndigo"
+            width={300}
+            height={300}
+            className="z-1 absolute -top-30 -left-30  object-cover opacity-40"
+          />
         </div>
-
-        <img
-          src={blurIndigo}
-          alt="Hero blurIndigo"
-          width={500}
-          height={500}
-          className="z-1 absolute -right-30 top-50 md:top-0 xl:-right-10 object-cover"
-        />
-        <img
-          src={blurCyan}
-          alt="Hero blurIndigo"
-          width={500}
-          height={500}
-          className="z-1 absolute right-40 top-50 md:top-10 xl:right-40 object-cover"
-        />
-        <img
-          src={blurCyan}
-          alt="Hero blurIndigo"
-          width={300}
-          height={300}
-          className="z-1 absolute -top-30 -left-30  object-cover opacity-40"
-        />
-      </div>
       </div>
       {/* <section
         className="hero-section text-white py-20 md:py-30 lg:py-40 relative mb-10"
@@ -232,13 +236,13 @@ const Home = () => {
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
-            {popularSports.map((sport) => (
+            {sports.map((sport) => (
               <SportCard
-                key={sport.id}
-                icon={sport.icon}
-                name={sport.name}
-                count={sport.count}
-                link={`/sports/${sport.id}`}
+                key={sport.SportTypeID}
+                icon={translateIcon[sport.Icon]}
+                name={sport.SportName}
+                // count={sport.count}
+                link={`/sports/${sport.SportTypeID}`}
               />
             ))}
           </div>
@@ -266,17 +270,27 @@ const Home = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {popularCourts.map((court) => (
+            {locations.slice(0, visibleCount).map((location) => (
               <CourtCard
-                key={court.id}
-                name={court.name}
-                image={court.image}
-                location={court.location}
-                price={court.price}
-                rating={court.rating}
-                sport={court.sport}
-                link={`/court/${court.id}`}
-                mode={0} // 0 for card view, 1 for list view
+              name={location.LocationName}
+              image={location.image}
+              location={location.Address}
+              rating={parseFloat(location.AverageRating).toFixed(1)}
+              sport={null}
+              badges={
+                <>
+                  {<span className="bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 text-sm px-2 py-1 rounded mr-1 inline-flex items-center">
+                  <FaClock className="mr-1" />
+                  {location.OpeningTime.split(":")
+                    .slice(0, 2)
+                    .join(":")}{" "}
+                  -{" "}
+                  {location.ClosingTime.split(":").slice(0, 2).join(":")}
+                </span>}
+                </>
+              }
+              mode={0}
+              onClick={() => handleLocationClick(location)} // Sửa lại thành arrow function
               />
             ))}
           </div>
@@ -285,52 +299,63 @@ const Home = () => {
 
       {/* How It Works Section */}
       <Section>
-      <div className="bg-gray-50 dark:bg-gray-700 container mx-auto px-4 py-8">
-  <div className="text-center mb-12">
-    <h2 className="text-3xl font-bold text-gray-800 dark:text-white mb-4">
-      Cách Đặt Sân
-    </h2>
-    <p className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-      Chỉ với 3 bước đơn giản để có sân chơi như ý
-    </p>
-  </div>
+        <div className="bg-gray-50 dark:bg-gray-700 container mx-auto px-4 py-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-gray-800 dark:text-white mb-4">
+              Cách Đặt Sân
+            </h2>
+            <p className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+              Chỉ với 3 bước đơn giản để có sân chơi như ý
+            </p>
+          </div>
 
-  <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-    {/* BƯỚC 1 */}
-    <div className="text-center p-6 rounded-xl bg-white dark:bg-gray-800 shadow-md hover:shadow-2xl transform transition-all duration-300 hover:scale-102 hover:bg-green-50 dark:hover:bg-green-800">
-      <div className="bg-green-100 dark:bg-green-900 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 transition-transform duration-300 group-hover:rotate-12">
-        <span className="text-green-700 dark:text-green-300 text-2xl font-bold">1</span>
-      </div>
-      <h3 className="text-xl font-semibold mb-3 dark:text-white">Tìm sân</h3>
-      <p className="text-gray-600 dark:text-gray-300">
-        Chọn môn thể thao, địa điểm và thời gian bạn muốn chơi
-      </p>
-    </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {/* BƯỚC 1 */}
+            <div className="text-center p-6 rounded-xl bg-white dark:bg-gray-800 shadow-md hover:shadow-2xl transform transition-all duration-300 hover:scale-102 hover:bg-green-50 dark:hover:bg-green-800">
+              <div className="bg-green-100 dark:bg-green-900 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 transition-transform duration-300 group-hover:rotate-12">
+                <span className="text-green-700 dark:text-green-300 text-2xl font-bold">
+                  1
+                </span>
+              </div>
+              <h3 className="text-xl font-semibold mb-3 dark:text-white">
+                Tìm sân
+              </h3>
+              <p className="text-gray-600 dark:text-gray-300">
+                Chọn môn thể thao, địa điểm và thời gian bạn muốn chơi
+              </p>
+            </div>
 
-    {/* BƯỚC 2 */}
-    <div className="text-center p-6 rounded-xl bg-white dark:bg-gray-800 shadow-md hover:shadow-2xl transform transition-all duration-300 hover:scale-102 hover:bg-green-50 dark:hover:bg-green-800">
-      <div className="bg-green-100 dark:bg-green-900 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 transition-transform duration-300 group-hover:rotate-12">
-        <span className="text-green-700 dark:text-green-300 text-2xl font-bold">2</span>
-      </div>
-      <h3 className="text-xl font-semibold mb-3 dark:text-white">Đặt sân</h3>
-      <p className="text-gray-600 dark:text-gray-300">
-        Xác nhận thông tin và thanh toán đơn giản
-      </p>
-    </div>
+            {/* BƯỚC 2 */}
+            <div className="text-center p-6 rounded-xl bg-white dark:bg-gray-800 shadow-md hover:shadow-2xl transform transition-all duration-300 hover:scale-102 hover:bg-green-50 dark:hover:bg-green-800">
+              <div className="bg-green-100 dark:bg-green-900 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 transition-transform duration-300 group-hover:rotate-12">
+                <span className="text-green-700 dark:text-green-300 text-2xl font-bold">
+                  2
+                </span>
+              </div>
+              <h3 className="text-xl font-semibold mb-3 dark:text-white">
+                Đặt sân
+              </h3>
+              <p className="text-gray-600 dark:text-gray-300">
+                Xác nhận thông tin và thanh toán đơn giản
+              </p>
+            </div>
 
-    {/* BƯỚC 3 */}
-    <div className="text-center p-6 rounded-xl bg-white dark:bg-gray-800 shadow-md hover:shadow-2xl transform transition-all duration-300 hover:scale-102 hover:bg-green-50 dark:hover:bg-green-800">
-      <div className="bg-green-100 dark:bg-green-900 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 transition-transform duration-300 group-hover:rotate-12">
-        <span className="text-green-700 dark:text-green-300 text-2xl font-bold">3</span>
-      </div>
-      <h3 className="text-xl font-semibold mb-3 dark:text-white">Chơi thôi!</h3>
-      <p className="text-gray-600 dark:text-gray-300">
-        Đến sân và tận hưởng trận đấu của bạn
-      </p>
-    </div>
-  </div>
-</div>
-
+            {/* BƯỚC 3 */}
+            <div className="text-center p-6 rounded-xl bg-white dark:bg-gray-800 shadow-md hover:shadow-2xl transform transition-all duration-300 hover:scale-102 hover:bg-green-50 dark:hover:bg-green-800">
+              <div className="bg-green-100 dark:bg-green-900 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 transition-transform duration-300 group-hover:rotate-12">
+                <span className="text-green-700 dark:text-green-300 text-2xl font-bold">
+                  3
+                </span>
+              </div>
+              <h3 className="text-xl font-semibold mb-3 dark:text-white">
+                Chơi thôi!
+              </h3>
+              <p className="text-gray-600 dark:text-gray-300">
+                Đến sân và tận hưởng trận đấu của bạn
+              </p>
+            </div>
+          </div>
+        </div>
       </Section>
 
       {/* Testimonials Section */}
@@ -373,6 +398,30 @@ const Home = () => {
           </button>
         </div>
       </Section>
+      {/* Location Detail Modal */}
+      {selectedLocation && showLocationModal && (
+        <div className="fixed md:w-3/4 h-5/6 m-auto inset-0 z-50 overflow-y-auto">
+          <div className="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            {/* Background overlay */}
+            <div
+              className="fixed inset-0 transition-opacity"
+              aria-hidden="true"
+              onClick={() => setShowLocationModal(false)}
+            >
+              <div className="absolute inset-0 bg-gray-500 dark:bg-gray-900 opacity-75"></div>
+            </div>
+
+            {/* Modal content */}
+            <div className="inline-block align-bottom bg-white dark:bg-gray-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-2 sm:align-middle sm:max-w-6xl sm:w-full">
+              <LocationDetail
+                locationId={selectedLocation.LocationID}
+                onClose={() => setShowLocationModal(false)}
+                isModal={true}
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

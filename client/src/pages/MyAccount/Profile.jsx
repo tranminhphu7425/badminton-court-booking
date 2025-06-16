@@ -1,7 +1,17 @@
 import { useState, useEffect } from 'react';
-import { FaUser, FaEnvelope, FaPhone, FaCamera, FaEdit, FaSave } from 'react-icons/fa';
-import Section from '../../components/Section';
 import { Link } from 'react-router-dom';
+
+import {
+  FaUser,
+  FaEnvelope,
+  FaPhone,
+  FaCamera,
+  FaEdit,
+  FaSave,
+} from 'react-icons/fa';
+
+import Section from '../../components/Section';
+
 
 const Profile = () => {
   const [isEditing, setIsEditing] = useState(false);

@@ -1,4 +1,4 @@
-export const sportTypeApi = {
+ const sportTypeApi = {
     async fetchSportTypes(){
       try {
         const response = await fetch('http://localhost:8081/api/sporttypes');
@@ -15,4 +15,9 @@ export const sportTypeApi = {
         throw new Error(`Lỗi tải danh sách các môn thể thao: ${error.message}`)
       }
     },
-}
+};
+
+
+export default sportTypeApi;
+
+

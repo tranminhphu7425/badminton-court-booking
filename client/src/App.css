@@ -33,21 +33,11 @@ body {
   transition: opacity 300ms, transform 300ms;
 }
 
-
-
 .container {
     width: 100%;
     max-width: 1200px;
     margin: 0 auto;
   }
-  
-  /* Hero Section */
-  .hero-section {
-    background: linear-gradient(rgba(26, 115, 82, 0.9), rgba(26, 115, 82, 0.9)), 
-                url('/images/hero-bg.jpg') no-repeat center center;
-    background-size: cover;
-  }
-  
   .search-box input {
     min-width: 0;
   }
