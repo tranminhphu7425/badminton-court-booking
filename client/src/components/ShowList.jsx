@@ -12,9 +12,9 @@ import {
 
 import Div from "./Div";
 
-import CourtCardLoading from "./CourtCardLoading";
+import LocationCardLoading from "./LocationCardLoading";
 
-const CourtCard = lazy(() => import("./CourtCard"));
+const LocationCard = lazy(() => import("./LocationCard"));
 
 const ShowList = ({
   filteredCourts,
@@ -80,16 +80,16 @@ const ShowList = ({
         </div>
 
         <div
-          className={`grid grid-cols-1 ${
-            mode == 0 ? "md:grid-cols-2 lg:grid-cols-3" : ""
+          className={`grid grid-cols-1 auto-rows-[1fr] ${
+            mode == 0 ? "md:grid-cols-2 lg:grid-cols-3 " : ""
           } gap-8`}
         >
           {filteredCourts.slice(0, visibleCount).map((location) => (
             <Div key={location.LocationID}>
-              <Suspense fallback={<CourtCardLoading mode={mode} />}>
-                <CourtCard
+              <Suspense fallback={<LocationCardLoading mode={mode} />}>
+                <LocationCard
                   name={location.LocationName}
-                  image={location.image}
+                  image={location.PrimaryImageUrl}
                   location={location.Address}
                   rating={parseFloat(location.AverageRating).toFixed(1)}
                   sport={sportCode !== "all" ? sportType.SportCode : null}
@@ -127,7 +127,7 @@ const ShowList = ({
           <div className="flex justify-center mt-10">
             <button
               onClick={handleLoadMore}
-              className="px-8 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-full hover:from-green-600 hover:to-emerald-700 transition-all duration-300 shadow-lg hover:shadow-emerald-500/30 flex items-center space-x-2"
+              className="px-8 py-3 mb-8 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-full hover:from-green-600 hover:to-emerald-700 transition-all duration-300 shadow-lg hover:shadow-emerald-500/30 flex items-center space-x-2"
             >
               <span>Xem thêm {filteredCourts.length - visibleCount} sân</span>
               <FaChevronDown className="animate-bounce" />

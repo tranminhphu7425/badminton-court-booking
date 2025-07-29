@@ -2,60 +2,102 @@
 import React, { useState, useEffect } from "react";
 
 // Thư viện bên ngoài
-import { Link } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
+import { Link, useLocation } from "react-router-dom";
+import { motion, AnimatePresence, useAnimation } from "framer-motion";
 
-// Biểu tượng - FontAwesome
+// Biểu tượng
 import {
   FaBars,
-  FaBasketballBall,
+  FaTimes,
+  FaHome,
   FaCalendarAlt,
-  FaCrown,
-  FaFootballBall,
+  FaInfoCircle,
+  FaUser,
+  FaSignInAlt,
+  FaUserPlus,
+  FaPowerOff,
+  FaUserCircle,
   FaHeart,
   FaHistory,
-  FaHome,
-  FaInfoCircle,
-  FaList,
-  FaPowerOff,
-  FaShoppingCart,
-  FaSignInAlt,
-  FaSignOutAlt,
   FaStar,
-  FaTableTennis,
-  FaTimes,
-  FaTimesCircle,
-  FaUser,
-  FaUserCircle,
-  FaUserPlus,
   FaWallet,
+  FaCrown,
+  FaTimesCircle,
   FaHeadset,
+  FaBasketballBall,
 } from "react-icons/fa";
-
-// Biểu tượng - Game Icons, Material Design
-import { GiShuttlecock, GiSoccerBall, GiTennisBall } from "react-icons/gi";
+import {
+  GiBasketballBall,
+  GiSoccerBall,
+  GiTennisBall,
+  GiShuttlecock,
+} from "react-icons/gi";
 import { MdSportsVolleyball } from "react-icons/md";
-
-// Tài nguyên nội bộ
-import  sportTypeApi  from "../api/sportTypeApi";
-
 // Assets
 import logoSrc from "../assets/images/logos/logo.png";
 
-const translateIcon = {
-  GiShuttlecock: <GiShuttlecock />,
-  GiSoccerBall: <GiSoccerBall />,
-  FaBasketballBall: <FaBasketballBall />,
-  MdSportsVolleyball: <MdSportsVolleyball />,
-  GiTennisBall: <GiTennisBall />,
-  FaTableTennis: <FaTableTennis />,
+// Tài nguyên nội bộ
+import sportTypeApi from "../api/sportTypeApi";
+
+const sportIcons = {
+  badminton: <GiShuttlecock className="text-blue-500" />,
+  football: <GiSoccerBall className="text-emerald-500" />,
+  pickleball: <FaBasketballBall className="text-black-500" />,
+  basketball: <GiBasketballBall className="text-orange-500" />,
+  volleyball: <MdSportsVolleyball className="text-red-500" />,
+  tennis: <GiTennisBall className="text-yellow-500" />,
 };
+const navSubItems = [
+  { to: "/booking/1/1", icon: <FaCalendarAlt />, text: "Đặt sân" },
+  { to: "/about", icon: <FaInfoCircle />, text: "Giới thiệu" },
+  { to: "/contact", icon: <FaUser />, text: "Liên hệ" },
+];
 
 const Navigation = ({ isLoggedIn, setIsLoggedIn }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [activeSport, setActiveSport] = useState(null);
+  const [activeDropdown, setActiveDropdown] = useState(null);
   const [sports, setSports] = useState([]);
+  const location = useLocation();
+  const controls = useAnimation();
+
+  // Animation variants
+  const menuVariants = {
+    open: {
+      opacity: 1,
+      height: "auto",
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.2,
+      },
+    },
+    closed: {
+      opacity: 0,
+      height: 0,
+      transition: {
+        staggerChildren: 0.05,
+        staggerDirection: -1,
+        when: "afterChildren",
+      },
+    },
+  };
+
+  const itemVariants = {
+    open: {
+      opacity: 1,
+      y: 0,
+      transition: { type: "spring", stiffness: 300, damping: 24 },
+    },
+    closed: { opacity: 0, y: -20 },
+  };
+
+  const bounceTransition = {
+    y: {
+      duration: 0.4,
+      repeat: Infinity,
+      repeatType: "reverse",
+      ease: "easeOut",
+    },
+  };
 
   useEffect(() => {
     const loadSportTypes = async () => {
@@ -70,379 +112,368 @@ const Navigation = ({ isLoggedIn, setIsLoggedIn }) => {
     loadSportTypes();
   }, []);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 10) {
-        setIsScrolled(true);
-      } else {
-        setIsScrolled(false);
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
   const toggleMenu = () => {
     setIsOpen(!isOpen);
   };
 
-  const toggleDropdown = (sportId) => {
-    setActiveSport(activeSport === sportId ? null : sportId);
+  const toggleDropdown = (dropdown) => {
+    setActiveDropdown(activeDropdown === dropdown ? null : dropdown);
   };
 
   const handleLogout = () => {
     setIsLoggedIn(false);
-    // setActiveSport(null);
-    // You might want to add additional logout logic here
-    // such as clearing local storage, cookies, etc.
   };
 
   return (
-    <header
-      className={`w-full transition-all duration-300 ${
-        isScrolled ? "bg-green-800 shadow-lg" : "bg-green-900"
-      } relative z-30`}
-    >
+    <header className="w-full bg-gradient-to-r from-green-600 to-emerald-600 shadow-lg sticky top-0 z-50">
       <div className="container mx-auto px-4 py-3">
         <div className="flex justify-between items-center">
-          {/* Logo */}
-          <div className="flex items-center">
-            <Link
-              to="/"
-              className="text-white text-2xl font-bold flex items-center"
-            >
-              <img
-                src={logoSrc}
-                className="rounded-lg mr-2"
-                alt=""
-                width={40}
-                height={40}
-              />
-              SportBooking
+          {/* Logo với hiệu ứng bounce */}
+          <motion.div
+            animate={controls}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="flex items-center"
+          >
+            <Link to="/">
+              <div className="flex space-x-2 items-center">
+                <motion.img
+                  src={logoSrc}
+                  alt="Logo"
+                  className="h-12 w-12"
+                  transition={bounceTransition}
+                />
+                <motion.span
+                  className="text-white font-bold text-3xl font-mono"
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.2 }}
+                >
+                  SportBooking
+                </motion.span>
+              </div>
             </Link>
-          </div>
+          </motion.div>
 
           {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center space-x-6">
-            <div className="relative group">
-              <button
-                className="text-white hover:text-green-200 flex items-center space-x-1"
+          <nav className="hidden lg:flex items-center space-x-4">
+            {/* Sports Dropdown */}
+            <motion.div className="relative" whileHover={{ scale: 1.05 }}>
+              <motion.button
+                className="flex items-center space-x-1 text-white p-3 rounded-lg hover:bg-green-700 transition-all"
                 onClick={() => toggleDropdown("sports")}
+                whileTap={{ scale: 0.95 }}
               >
-                <span>Sân thể thao</span>
-                <svg
-                  className="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
+                <span className="font-medium">Sân thể thao</span>
+                <motion.span
+                  animate={{ rotate: activeDropdown === "sports" ? 180 : 0 }}
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M19 9l-7 7-7-7"
-                  />
-                </svg>
-              </button>
+                  ▼
+                </motion.span>
+              </motion.button>
 
               <AnimatePresence>
-                {activeSport === "sports" && (
+                {activeDropdown === "sports" && (
                   <motion.div
-                    initial={{ opacity: 0, y: -10 }}
+                    initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    className="absolute left-0 mt-2 w-max bg-white dark:bg-gray-800 rounded-md shadow-lg z-30"
+                    exit={{ opacity: 0, y: 20 }}
+                    className="absolute left-0 mt-2 w-56 bg-white rounded-lg shadow-xl overflow-hidden"
                   >
-                    <div className="py-1">
-                      <Link
-                        key={0}
-                        to={`/sports/all`}
-                        className="flex px-4 py-2 text-gray-800 dark:text-gray-100 hover:bg-green-100 dark:hover:bg-gray-700 items-center"
-                        onClick={() => setActiveSport(null)}
+                    {sports.map((sport, index) => (
+                      <motion.div
+                        key={sport.SportCode}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: index * 0.05 }}
                       >
-                        <span className="mr-2">
-                          <FaList />
-                        </span>
-                        Tất cả địa điểm
-                      </Link>
-                      {sports.map((sport) => (
                         <Link
-                          key={sport.SportCode}
                           to={`/sports/${sport.SportCode}`}
-                          className="flex px-4 py-2 text-gray-800 dark:text-gray-100 hover:bg-green-100 dark:hover:bg-gray-700 items-center"
-                          onClick={() => setActiveSport(null)}
+                          className="flex items-center px-4 py-2 text-gray-800 hover:bg-emerald-100 transition-colors"
+                          onClick={() => setActiveDropdown(null)}
                         >
-                          <span className="mr-2">
-                            {translateIcon[sport.Icon]}
+                          <span className="mr-3 text-xl">
+                            {sportIcons[sport.SportCode]}
                           </span>
-                          {sport.SportName}
+                          <span>{sport.SportName}</span>
                         </Link>
-                      ))}
-                    </div>
+                      </motion.div>
+                    ))}
                   </motion.div>
                 )}
               </AnimatePresence>
-            </div>
+            </motion.div>
 
-            <Link
-              to="/booking/1/3"
-              className="text-white hover:text-green-200 flex items-center"
-            >
-              <FaCalendarAlt className="mr-1" /> Đặt sân
-            </Link>
-            <Link
-              to="/about"
-              className="text-white hover:text-green-200 flex items-center"
-            >
-              <FaInfoCircle className="mr-1" /> Giới thiệu
-            </Link>
-            <Link
-              to="/contact"
-              className="text-white hover:text-green-200 flex items-center"
-            >
-              <FaUser className="mr-1" /> Liên hệ
-            </Link>
+            {/* Main Nav Items */}
+            {navSubItems.map((item, index) => (
+              <motion.div
+                key={item.to}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Link
+                  to={item.to}
+                  className={`flex items-center space-x-2 p-3 rounded-lg transition-all ${
+                    location.pathname === item.to
+                      ? "bg-white text-emerald-600"
+                      : "text-white hover:bg-green-700"
+                  }`}
+                >
+                  <span className="text-lg">{item.icon}</span>
+                  <span className="font-medium">{item.text}</span>
+                </Link>
+              </motion.div>
+            ))}
 
-            {/* ✅ Hiển thị tùy theo đăng nhập hay chưa */}
+            {/* Auth Buttons */}
             {isLoggedIn ? (
-              <div className="relative group">
-                <button
-                  className="text-white hover:text-green-300 flex items-center space-x-2 transition-colors duration-200"
+              <motion.div className="relative" whileHover={{ scale: 1.05 }}>
+                <motion.button
+                  className="flex items-center space-x-2 text-white p-3 rounded-lg hover:bg-emerald-700 transition-all"
                   onClick={() => toggleDropdown("account")}
+                  whileTap={{ scale: 0.95 }}
                 >
                   <FaUserCircle className="text-xl" />
                   <span className="font-medium">Tài khoản</span>
-                </button>
+                </motion.button>
 
                 <AnimatePresence>
-                  {activeSport === "account" && (
+                  {activeDropdown === "account" && (
                     <motion.div
-                      initial={{ opacity: 0, y: -10, scale: 0.95 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: -10, scale: 0.95 }}
-                      transition={{
-                        type: "spring",
-                        damping: 20,
-                        stiffness: 300,
-                      }}
-                      className="absolute right-0 mt-2 w-56 bg-white dark:bg-gray-800 rounded-lg shadow-xl z-30 border border-gray-200 dark:border-gray-700 overflow-hidden"
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 20 }}
+                      className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-xl overflow-hidden z-50"
                     >
-                      <div className="py-1">
-                        <Link
-                          to="/profile"
-                          className="flex items-center px-4 py-3 text-gray-700 dark:text-gray-200 hover:bg-green-50 dark:hover:bg-gray-700 transition-colors duration-150"
+                      {[
+                        {
+                          icon: <FaUser />,
+                          text: "Trang cá nhân",
+                          to: "/profile",
+                        },
+                        {
+                          icon: <FaHistory />,
+                          text: "Lịch sử đặt sân",
+                          to: "/history",
+                        },
+                        {
+                          icon: <FaHeart />,
+                          text: "Sân yêu thích",
+                          to: "/favorites",
+                        },
+                        {
+                          icon: <FaStar />,
+                          text: "Đánh giá của tôi",
+                          to: "/reviews",
+                        },
+                        {
+                          icon: <FaWallet />,
+                          text: "Ví thanh toán",
+                          to: "/wallet",
+                        },
+                        {
+                          icon: <FaCrown />,
+                          text: "Gói hội viên",
+                          to: "/membership",
+                        },
+                        {
+                          icon: <FaTimesCircle />,
+                          text: "Đơn đã hủy",
+                          to: "/canceled",
+                        },
+                        { icon: <FaHeadset />, text: "Hỗ trợ", to: "/support" },
+                      ].map((item, index) => (
+                        <motion.div
+                          key={item.text}
+                          initial={{ opacity: 0, x: -20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: index * 0.05 }}
                         >
-                          <FaUser className="mr-3 text-gray-500 dark:text-gray-400" />
-                          <span>Trang cá nhân</span>
-                        </Link>
-
-                        <Link
-                          to="/bookings/history"
-                          className="flex items-center px-4 py-3 text-gray-700 dark:text-gray-200 hover:bg-green-50 dark:hover:bg-gray-700 transition-colors duration-150"
-                        >
-                          <FaHistory className="mr-3 text-gray-500 dark:text-gray-400" />
-                          <span>Lịch sử đặt sân</span>
-                        </Link>
-
-                        <Link
-                          to="/favorites"
-                          className="flex items-center px-4 py-3 text-gray-700 dark:text-gray-200 hover:bg-green-50 dark:hover:bg-gray-700 transition-colors duration-150"
-                        >
-                          <FaHeart className="mr-3 text-gray-500 dark:text-gray-400" />
-                          <span>Sân yêu thích</span>
-                        </Link>
-
-                        <Link
-                          to="/reviews"
-                          className="flex items-center px-4 py-3 text-gray-700 dark:text-gray-200 hover:bg-green-50 dark:hover:bg-gray-700 transition-colors duration-150"
-                        >
-                          <FaStar className="mr-3 text-gray-500 dark:text-gray-400" />
-                          <span>Đánh giá của tôi</span>
-                        </Link>
-
-                        <Link
-                          to="/wallet"
-                          className="flex items-center px-4 py-3 text-gray-700 dark:text-gray-200 hover:bg-green-50 dark:hover:bg-gray-700 transition-colors duration-150"
-                        >
-                          <FaWallet className="mr-3 text-gray-500 dark:text-gray-400" />
-                          <span>Ví thanh toán</span>
-                        </Link>
-
-                        <Link
-                          to="/membership"
-                          className="flex items-center px-4 py-3 text-gray-700 dark:text-gray-200 hover:bg-green-50 dark:hover:bg-gray-700 transition-colors duration-150"
-                        >
-                          <FaCrown className="mr-3 text-gray-500 dark:text-gray-400" />
-                          <span>Gói hội viên</span>
-                        </Link>
-
-                        <Link
-                          to="/orders/canceled"
-                          className="flex items-center px-4 py-3 text-gray-700 dark:text-gray-200 hover:bg-green-50 dark:hover:bg-gray-700 transition-colors duration-150"
-                        >
-                          <FaTimesCircle className="mr-3 text-gray-500 dark:text-gray-400" />
-                          <span>Đơn đã hủy</span>
-                        </Link>
-
-                        <Link
-                          to="/support"
-                          className="flex items-center px-4 py-3 text-gray-700 dark:text-gray-200 hover:bg-green-50 dark:hover:bg-gray-700 transition-colors duration-150"
-                        >
-                          <FaHeadset className="mr-3 text-gray-500 dark:text-gray-400" />
-                          <span>Trung tâm hỗ trợ</span>
-                        </Link>
-
-                        <div className="border-t border-gray-200 dark:border-gray-700 my-1"></div>
-
+                          <Link
+                            to={item.to}
+                            className="flex items-center px-4 py-3 text-gray-800 hover:bg-emerald-100 transition-colors"
+                            onClick={() => setActiveDropdown(null)}
+                          >
+                            <span className="mr-3 text-emerald-600">
+                              {item.icon}
+                            </span>
+                            <span>{item.text}</span>
+                          </Link>
+                        </motion.div>
+                      ))}
+                      <motion.div
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.4 }}
+                        className="border-t border-gray-200"
+                      >
                         <button
                           onClick={handleLogout}
-                          className="flex items-center w-full px-4 py-3 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-gray-700 transition-colors duration-150"
+                          className="flex items-center w-full px-4 py-3 text-red-500 hover:bg-red-50 transition-colors"
                         >
                           <FaPowerOff className="mr-3" />
                           <span>Đăng xuất</span>
                         </button>
-                      </div>
+                      </motion.div>
                     </motion.div>
                   )}
                 </AnimatePresence>
-              </div>
+              </motion.div>
             ) : (
-              <Link
-                to="/login"
-                className="text-white hover:text-green-200 flex items-center bg-green-600 px-4 py-2 rounded-lg"
-              >
-                <FaSignInAlt className="mr-2" />
-                Đăng nhập
-              </Link>
+              <div className="flex space-x-3">
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <Link
+                    to="/login"
+                    className="flex items-center space-x-2 bg-white text-emerald-600 px-4 py-2 rounded-lg font-medium"
+                  >
+                    <FaSignInAlt />
+                    <span>Đăng nhập</span>
+                  </Link>
+                </motion.div>
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <Link
+                    to="/register"
+                    className="flex items-center space-x-2 bg-yellow-400 text-white px-4 py-2 rounded-lg font-medium"
+                  >
+                    <FaUserPlus />
+                    <span>Đăng ký</span>
+                  </Link>
+                </motion.div>
+              </div>
             )}
           </nav>
 
-          {/* Mobile menu button */}
-          <div className="lg:hidden flex items-center">
-            <button
-              onClick={toggleMenu}
-              className="text-white focus:outline-none"
-              aria-label="Toggle menu"
-            >
-              {isOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
-            </button>
-          </div>
+          {/* Mobile Menu Button */}
+          <motion.button
+            className="lg:hidden text-white focus:outline-none"
+            onClick={toggleMenu}
+            whileTap={{ scale: 0.9 }}
+            aria-label="Toggle menu"
+          >
+            {isOpen ? (
+              <FaTimes className="text-2xl" />
+            ) : (
+              <FaBars className="text-2xl" />
+            )}
+          </motion.button>
         </div>
 
         {/* Mobile Navigation */}
         <AnimatePresence>
           {isOpen && (
             <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
+              initial="closed"
+              animate="open"
+              exit="closed"
+              variants={menuVariants}
               className="lg:hidden overflow-hidden"
             >
-              <div className="pt-4 pb-2 space-y-2">
-                <div>
-                  <button
-                    className="w-full flex justify-between items-center text-white py-2 px-3 bg-green-700 rounded"
+              <motion.div
+                className="pt-4 pb-2 space-y-2"
+                variants={menuVariants}
+              >
+                {/* Sports Dropdown */}
+                <motion.div variants={itemVariants}>
+                  <motion.button
+                    className="w-full flex justify-between items-center rounded-lg text-white hover:bg-emerald-700 py-3 px-4 hover:bg-emerald-50 transition"
                     onClick={() => toggleDropdown("mobile-sports")}
+                    whileTap={{ scale: 0.97 }}
                   >
                     <span>Sân thể thao</span>
-                    <svg
-                      className="w-4 h-4 transform transition-transform"
-                      style={{
-                        rotate:
-                          activeSport === "mobile-sports" ? "180deg" : "0deg",
+                    <motion.span
+                      animate={{
+                        rotate: activeDropdown === "mobile-sports" ? 180 : 0,
                       }}
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
+                      transition={{ duration: 0.2 }}
+                      className="text-sm"
                     >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M19 9l-7 7-7-7"
-                      />
-                    </svg>
-                  </button>
+                      ▼
+                    </motion.span>
+                  </motion.button>
 
                   <AnimatePresence>
-                    {activeSport === "mobile-sports" && (
+                    {activeDropdown === "mobile-sports" && (
                       <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: "auto" }}
-                        exit={{ opacity: 0, height: 0 }}
-                        className="ml-4 mt-2 space-y-1"
+                        initial="closed"
+                        animate="open"
+                        exit="closed"
+                        variants={menuVariants}
+                        className="mt-2 space-y-1 bg-emerald-100 border border-emerald-200 rounded-xl shadow-lg px-2 py-2"
                       >
-                        <Link
-                          key={0}
-                          to={`/sports/all`}
-                          className="flex py-2 px-3 text-white hover:bg-green-700 rounded items-center"
-                          onClick={() => {
-                            setActiveSport(null);
-                            setIsOpen(false);
-                          }}
-                        >
-                          <span className="mr-2">
-                            <FaList />
-                          </span>
-                          Tất cả địa điểm
-                        </Link>
                         {sports.map((sport) => (
-                          <Link
+                          <motion.div
                             key={sport.SportCode}
-                            to={`/sports/${sport.SportCode}`}
-                            className="flex py-2 px-3 text-white hover:bg-green-700 rounded items-center"
-                            onClick={() => {
-                              setActiveSport(null);
-                              setIsOpen(false);
-                            }}
+                            variants={itemVariants}
                           >
-                            <span className="mr-2">
-                              {translateIcon[sport.Icon]}
-                            </span>
-                            {sport.SportName}
-                          </Link>
+                            <Link
+                              to={`/sports/${sport.SportCode}`}
+                              className="flex items-center gap-3 py-2 px-3 text-emerald-700 hover:bg-emerald-200 hover:text-emerald-900 rounded-lg transition"
+                              onClick={() => {
+                                setActiveDropdown(null);
+                                setIsOpen(false);
+                              }}
+                            >
+                              <span className="text-lg">
+                                {sportIcons[sport.SportCode]}
+                              </span>
+                              <span className="text-sm font-medium">
+                                {sport.SportName}
+                              </span>
+                            </Link>
+                          </motion.div>
                         ))}
                       </motion.div>
                     )}
                   </AnimatePresence>
-                </div>
+                </motion.div>
 
-                <Link
-                  to="/booking/1/3"
-                  className="flex py-2 px-3 text-white hover:bg-green-700 rounded items-center"
-                >
-                  <FaCalendarAlt className="mr-2" /> Đặt sân
-                </Link>
-                <Link
-                  to="/about"
-                  className="flex py-2 px-3 text-white hover:bg-green-700 rounded items-center"
-                >
-                  <FaInfoCircle className="mr-2" /> Giới thiệu
-                </Link>
-                <Link
-                  to="/contact"
-                  className="flex py-2 px-3 text-white hover:bg-green-700 rounded items-center"
-                >
-                  <FaUser className="mr-2" /> Liên hệ
-                </Link>
+                {/* Main Mobile Nav Items */}
+                {navSubItems.map((item) => (
+                  <motion.div key={item.to} variants={itemVariants}>
+                    <Link
+                      to={item.to}
+                      className={`flex items-center py-3 px-4 rounded-lg ${
+                        location.pathname === item.to
+                          ? "bg-white text-emerald-600"
+                          : "text-white hover:bg-emerald-700"
+                      }`}
+                      onClick={() => setIsOpen(false)}
+                    >
+                      <span className="mr-3">{item.icon}</span>
+                      <span className="font-medium">{item.text}</span>
+                    </Link>
+                  </motion.div>
+                ))}
 
-                <div className="flex items-center space-x-4 justify-center">
+                {/* Mobile Auth Buttons */}
+                <motion.div
+                  className="flex flex-col space-y-2 mt-4"
+                  variants={itemVariants}
+                >
                   {isLoggedIn ? (
                     <>
                       <Link
                         to="/profile"
-                        className="text-white hover:text-green-200 flex items-center space-x-1 gap-1 bg-green-500 px-4 py-2 rounded-lg"
+                        className="flex justify-center items-center py-3 px-4 bg-white text-emerald-600 rounded-lg font-medium"
+                        onClick={() => setIsOpen(false)}
                       >
-                        <span>Trang cá nhân</span>
+                        <FaUserCircle className="mr-2" />
+                        <span>Tài khoản</span>
                       </Link>
                       <button
-                        className="text-white hover:text-green-200 flex items-center space-x-1 gap-1 bg-red-500 px-4 py-2 rounded-lg"
-                        onClick={handleLogout}
+                        className="flex justify-center items-center py-3 px-4 bg-red-500 text-white rounded-lg font-medium"
+                        onClick={() => {
+                          handleLogout();
+                          setIsOpen(false);
+                        }}
                       >
-                        <FaPowerOff />
+                        <FaPowerOff className="mr-2" />
                         <span>Đăng xuất</span>
                       </button>
                     </>
@@ -450,22 +481,24 @@ const Navigation = ({ isLoggedIn, setIsLoggedIn }) => {
                     <>
                       <Link
                         to="/login"
-                        className="text-white hover:text-green-200 flex items-center bg-green-600 px-4 py-2 rounded-lg"
+                        className="flex justify-center items-center py-3 px-4 bg-white text-emerald-600 rounded-lg font-medium"
+                        onClick={() => setIsOpen(false)}
                       >
                         <FaSignInAlt className="mr-2" />
-                        Đăng nhập
+                        <span>Đăng nhập</span>
                       </Link>
                       <Link
                         to="/register"
-                        className="text-white hover:text-green-200 flex items-center bg-green-500 px-4 py-2 rounded-lg"
+                        className="flex justify-center items-center py-3 px-4 bg-yellow-400 text-white rounded-lg font-medium"
+                        onClick={() => setIsOpen(false)}
                       >
                         <FaUserPlus className="mr-2" />
-                        Đăng ký
+                        <span>Đăng ký</span>
                       </Link>
                     </>
                   )}
-                </div>
-              </div>
+                </motion.div>
+              </motion.div>
             </motion.div>
           )}
         </AnimatePresence>

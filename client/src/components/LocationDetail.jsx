@@ -32,6 +32,7 @@ const LocationDetail = ({ onClose, isModal, locationId, isFavoritePage }) => {
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState("info");
   const [showBookingForm, setShowBookingForm] = useState(false);
+  const [mainImageIndex, setMainImageIndex] = useState(0);
   const [selectedSport, setSelectedSport] = useState(null);
 
   useEffect(() => {
@@ -40,6 +41,7 @@ const LocationDetail = ({ onClose, isModal, locationId, isFavoritePage }) => {
         const data = await locationApi.fetchLocationById(locationId);
         setLocation(data);
         setLoading(false);
+        console.log("Thong tin ve dia diem: ", data);
       } catch (err) {
         setError(err);
         console.log(err);
@@ -205,9 +207,12 @@ const LocationDetail = ({ onClose, isModal, locationId, isFavoritePage }) => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-8">
           <div className="lg:col-span-2">
             <img
-              src={location.image || "https://scontent-hkg1-2.xx.fbcdn.net/v/t39.30808-6/495958050_1017980043814723_5626933874150903583_n.jpg?stp=dst-jpg_s600x600_tt6&_nc_cat=102&ccb=1-7&_nc_sid=127cfc&_nc_eui2=AeFzelKbwhjOIvvs-ZT6rn1mRO31um_gkVpE7fW6b-CRWhHMeS0XWieRbAr9flfhblf-IvZl8EJoZnA4ak9QMWwI&_nc_ohc=A4zMW4igbCYQ7kNvwGNd_i3&_nc_oc=AdlTJId8hokB1aaGAhhI2lJdAj4pYRpMda8D3gPnaObwQgcGp-xMIYF5dhdWJth2aqQ&_nc_zt=23&_nc_ht=scontent-hkg1-2.xx&_nc_gid=GZg2X7GGhYIFk05X-5NYHQ&oh=00_AfJffIJrBmC3irZGT-ZVtgJkPPq9mkBVTB9psEeArcvO_w&oe=683B073E"}
+              src={location.Images[mainImageIndex] || "https://scontent-hkg1-2.xx.fbcdn.net/v/t39.30808-6/495958050_1017980043814723_5626933874150903583_n.jpg?stp=dst-jpg_s600x600_tt6&_nc_cat=102&ccb=1-7&_nc_sid=127cfc&_nc_eui2=AeFzelKbwhjOIvvs-ZT6rn1mRO31um_gkVpE7fW6b-CRWhHMeS0XWieRbAr9flfhblf-IvZl8EJoZnA4ak9QMWwI&_nc_ohc=A4zMW4igbCYQ7kNvwGNd_i3&_nc_oc=AdlTJId8hokB1aaGAhhI2lJdAj4pYRpMda8D3gPnaObwQgcGp-xMIYF5dhdWJth2aqQ&_nc_zt=23&_nc_ht=scontent-hkg1-2.xx&_nc_gid=GZg2X7GGhYIFk05X-5NYHQ&oh=00_AfJffIJrBmC3irZGT-ZVtgJkPPq9mkBVTB9psEeArcvO_w&oe=683B073E"}
               alt={location.LocationName}
               className="w-full h-64 lg:h-96 object-cover rounded-lg"
+              onclick = { () => {
+                setMainImageIndex((prev) => (prev + 1) % location.Images.length);
+              }}
             />
           </div>
           <div className="grid grid-cols-2 gap-4">
@@ -215,10 +220,11 @@ const LocationDetail = ({ onClose, isModal, locationId, isFavoritePage }) => {
               <img
                 key={i}
                 src={
-                  location[`image${i}`] || "https://scontent-hkg1-2.xx.fbcdn.net/v/t39.30808-6/495958050_1017980043814723_5626933874150903583_n.jpg?stp=dst-jpg_s600x600_tt6&_nc_cat=102&ccb=1-7&_nc_sid=127cfc&_nc_eui2=AeFzelKbwhjOIvvs-ZT6rn1mRO31um_gkVpE7fW6b-CRWhHMeS0XWieRbAr9flfhblf-IvZl8EJoZnA4ak9QMWwI&_nc_ohc=A4zMW4igbCYQ7kNvwGNd_i3&_nc_oc=AdlTJId8hokB1aaGAhhI2lJdAj4pYRpMda8D3gPnaObwQgcGp-xMIYF5dhdWJth2aqQ&_nc_zt=23&_nc_ht=scontent-hkg1-2.xx&_nc_gid=GZg2X7GGhYIFk05X-5NYHQ&oh=00_AfJffIJrBmC3irZGT-ZVtgJkPPq9mkBVTB9psEeArcvO_w&oe=683B073E"
+                  location.Images[i] || "https://scontent-hkg1-2.xx.fbcdn.net/v/t39.30808-6/495958050_1017980043814723_5626933874150903583_n.jpg?stp=dst-jpg_s600x600_tt6&_nc_cat=102&ccb=1-7&_nc_sid=127cfc&_nc_eui2=AeFzelKbwhjOIvvs-ZT6rn1mRO31um_gkVpE7fW6b-CRWhHMeS0XWieRbAr9flfhblf-IvZl8EJoZnA4ak9QMWwI&_nc_ohc=A4zMW4igbCYQ7kNvwGNd_i3&_nc_oc=AdlTJId8hokB1aaGAhhI2lJdAj4pYRpMda8D3gPnaObwQgcGp-xMIYF5dhdWJth2aqQ&_nc_zt=23&_nc_ht=scontent-hkg1-2.xx&_nc_gid=GZg2X7GGhYIFk05X-5NYHQ&oh=00_AfJffIJrBmC3irZGT-ZVtgJkPPq9mkBVTB9psEeArcvO_w&oe=683B073E"
                 }
                 alt={`${location.LocationName} ${i}`}
                 className="w-full h-32 object-cover rounded-lg"
+                onClick={() => setMainImageIndex(i)}
               />
             ))}
           </div>
@@ -276,28 +282,28 @@ const LocationDetail = ({ onClose, isModal, locationId, isFavoritePage }) => {
                   Tiện ích
                 </h3>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                  {location.amenities?.parking && (
+                  {location.amenities?.parking == "1" && (
                     <div className="flex items-center">
                       <span className="bg-gray-100 dark:bg-gray-600 text-gray-800 dark:text-gray-200 px-2 py-1 rounded text-sm">
                         🅿️ Chỗ đậu xe
                       </span>
                     </div>
                   )}
-                  {location.amenities?.shower && (
+                  {location.amenities?.shower == "1" && (
                     <div className="flex items-center">
                       <span className="bg-gray-100 dark:bg-gray-600 text-gray-800 dark:text-gray-200 px-2 py-1 rounded text-sm">
                         🚿 Phòng tắm
                       </span>
                     </div>
                   )}
-                  {location.amenities?.drinks && (
+                  {location.amenities?.drinks == "1" && (
                     <div className="flex items-center">
                       <span className="bg-gray-100 dark:bg-gray-600 text-gray-800 dark:text-gray-200 px-2 py-1 rounded text-sm">
                         🥤 Nước uống
                       </span>
                     </div>
                   )}
-                  {location.amenities?.lights && (
+                  {location.amenities?.lights == "1" && (
                     <div className="flex items-center">
                       <span className="bg-gray-100 dark:bg-gray-600 text-gray-800 dark:text-gray-200 px-2 py-1 rounded text-sm">
                         💡 Đèn chiếu sáng

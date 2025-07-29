@@ -11,7 +11,7 @@ import blurIndigo from "../assets/images/backgrounds/home/blur-indigo.b752cf77.p
 import blurCyan from "../assets/images/backgrounds/home/blur-cyan.d28a5585.png";
 
 import SportCard from "../components/SportCard";
-import CourtCard from "../components/CourtCard";
+import LocationCard from "../components/LocationCard";
 import TestimonialCard from "../components/TestimonialCard";
 import LocationDetail from "../components/LocationDetail";
 import Section from "../components/Section";
@@ -73,10 +73,11 @@ const Home = () => {
     loadSportTypes();
   }, []);
 
+
   useEffect(() => {
     const loadAllLocations = async () => {
       try {
-        setLoading(true); // ⏳ bắt đầu loading
+        setLoading(true);
   
         // Tạo danh sách promise
         const locationPromises = sports.map((sport) =>
@@ -211,9 +212,9 @@ const Home = () => {
           <img
             src={blurCyan}
             alt="Hero blurIndigo"
-            width={300}
-            height={300}
-            className="z-1 absolute -top-30 -left-30  object-cover opacity-40"
+            width={400}
+            height={400}
+            className="z-1 absolute -top-20 -left-30  object-cover opacity-30"
           />
         </div>
       </div>
@@ -274,8 +275,8 @@ const Home = () => {
                 key={sport.SportTypeID}
                 icon={translateIcon[sport.Icon]}
                 name={sport.SportName}
-                count={numberLocation[sport.SportTypeID-1]}
-                link={`/sports/${sport.SportCode}`}
+                count={numberLocation[sport.SportTypeID]}              
+                  link={`/sports/${sport.SportCode}`}
               />
             ))}
           </div>
@@ -304,9 +305,10 @@ const Home = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {locations.slice(0, visibleCount).map((location) => (
-              <CourtCard
+              <LocationCard
+              key={location.locationId}
               name={location.LocationName}
-              image={location.image}
+              image={location.PrimaryImageUrl } 
               location={location.Address}
               rating={parseFloat(location.AverageRating).toFixed(1)}
               sport={null}

@@ -10,7 +10,7 @@ import {
 } from "react-icons/fa";
 import { GiTennisCourt } from "react-icons/gi";
 
-import CourtCard from "../../components/CourtCard";
+import LocationCard from "../../components/LocationCard";
 import LocationDetail from "../../components/LocationDetail";
 import Div from "../../components/Div";
 import ShowList from "../../components/ShowList";
@@ -52,6 +52,7 @@ const Favorite = () => {
               fetch(`http://localhost:8081/api/locations/${id}`).then(res => res.json())
           ));
           setFavorites(response);
+          console.log("Favorites: ", response);
         } else {
           setFavorites([]);
         }

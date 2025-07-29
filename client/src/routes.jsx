@@ -12,8 +12,13 @@ const CourtsList = lazy(() => import('./pages/Courts/List'));
 const CourtDetail = lazy(() => import('./pages/Courts/Detail'));
 const BookingMain = lazy(() => import('./pages/Booking/Main'));
 const BookingConfirm = lazy(() => import('./pages/Booking/Confirm'));
-const BookingHistory = lazy(() => import('./pages/Booking/History'));
+const BookingHistory = lazy(() => import('./pages/MyAccount/BookingHistory'));
 const Favorite = lazy(() => import('./pages/MyAccount/Favorite'));
+const MyReviews = lazy(() => import('./pages/MyAccount/MyReviews'));
+const Wallet = lazy(() => import('./pages/MyAccount/Wallet'));
+const Membership = lazy(() => import('./pages/MyAccount/Membership'));
+const CancelledBookings = lazy(() => import('./pages/MyAccount/CancelledBookings'));
+const SupportCenter = lazy(() => import('./pages/MyAccount/SupportCenter'));
 const Profile = lazy(() => import('./pages/MyAccount/Profile'));
 
 export const getRoutes  =  (isLoggedIn, setIsLoggedIn) => [
@@ -77,11 +82,7 @@ export const getRoutes  =  (isLoggedIn, setIsLoggedIn) => [
     element: <BookingConfirm />,
     name: 'Xác nhận đặt sân'
   },
-  {
-    path: '/booking/history',
-    element: <BookingHistory />,
-    name: 'Lịch sử đặt sân'
-  },
+  
   {
     path: '/favorites',
     element: <Favorite/>,
@@ -91,5 +92,33 @@ export const getRoutes  =  (isLoggedIn, setIsLoggedIn) => [
     path: '/profile',
     element: <Profile/>,
     name: 'Trang hồ sơ'
+  }, {
+    path: '/history',
+    element: <BookingHistory />,
+    name: 'Lịch sử đặt sân'
+  },{
+    path: '/reviews',
+    element: <MyReviews/>,
+    name: 'Đánh giá của tôi'
+  }
+  ,{
+    path: '/wallet',
+    element: <Wallet />,
+    name: 'Ví thanh toán'
+  },
+  {
+    path: '/membership',
+    element: <Membership />,
+    name: 'Gói hội viên'
+  },
+  {
+    path: '/canceled',
+    element: <CancelledBookings />,
+    name: 'Đơn bị hủy'
+  },
+  {
+    path: '/support',
+    element: <SupportCenter/>,
+    name: 'Trung tâm hỗ trợ'
   }
 ];

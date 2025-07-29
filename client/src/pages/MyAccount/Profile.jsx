@@ -189,12 +189,12 @@ const Profile = () => {
                 <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">
                   Lịch sử đặt sân
                 </h2>
-                <p className="text-gray-600 dark:text-gray-300">
+                <p className="mb-4 text-gray-600 dark:text-gray-300">
                   Xem lịch sử đặt sân của bạn
                 </p>
-                <button className="mt-4 text-green-500 hover:text-green-600 dark:text-green-400 dark:hover:text-green-300">
+                <Link to = "/bookings/history" className="text-green-500 hover:text-green-600 dark:text-green-400 dark:hover:text-green-300">
                   Xem chi tiết →
-                </button>
+                </Link>
               </div>
 
               {/* Favorite Courts */}
@@ -202,11 +202,22 @@ const Profile = () => {
                 <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">
                   Sân yêu thích
                 </h2>
-                <p className="text-gray-600 dark:text-gray-300">
+                <p className="mb-4 text-gray-600 dark:text-gray-300">
                   Quản lý danh sách sân yêu thích
                 </p>
                 <Link  to = "/favorites"
-                className="mt-4 text-green-500 hover:text-green-600 dark:text-green-400 dark:hover:text-green-300">
+                className="text-green-500 hover:text-green-600 dark:text-green-400 dark:hover:text-green-300">
+                  Xem chi tiết →
+                </Link>
+              </div>
+              <div className="bg-white dark:bg-gray-700 rounded-xl shadow-sm p-6">
+                <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">
+                  Đánh giá của tôi
+                </h2>
+                <p className="mb-4 text-gray-600 dark:text-gray-300">
+                  Quản lý đánh giá của bạn
+                </p>
+                <Link to = "/reviews" className="text-green-500 hover:text-green-600 dark:text-green-400 dark:hover:text-green-300">
                   Xem chi tiết →
                 </Link>
               </div>

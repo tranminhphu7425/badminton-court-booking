@@ -6,7 +6,7 @@ import {
   FaClock,
   FaParking,
   FaShower,
-  FaGlassWater,
+  // FaGlassWater,
   FaLightbulb,
   FaCalendarAlt,
   FaPhone,

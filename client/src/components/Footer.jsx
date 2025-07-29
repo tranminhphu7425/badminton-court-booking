@@ -88,7 +88,7 @@ const Footer = () => {
           </li>
           <li>
             <Link
-              to="/sports"
+              to="/sports/all"
               className="text-gray-600 hover:text-green-600 dark:text-gray-300 dark:hover:text-green-400 transition duration-300"
             >
               Môn thể thao

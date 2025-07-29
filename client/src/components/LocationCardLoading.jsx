@@ -1,6 +1,6 @@
 import { FaStar, FaMapMarkerAlt } from "react-icons/fa";
 
-const CourtCardLoading = ({ mode }) => {
+const LocationCardLoading = ({ mode }) => {
   return (
     <div className="group block focus:outline-none rounded-xl animate-pulse">
       {mode === 0 ? (
@@ -48,4 +48,4 @@ const CourtCardLoading = ({ mode }) => {
   );
 };
 
-export default CourtCardLoading;
+export default LocationCardLoading;
