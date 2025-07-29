@@ -192,7 +192,7 @@ const Profile = () => {
                 <p className="mb-4 text-gray-600 dark:text-gray-300">
                   Xem lịch sử đặt sân của bạn
                 </p>
-                <Link to = "/bookings/history" className="text-green-500 hover:text-green-600 dark:text-green-400 dark:hover:text-green-300">
+                <Link to = "/history" className="text-green-500 hover:text-green-600 dark:text-green-400 dark:hover:text-green-300">
                   Xem chi tiết →
                 </Link>
               </div>

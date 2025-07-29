@@ -8,6 +8,8 @@ import {
   FaClock,
   FaThLarge,
   FaList,
+  FaFire,
+  FaChevronRight,
 } from "react-icons/fa";
 import { GiTennisCourt } from "react-icons/gi";
 
@@ -20,8 +22,6 @@ import LocationDetail from "../../components/LocationDetail";
 import ShowList from "../../components/ShowList";
 
 import locationApi from "../../api/locationApi";
-
-
 
 function capitalizeFirstLetter(str) {
   if (!str) return "";
@@ -38,7 +38,7 @@ const SportLayout = () => {
   const [mode, setMode] = useState(0);
   const [selectedLocation, setSelectedLocation] = useState(null);
   const [showLocationModal, setShowLocationModal] = useState(false);
-  
+
   // State cho bộ lọc
   const [filters, setFilters] = useState({
     province: null,
@@ -457,7 +457,7 @@ const SportLayout = () => {
       </section>
 
       {/* Results Section */}
-      <section className="py-4 dark:bg-gray-800">
+      <section className="py-4 dark:bg-gray-800 relative">
         <div className="container mx-auto px-4">
           {loading ? (
             <div className="text-center py-12">
@@ -485,16 +485,95 @@ const SportLayout = () => {
               </div>
             </div>
           ) : (
-            <>
-              <ShowList
-                filteredCourts={filteredCourts}
-                sportCode={sportCode}
-                sportType={sportType}
-                mode={mode}
-                setMode={setMode}
-                handleLocationClick={handleLocationClick}
-              />
-            </>
+            <div className="flex flex-col lg:flex-row">
+              {/* Main content */}
+              <div className="w-full lg:w-3/4">
+                <ShowList
+                  filteredCourts={filteredCourts}
+                  sportCode={sportCode}
+                  sportType={sportType}
+                  mode={mode}
+                  setMode={setMode}
+                  handleLocationClick={handleLocationClick}
+                />
+              </div>
+
+              {/* Top sân bên phải - chỉ hiển thị trên desktop */}
+              <div className="hidden lg:block lg:w-1/4 lg:pl-8 lg:pr-0 lg:ml-8 lg:-mr-8">
+                <div className="bg-white dark:bg-gray-700 rounded-xl shadow-lg p-6 sticky top-20">
+                  <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-4 pb-2 border-b border-gray-200 dark:border-gray-600">
+                    <span className="bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 px-2 py-1 rounded mr-2">
+                      TOP
+                    </span>
+                    Sân đặt nhiều nhất hôm nay
+                  </h3>
+
+                  <div className="space-y-4">
+                    {[
+                      {
+                        id: 1,
+                        name: "Sân bóng Hoa Lư",
+                        bookings: 42,
+                        sport: "Bóng đá",
+                      },
+                      {
+                        id: 2,
+                        name: "Sân cầu lông Sunshine",
+                        bookings: 35,
+                        sport: "Cầu lông",
+                      },
+                      {
+                        id: 3,
+                        name: "Sân tennis Q1",
+                        bookings: 28,
+                        sport: "Tennis",
+                      },
+                      {
+                        id: 4,
+                        name: "Sân bóng rổ Galaxy",
+                        bookings: 22,
+                        sport: "Bóng rổ",
+                      },
+                      {
+                        id: 5,
+                        name: "Sân bóng chuyền Sài Gòn",
+                        bookings: 18,
+                        sport: "Bóng chuyền",
+                      },
+                    ].map((court) => (
+                      <div
+                        key={court.id}
+                        className="flex items-start p-3 hover:bg-gray-50 dark:hover:bg-gray-600 rounded-lg transition cursor-pointer"
+                        onClick={() =>
+                          handleLocationClick({ LocationID: court.id })
+                        }
+                      >
+                        <span className="bg-green-500 text-white text-sm font-bold w-6 h-6 flex items-center justify-center rounded-full mr-3 mt-1">
+                          {court.id}
+                        </span>
+                        <div className="flex-1">
+                          <h4 className="font-medium text-gray-800 dark:text-white">
+                            {court.name}
+                          </h4>
+                          <div className="flex justify-between items-center mt-1">
+                            <span className="text-xs px-2 py-1 bg-gray-100 dark:bg-gray-500 rounded-full text-gray-600 dark:text-gray-200">
+                              {court.sport}
+                            </span>
+                            <span className="text-sm text-green-600 dark:text-green-400 font-medium">
+                              {court.bookings} lượt
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <button className="w-full mt-4 py-2 px-4 bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-800 text-white rounded-lg text-sm font-medium transition">
+                    Xem tất cả
+                  </button>
+                </div>
+              </div>
+            </div>
           )}
         </div>
       </section>

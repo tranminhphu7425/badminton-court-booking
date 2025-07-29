@@ -25,6 +25,7 @@ import {
   FaTimesCircle,
   FaHeadset,
   FaBasketballBall,
+  FaList,
 } from "react-icons/fa";
 import {
   GiBasketballBall,
@@ -180,6 +181,17 @@ const Navigation = ({ isLoggedIn, setIsLoggedIn }) => {
                     exit={{ opacity: 0, y: 20 }}
                     className="absolute left-0 mt-2 w-56 bg-white rounded-lg shadow-xl overflow-hidden"
                   >
+                    <Link
+                      key={0}
+                      to={`/sports/all`}
+                      className="flex items-center px-4 py-2 text-gray-800 hover:bg-emerald-100 transition-colors"
+                      onClick={() => setActiveSport(null)}
+                    >
+                      <span className="mr-3 text-xl">
+                        <FaList />
+                      </span>
+                      Tất cả địa điểm
+                    </Link>
                     {sports.map((sport, index) => (
                       <motion.div
                         key={sport.SportCode}
@@ -406,6 +418,22 @@ const Navigation = ({ isLoggedIn, setIsLoggedIn }) => {
                         variants={menuVariants}
                         className="mt-2 space-y-1 bg-emerald-100 border border-emerald-200 rounded-xl shadow-lg px-2 py-2"
                       >
+                        <Link
+                          key={0}
+                          to={`/sports/all`}
+                          className="flex items-center gap-3 py-2 px-3 text-emerald-700 hover:bg-emerald-200 hover:text-emerald-900 rounded-lg transition"
+                          onClick={() => {
+                            setActiveSport(null);
+                            setIsOpen(false);
+                          }}
+                        >
+                          <span className="text-lg">
+                            <FaList />
+                          </span>
+                          <span className="text-sm font-medium">
+                            Tất cả địa điểm
+                          </span>
+                        </Link>
                         {sports.map((sport) => (
                           <motion.div
                             key={sport.SportCode}
