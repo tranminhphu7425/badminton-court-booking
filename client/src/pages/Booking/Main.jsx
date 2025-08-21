@@ -5,83 +5,8 @@ import { vi } from "date-fns/locale";
 import { toast } from "react-toastify"; // Added for better notifications
 import { useParams } from "react-router-dom";
 import LocationDetail from "../../components/LocationDetail";
-
-// Extract reusable components
-const CourtCell = ({ court }) => (
-  <td className="px-4 py-2 whitespace-nowrap">
-    <div className="flex items-center">
-      <div className="flex-shrink-0 h-8 w-8 rounded-full bg-green-100 flex items-center justify-center mr-3">
-        <svg
-          className="h-5 w-5 text-green-600"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
-          />
-        </svg>
-      </div>
-      <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
-        Sân {court.court}
-      </div>
-    </div>
-  </td>
-);
-
-const TimeSlot = ({ court, hour, isBooked, isSelected, booking, onSelect }) => (
-  <td
-    onClick={() => !isBooked && onSelect(court, hour)}
-    className={`px-2 py-1 text-center cursor-pointer transition-all ${
-      isBooked
-        ? "bg-rose-50/70 hover:bg-rose-100/70 dark:bg-rose-900/30 dark:hover:bg-rose-900/50"
-        : isSelected
-        ? "bg-emerald-100 hover:bg-emerald-200 dark:bg-emerald-900 dark:hover:bg-emerald-800"
-        : "hover:bg-emerald-50 dark:hover:bg-emerald-900/40"
-    }`}
-  >
-    <div
-      className={`inline-flex min-w-17 h-18 flex-col items-center justify-center p-2 rounded-lg min-h-[60px] w-full ${
-        isBooked
-          ? "border border-rose-200 bg-white dark:bg-gray-900 dark:border-rose-800"
-          : isSelected
-          ? "border-2 border-emerald-400 dark:border-emerald-300"
-          : "border border-gray-200 dark:border-gray-700 dark:bg-gray-900"
-      }`}
-    >
-      {isBooked ? (
-        <>
-          <span
-            className="text-xs font-semibold text-rose-600 dark:text-rose-400"
-            title={booking?.user || "Guest"}
-          >
-            Đã được đặt
-          </span>
-        </>
-      ) : (
-        <>
-          <span
-            className={`text-sm font-medium ${
-              isSelected
-                ? "text-emerald-700 dark:text-emerald-300"
-                : "text-gray-600 dark:text-gray-300"
-            }`}
-          >
-            Trống
-          </span>
-          {!isSelected && (
-            <span className="mt-1 text-[10px] px-1 py-0.5 bg-green-100 text-green-700 rounded dark:bg-green-900 dark:text-green-300">
-              Nhấn để đặt
-            </span>
-          )}
-        </>
-      )}
-    </div>
-  </td>
-);
+import TimeSlot from "../../components/TimeSlot";
+import CourtCell from "../../components/CourtCell";
 
 const BookingModal = ({
   selectedCourt,
@@ -362,7 +287,9 @@ function Main() {
     const confirmedBooked = bookings.some((booking) => {
       if (!booking?.court || !booking?.time || !booking?.date) return false;
 
-      const bookingCourt = parseInt(booking.court.replace(booking.court.slice(0, 2), ""));
+      const bookingCourt = parseInt(
+        booking.court.replace(booking.court.slice(0, 2), "")
+      );
       const bookingTime = parseInt(booking.time);
       const bookingFormattedDate = formatDate(booking.date);
 
@@ -375,7 +302,9 @@ function Main() {
 
     // Check in pending bookings
     const pendingBooked = pendingBookings.some((booking) => {
-      const bookingCourt = parseInt(booking.court.replace(booking.court.slice(0, 2), ""));
+      const bookingCourt = parseInt(
+        booking.court.replace(booking.court.slice(0, 2), "")
+      );
       const bookingTime = parseInt(booking.time);
       const bookingFormattedDate = formatDate(booking.date);
 
@@ -424,7 +353,9 @@ function Main() {
 
       // Tìm thông tin sân được chọn
       const courtData = courts.find(
-        (c) => c.court && parseInt(c.court.replace(c.court.slice(0, 2), "")) === selectedCourt
+        (c) =>
+          c.court &&
+          parseInt(c.court.replace(c.court.slice(0, 2), "")) === selectedCourt
       );
       console.log("Selected court data1:", selectedCourt);
 
@@ -509,7 +440,9 @@ function Main() {
         <div className="max-w-6xl mx-auto">
           <h1 className="text-3xl md:text-4xl font-bold text-center text-green-800 dark:text-green-300 mb-2">
             ĐẶT LỊCH SÂN{" "}
-            {courts && courts.length > 0 ? courts[0].sportType.toUpperCase() : ""}
+            {courts && courts.length > 0
+              ? courts[0].sportType.toUpperCase()
+              : ""}
           </h1>
 
           <p className="text-center text-gray-600 dark:text-gray-300 mb-8">
@@ -611,90 +544,241 @@ function Main() {
           </div>
 
           {/* Booking Table */}
-          <div className="overflow-x-auto bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700 overflow-hidden my-8">
-            <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-              <thead className="bg-gradient-to-r from-green-600 to-green-500 dark:from-green-800 dark:to-green-700">
-                <tr>
-                  <th className="px-4 py-2 text-center text-xs font-semibold text-white uppercase tracking-wider rounded-tl-2xl">
-                    Sân
-                  </th>
-                  {hours.map((hour) => (
-                    <th
-                      key={hour}
-                      className={`px-4 py-3 text-center text-xs font-semibold text-white uppercase tracking-wider ${
-                        selectedTime === hour
-                          ? "bg-green-700/90 dark:bg-green-900/90"
-                          : ""
-                      }`}
-                    >
-                      <div className="flex flex-col">
-                        <span className="font-bold text-sm">{hour}h - </span>
-                        <span className="text-xs font-normal opacity-90">
-                          {hour + 1}h
-                        </span>
-                      </div>
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
-                {courts.map((court) => {
-                  //
-                  // kiểm tra CourtNumber phải bắt đầu bằng "S"
-                  if (!court.court) {
-                    return null; // bỏ qua court không hợp lệ
-                  }
-
-                  const courtNumber = parseInt(court.court.replace(court.court.slice(0, 2), ""));
-                  return (
-                    <tr
-                      key={courtNumber}
-                      className={`${
-                        selectedCourt === courtNumber
-                          ? "bg-green-50 dark:bg-gray-700"
-                          : "hover:bg-gray-50 dark:hover:bg-gray-700"
-                      } transition-colors`}
-                    >
-                      <CourtCell court={court} />
-                      {hours.map((hour) => {
-                        const isSlotBooked = isBooked(courtNumber, hour);
-                        const isSlotSelected =
-                          selectedCourt === courtNumber &&
-                          selectedTime === hour;
-                        const booking = bookings.find(
-                          (b) =>
-                            b.court &&
-                          parseInt(b.court.replace(b.court.slice(0, 2), "")) ===
-                              courtNumber &&
-                            parseInt(b.time) === hour
-                        );
-
-                        return (
-                          <TimeSlot
-                            key={`${courtNumber}-${hour}`}
-                            court={courtNumber}
-                            hour={hour}
-                            isBooked={isSlotBooked}
-                            isSelected={isSlotSelected}
-                            booking={booking}
-                            onSelect={handleSlotSelect}
-                          />
-                        );
-                      })}
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-          <div className="inline-block align-bottom bg-white dark:bg-gray-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-2 sm:align-middle sm:max-w-6xl sm:w-full">
-              <LocationDetail
-                locationId={parseInt(locationId)}
-              
-                isModal={false}
+          {/* ===== Desktop (sm+) — giữ nguyên table của bạn ===== */}
+          <div className="hidden md:block">
+            <div className="relative rounded-2xl p-[1px] bg-gradient-to-r from-green-400/20 via-sky-400/20 to-violet-400/20 shadow-lg my-8">
+              <span
+                aria-hidden
+                className="pointer-events-none absolute inset-0 rounded-2xl
+        before:absolute before:-inset-1 before:rounded-2xl
+        before:bg-[linear-gradient(115deg,rgba(255,255,255,0)_10%,rgba(255,255,255,0.25)_50%,rgba(255,255,255,0)_90%)]
+        before:opacity-0 hover:before:opacity-100 before:transition-opacity before:duration-700"
               />
+              <div className="overflow-x-auto bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 overflow-hidden">
+                <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700 table-group">
+                  <thead className="relative bg-gradient-to-r from-green-600 to-green-500 dark:from-green-800 dark:to-green-700 text-white">
+                    <tr className="relative">
+                      <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider rounded-tl-2xl">
+                        Sân
+                      </th>
+                      {hours.map((hour) => (
+                        <th
+                          key={hour}
+                          className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider relative overflow-hidden"
+                        >
+                          <div className="flex flex-col items-center">
+                            <span className="font-bold text-sm">
+                              {hour}h -{" "}
+                            </span>
+                            <span className="text-xs font-normal opacity-90">
+                              {hour + 1}h
+                            </span>
+                          </div>
+                          <span
+                            aria-hidden
+                            className="pointer-events-none absolute inset-0
+                    before:absolute before:-left-1/2 before:top-0 before:bottom-0 before:w-1/2
+                    before:bg-[linear-gradient(100deg,rgba(255,255,255,0.0),rgba(255,255,255,0.35),rgba(255,255,255,0.0))]
+                    before:translate-x-[-100%] group-[.table-group]:before:animate-[shine_2.6s_ease-in-out_infinite]"
+                          />
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+
+                  <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
+                    {courts.map((court) => {
+                      if (!court.court) return null;
+                      const courtNumber = parseInt(
+                        court.court.replace(court.court.slice(0, 2), "")
+                      );
+                      return (
+                        <tr
+                          key={courtNumber}
+                          className={`transition-colors ${
+                            selectedCourt === courtNumber
+                              ? "bg-green-50 dark:bg-gray-700"
+                              : "hover:bg-gray-50/60 dark:hover:bg-gray-700/60"
+                          }`}
+                        >
+                          <CourtCell court={court} as="td" />
+                          {hours.map((hour) => {
+                            const isSlotBooked = isBooked(courtNumber, hour);
+                            const isSlotSelected =
+                              selectedCourt === courtNumber &&
+                              selectedTime === hour;
+                            const booking = bookings.find(
+                              (b) =>
+                                b.court &&
+                                parseInt(
+                                  b.court.replace(b.court.slice(0, 2), "")
+                                ) === courtNumber &&
+                                parseInt(b.time) === hour
+                            );
+                            return (
+                              <TimeSlot
+                                key={`${courtNumber}-${hour}`}
+                                court={courtNumber}
+                                hour={hour}
+                                isBooked={isSlotBooked}
+                                isSelected={isSlotSelected}
+                                booking={booking}
+                                onSelect={handleSlotSelect}
+                              />
+                            );
+                          })}
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
             </div>
-            
+          </div>
+
+          {/* ===== Mobile (xs) — card + chip thời gian ===== */}
+          <div className="md:hidden my-6 space-y-4">
+            {courts
+              .filter((court) => court.court)
+              .map((court) => {
+                const courtNumber = parseInt(
+                  court.court.replace(court.court.slice(0, 2), "")
+                );
+                const selectedInThisCourt =
+                  selectedCourt === courtNumber ? selectedTime : null;
+
+                return (
+                  <div
+                    key={courtNumber}
+                    className="relative rounded-2xl p-[1px] bg-gradient-to-r from-green-400/15 via-sky-400/15 to-violet-400/15"
+                  >
+                    <div className="rounded-2xl bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 p-4">
+                      {/* Header sân */}
+                      <div className="flex items-center justify-between mb-3">
+                        <CourtCell
+                          court={court}
+                          as="div"
+                          compact
+                          className="font-semibold"
+                        />
+                        {selectedInThisCourt !== null && (
+                          <span className="text-xs px-2 py-1 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300">
+                            Chọn: {selectedInThisCourt}h–
+                            {selectedInThisCourt + 1}h
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Khung giờ dạng chip: cuộn ngang + snap */}
+                      <div className="relative">
+                        {/* gradient hint hai bên */}
+                        <div className="pointer-events-none absolute inset-y-0 left-0 w-6 bg-gradient-to-r from-white dark:from-gray-800 to-transparent" />
+                        <div className="pointer-events-none absolute inset-y-0 right-0 w-6 bg-gradient-to-l from-white dark:from-gray-800 to-transparent" />
+
+                        <div
+                          className="
+                  flex gap-2 overflow-x-auto overscroll-x-contain snap-x snap-mandatory px-1 py-1
+                  scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-700
+                "
+                        >
+                          {hours.map((hour) => {
+                            const isSlotBooked = isBooked(courtNumber, hour);
+                            const isSlotSelected =
+                              selectedCourt === courtNumber &&
+                              selectedTime === hour;
+                            const booking = bookings.find(
+                              (b) =>
+                                b.court &&
+                                parseInt(
+                                  b.court.replace(b.court.slice(0, 2), "")
+                                ) === courtNumber &&
+                                parseInt(b.time) === hour
+                            );
+
+                            // Chip theo idea "TimeSlot" đã hoạt hình hóa
+                            return (
+                              <button
+                                key={`${courtNumber}-${hour}`}
+                                onClick={() =>
+                                  !isSlotBooked &&
+                                  handleSlotSelect(courtNumber, hour)
+                                }
+                                disabled={isSlotBooked}
+                                className={`
+                        snap-start shrink-0 min-w-[96px] px-3 py-4 rounded-xl text-sm font-medium
+                        transition-all duration-300 relative overflow-hidden
+                        focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500
+                        ${
+                          isSlotBooked
+                            ? `cursor-not-allowed text-rose-600 dark:text-rose-400
+                              border border-rose-200 dark:border-rose-800
+                              bg-gray-50 dark:bg-gray-900
+                              [background-image:repeating-linear-gradient(45deg,rgba(0,0,0,0.06)_0_10px,rgba(0,0,0,0.02)_10px_20px)]
+                              animate-[stripes_1.2s_linear_infinite]`
+                            : isSlotSelected
+                            ? `text-emerald-700 dark:text-emerald-300
+                              border-2 border-emerald-400 dark:border-emerald-300
+                              bg-gradient-to-br from-emerald-400/20 via-emerald-300/20 to-sky-300/20
+                              shadow-[0_8px_20px_rgba(16,185,129,0.25)]`
+                            : `text-gray-700 dark:text-gray-200
+                              border border-gray-200 dark:border-gray-700
+                              bg-white dark:bg-gray-900
+                              hover:scale-[1.03] active:scale-95 hover:border-emerald-400
+                              hover:shadow-[0_8px_24px_rgba(34,197,94,0.2)]`
+                        }
+                      `}
+                              >
+                                {isSlotSelected
+                                  ? "Đang chọn"
+                                  : isSlotBooked
+                                  ? "Đã đặt"
+                                  : `${hour}h-${hour + 1}h`}
+
+                                {/* pulse ring khi selected */}
+                                {isSlotSelected && (
+                                  <span
+                                    aria-hidden
+                                    className="pointer-events-none absolute inset-0 rounded-xl ring-2 ring-emerald-400/40 [box-shadow:0_0_0_8px_rgba(16,185,129,0.15)] animate-[pulseRing_1.6s_ease-out_infinite]"
+                                  />
+                                )}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+          </div>
+
+          {/* ===== Sticky action bar khi đã chọn (mobile ưu tiên, desktop cũng dùng được) ===== */}
+          {selectedCourt != null && selectedTime != null && (
+            <div className="fixed inset-x-0 bottom-0 z-40">
+              <div className="mx-auto max-w-7xl px-4 pb-4">
+                <div className="rounded-2xl bg-white/90 dark:bg-gray-800/90 backdrop-blur border border-gray-200 dark:border-gray-700 shadow-lg p-3 flex items-center justify-between">
+                  <div className="text-sm">
+                    <div className="font-semibold text-gray-800 dark:text-white">
+                      Sân {selectedCourt}
+                    </div>
+                    <div className="text-gray-600 dark:text-gray-300">
+                      {selectedTime}h – {selectedTime + 1}h
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => /* gọi action đặt sân */ {}}
+                    className="rounded-full px-5 py-2 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold transition-colors"
+                  >
+                    Đặt ngay
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          <div className="inline-block align-bottom bg-white dark:bg-gray-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-2 sm:align-middle sm:max-w-6xl sm:w-full">
+            <LocationDetail locationId={parseInt(locationId)} isModal={false} />
+          </div>
 
           {/* Booking Modal */}
           {selectedTime && selectedCourt && (

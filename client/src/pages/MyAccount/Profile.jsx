@@ -11,6 +11,8 @@ import {
 } from 'react-icons/fa';
 
 import Section from '../../components/Section';
+import userApi from "../../api/userApi"; // Đường dẫn điều chỉnh theo dự án của bạn
+
 
 
 const Profile = () => {
@@ -19,32 +21,29 @@ const Profile = () => {
   const [error, setError] = useState(null);       // Trạng thái lỗi (nếu có)
   const [userData, setUserData] = useState();
   useEffect(() => {
-      const fetchProfile = async () => {
-        const userId = localStorage.getItem('UserID');
-        if(!userId){
-          setError("Không tìm thấy UserID trong localStorage");
-         setLoading(false);
-          return;
-        }
-      
-      try {
-        const response = await fetch(`http://localhost:8081/api/profile/${userId}`);
-        const data = await response.json();
+    const loadUserProfile = async () => {
+      const userId = localStorage.getItem("UserID");
+      if (!userId) {
+        setError("Không tìm thấy UserID trong localStorage");
+        setLoading(false);
+        return;
+      }
 
-        if (response.ok && data.success) {
-          setUserData(data.profile); // Lưu dữ liệu vào biến userData
-          console.log(data.profile);
+      try {
+        const result = await userApi.fetchUserProfile(userId);
+        if (result.success) {
+          setUserData(result.profile);
         } else {
-          setError(data.message || "Lỗi không xác định");
+          setError(result.message || "Dữ liệu không hợp lệ");
         }
       } catch (err) {
-        setError("Không thể kết nối đến server");
-        console.error(err);
+        setError(err.message);
       } finally {
         setLoading(false);
       }
-  };
-  fetchProfile();
+    };
+
+    loadUserProfile();
   }, []);
 
   if (loading) return <p>Đang tải thông tin...</p>;

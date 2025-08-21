@@ -14,24 +14,22 @@ import SportCard from "../components/SportCard";
 import LocationCard from "../components/LocationCard";
 import TestimonialCard from "../components/TestimonialCard";
 import LocationDetail from "../components/LocationDetail";
+import LoadingSpinner from "../components/LoadingSpinner";
+
 import Section from "../components/Section";
 import locationApi from "../api/locationApi";
 import sportTypeApi from "../api/sportTypeApi";
 
-
 const translateIcon = {
   GiShuttlecock: <MdSportsTennis size={24} />,
-  GiSoccerBall: <GiSoccerBall size={24}  />,
+  GiSoccerBall: <GiSoccerBall size={24} />,
   FaBasketballBall: <GiTennisCourt size={24} />,
   MdSportsVolleyball: <GiBasketballBall size={24} />,
-  GiTennisBall: <MdSportsVolleyball size={24}  />,
+  GiTennisBall: <MdSportsVolleyball size={24} />,
   FaTableTennis: <GiTennisCourt size={24} />,
 };
 
-
-
 const Home = () => {
-  const [searchQuery, setSearchQuery] = useState("");
   const [locations, setLocations] = useState([]);
   const [loading, setLoading] = useState(true);
   const PAGE_SIZE = 3;
@@ -42,6 +40,28 @@ const Home = () => {
   const [error, setError] = useState(null);
   const [numberLocation, setNumberLocation] = useState([0]);
 
+  const sportsTile = encodeURIComponent(`
+    <svg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160' fill='none'>
+      <g stroke='#0ea5e9' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'>
+        <!-- Basketball -->
+        <circle cx='40' cy='40' r='22'/>
+        <path d='M18 40h44M40 18v44M26 26c9 9 19 19 28 28M26 54c9-9 19-19 28-28'/>
+
+        <!-- Tennis racket -->
+        <ellipse cx='120' cy='36' rx='18' ry='22'/>
+        <path d='M105 50l-22 22'/>
+        <path d='M110 26l20 20M110 46l20-20' opacity='0.6'/>
+
+        <!-- Shuttlecock -->
+        <path d='M26 120l22-22l8 8l-22 22z'/>
+        <path d='M30 124l-6 12M38 116l-6 12M46 108l-6 12' opacity='0.7'/>
+
+        <!-- Goal -->
+        <rect x='96' y='108' width='44' height='22' rx='2'/>
+        <path d='M96 130l44-22M96 108l44 22' opacity='0.6'/>
+      </g>
+    </svg>
+  `);
 
   useEffect(() => {
     const loadLocations = async () => {
@@ -58,38 +78,36 @@ const Home = () => {
     loadLocations();
   }, []);
 
-  useEffect ( () => {
+  useEffect(() => {
     const loadSportTypes = async () => {
       try {
         const data = await sportTypeApi.fetchSportTypes();
         setSports(data);
-        console.log("Danh sach cac mon the thao (Home.jsx): " , data);
-      }
-      catch (err) {
-          console.log(err);
-          setError(err.message);
+        console.log("Danh sach cac mon the thao (Home.jsx): ", data);
+      } catch (err) {
+        console.log(err);
+        setError(err.message);
       }
     };
     loadSportTypes();
   }, []);
 
-
   useEffect(() => {
     const loadAllLocations = async () => {
       try {
         setLoading(true);
-  
+
         // Tạo danh sách promise
         const locationPromises = sports.map((sport) =>
           locationApi.fetchLocationsBySport(sport.SportCode)
         );
-  
+
         // Đợi tất cả promise hoàn thành (giữ nguyên thứ tự)
         const allLocationData = await Promise.all(locationPromises);
-  
+
         // Tạo mảng số lượng từng địa điểm theo đúng thứ tự
         const locationCounts = allLocationData.map((data) => data.length);
-  
+
         // Cập nhật state một lần duy nhất
         setNumberLocation(locationCounts);
         setLoading(false); // ✅ Tất cả đã xong
@@ -98,19 +116,13 @@ const Home = () => {
         setLoading(false); // Dù lỗi vẫn tắt loading
       }
     };
-  
+
     if (sports.length === 6) {
       loadAllLocations();
     }
   }, [sports]);
-  
-  
 
   console.log(numberLocation);
-
-
-  
-
 
   const handleLocationClick = (location) => {
     setSelectedLocation(location);
@@ -119,11 +131,6 @@ const Home = () => {
     // Thêm history push nếu muốn thay đổi URL
     // navigate(`/locations/${location.LocationID}`, { replace: false });
   };
-
-
-
-
-  
 
   const testimonials = [
     {
@@ -151,31 +158,60 @@ const Home = () => {
     },
   ];
 
-  return (
+  return loading ? <LoadingSpinner/> : (
     <div className=" home-page dark:bg-gray-800">
       {/* Hero Section */}
-      <div className="bg-gradient-to-r from-orange-50 to-stone-50 dark:bg-gradient-to-r dark:from-gray-800 dark:to-gray-800">
-        <div className=" relative container max-w-7xl mx-auto px-6 py-20 flex flex-col md:flex-row items-center md:items-center justify-between gap-8 md:gap-12">
-          <div className="max-w-xl text-center md:text-left">
-            <h1 className="text-[2.75rem] md:text-[3rem] font-semibold bg-gradient-to-r  from-green-500 to-sky-800 bg-clip-text text-transparent leading-tight drop-shadow-[2px_2px_0_#fga] dark:drop-shadow-[2px_2px_0_#000] dark:bg-gradient-to-r dark:from-green-400 dark:to-teal-500 dark:bg-clip-text dark:text-transparent">
+      <div className="bg-gradient-to-r from-orange-0 to-stone-100 dark:bg-gradient-to-r dark:from-gray-800 dark:to-gray-800">
+        
+        <div className="relative container max-w-7xl mx-auto px-6 py-20 flex flex-col md:flex-row items-center justify-between gap-8 md:gap-12">
+          {/* PATTERN nền mờ bên trái */}
+          
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-y-0 left-0 w-[110%] md:w-full -z-0 opacity-10 dark:opacity-10"
+            style={{
+              backgroundImage: `url("data:image/svg+xml;utf8,${sportsTile}")`,
+              backgroundRepeat: "repeat",
+              backgroundSize: "160px 160px",
+              maskImage:
+                "radial-gradient(1200px 400px at left center, #000 70%, transparent 100%)",
+              WebkitMaskImage:
+                "radial-gradient(1200px 400px at left center, #000 70%, transparent 100%)",
+            }}
+          />
+          <div className="relative z-10 max-w-xl text-center md:text-left">
+            <h1 className="text-[2.75rem] md:text-[3rem] font-semibold bg-gradient-to-r from-green-500 to-sky-800 bg-clip-text text-transparent leading-tight drop-shadow-[2px_2px_0_#fga] dark:drop-shadow-[2px_2px_0_#000] dark:from-green-400 dark:to-teal-500">
               Đặt sân&nbsp;
-              <span className="bg-gradient-to-r from-pink-500 to-violet-800 bg-clip-text text-transparent leading-tight dark:bg-gradient-to-r dark:from-pink-400 dark:to-purple-500 dark:bg-clip-text dark:text-transparent">
+              <span className="bg-gradient-to-r from-pink-500 to-violet-800 bg-clip-text text-transparent dark:from-pink-400 dark:to-purple-500">
                 thể thao&nbsp;
               </span>
               dễ dàng
             </h1>
 
-            <p class="mt-6 text-xl  dark:text-white max-w-lg leading-relaxed">
+            <p className="mt-6 text-xl dark:text-white max-w-lg leading-relaxed">
               Tìm và đặt sân bóng đá, cầu lông, tennis,... nhanh chóng với giá
               tốt nhất
             </p>
-            <div class="mt-8 flex justify-center md:justify-start gap-4">
+
+            <div className="mt-8 flex justify-center md:justify-start gap-4">
               <Link
                 to="/about"
-                className="bg-green-500 text-white dark:text-black font-semibold rounded-full px-6 py-2.5 hover:bg-green-900 transition"
+                className="
+    relative inline-block font-semibold rounded-full px-6 py-2.5
+    bg-green-500 text-white dark:text-black
+    transition-all duration-300 ease-out
+    hover:bg-gradient-to-r hover:from-green-500 hover:to-emerald-400
+    hover:shadow-[0_4px_15px_rgba(16,185,129,0.5)]
+    hover:-translate-y-0.5
+    before:absolute before:inset-0 before:rounded-full
+    before:bg-[linear-gradient(115deg,rgba(255,255,255,0)_10%,rgba(255,255,255,0.4)_50%,rgba(255,255,255,0)_90%)]
+    before:opacity-0 hover:before:opacity-100
+    before:transition-opacity before:duration-500
+  "
               >
                 Giới thiệu
               </Link>
+
               <Link
                 to="/contact"
                 className="bg-[#1B243B] text-white font-semibold rounded-full px-6 py-2.5 hover:bg-[#2a3a5a] transition"
@@ -185,36 +221,37 @@ const Home = () => {
             </div>
           </div>
 
-          <div class="relative z-2 max-w-xl w-full">
-            <div class="absolute -top-px right-11 left-20 h-px bg-linear-to-r from-sky-300/0 via-sky-300/70 to-sky-300/0"></div>
+          <div className="relative z-10 max-w-xl select-none">
+            <div className="absolute -top-px right-11 left-20 h-px bg-gradient-to-r from-sky-300/0 via-sky-300/70 to-sky-300/0" />
             <img
               src={backgroundImage}
               alt="Hero Image"
-              class="rounded-2xl border border-white/30 shadow-lg"
+              className="rounded-2xl border border-white/30 shadow-lg"
             />
-            <div class="absolute -bottom-px right-11 left-20 h-px bg-linear-to-r from-sky-300/0 via-sky-300/70 to-sky-300/0"></div>
+            <div className="absolute -bottom-px right-11 left-20 h-px bg-gradient-to-r from-sky-300/0 via-sky-300/70 to-sky-300/0" />
           </div>
 
+          {/* Blurs */}
           <img
             src={blurIndigo}
             alt="Hero blurIndigo"
             width={500}
             height={500}
-            className="z-1 absolute -right-30 top-50 md:top-0 xl:-right-10 object-cover"
+            className="z-0 absolute -right-30 top-50 md:top-0 xl:-right-10 object-cover select-none"
           />
           <img
             src={blurCyan}
-            alt="Hero blurIndigo"
+            alt="Hero blurCyan"
             width={500}
             height={500}
-            className="z-1 absolute right-40 top-50 md:top-10 xl:right-40 object-cover"
+            className="z-0 absolute right-40 top-50 md:top-10 xl:right-40 object-cover select-none"
           />
           <img
             src={blurCyan}
-            alt="Hero blurIndigo"
+            alt="Hero blurCyan"
             width={400}
             height={400}
-            className="z-1 absolute -top-20 -left-30  object-cover opacity-30"
+            className="z-0 absolute -top-20 -left-30 object-cover opacity-30 select-none"
           />
         </div>
       </div>
@@ -275,8 +312,8 @@ const Home = () => {
                 key={sport.SportTypeID}
                 icon={translateIcon[sport.Icon]}
                 name={sport.SportName}
-                count={numberLocation[sport.SportTypeID]}              
-                  link={`/sports/${sport.SportCode}`}
+                count={numberLocation[sport.SportTypeID]}
+                link={`/sports/${sport.SportCode}`}
               />
             ))}
           </div>
@@ -306,26 +343,28 @@ const Home = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {locations.slice(0, visibleCount).map((location) => (
               <LocationCard
-              key={location.locationId}
-              name={location.LocationName}
-              image={location.PrimaryImageUrl } 
-              location={location.Address}
-              rating={parseFloat(location.AverageRating).toFixed(1)}
-              sport={null}
-              badges={
-                <>
-                  {<span className="bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 text-sm px-2 py-1 rounded mr-1 inline-flex items-center">
-                  <FaClock className="mr-1" />
-                  {location.OpeningTime.split(":")
-                    .slice(0, 2)
-                    .join(":")}{" "}
-                  -{" "}
-                  {location.ClosingTime.split(":").slice(0, 2).join(":")}
-                </span>}
-                </>
-              }
-              mode={0}
-              onClick={() => handleLocationClick(location)} // Sửa lại thành arrow function
+                key={location.locationId}
+                name={location.LocationName}
+                image={location.PrimaryImageUrl}
+                location={location.Address}
+                rating={parseFloat(location.AverageRating).toFixed(1)}
+                sport={null}
+                badges={
+                  <>
+                    {
+                      <span className="bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 text-sm px-2 py-1 rounded mr-1 inline-flex items-center">
+                        <FaClock className="mr-1" />
+                        {location.OpeningTime.split(":")
+                          .slice(0, 2)
+                          .join(":")}{" "}
+                        -{" "}
+                        {location.ClosingTime.split(":").slice(0, 2).join(":")}
+                      </span>
+                    }
+                  </>
+                }
+                mode={0}
+                onClick={() => handleLocationClick(location)} // Sửa lại thành arrow function
               />
             ))}
           </div>
@@ -428,14 +467,17 @@ const Home = () => {
           <p className="text-xl mb-8 max-w-2xl mx-auto dark:text-gray-200">
             Đăng ký ngay để nhận ưu đãi 10% cho lần đặt sân đầu tiên
           </p>
-          <button className="bg-white dark:bg-gray-100 text-green-700 hover:bg-gray-200 dark:hover:bg-gray-300 px-8 py-4 rounded-lg font-bold text-lg transition duration-300">
+          <Link
+            to="/sports/all"
+            className="bg-white dark:bg-gray-100 text-green-700 hover:bg-gray-200 dark:hover:bg-gray-300 px-8 py-4 rounded-lg font-bold text-lg transition duration-300"
+          >
             Đặt sân ngay
-          </button>
+          </Link>
         </div>
       </Section>
       {/* Location Detail Modal */}
       {selectedLocation && showLocationModal && (
-        <div className="fixed md:w-3/4 h-5/6 m-auto inset-0 z-50 overflow-y-auto">
+        <div className="fixed px-5 md:w-4/5 xl:w-3/4 max-w-7xl h-5/6 m-auto inset-0 z-50 overflow-y-auto">
           <div className="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
             {/* Background overlay */}
             <div

@@ -11,6 +11,7 @@ import backgroundImage from "../assets/images/backgrounds/about/about_bg.jpg";
 import teamMembers from "../data/teamMembers";
 import Section from "../components/Section";
 import gioi_thieu_sportbooking from "../assets/images/backgrounds/about/gioi_thieu_sportbooking.png";
+import MemberCard from "../components/MemberCard";
 
 
 const About = () => {
@@ -180,25 +181,7 @@ const About = () => {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
         {teamMembers.map((member) => (
-          <div
-            key={member.id}
-            className="bg-white dark:bg-gray-600 rounded-xl overflow-hidden shadow-sm text-center"
-          >
-            <div className="h-50 bg-gray-200 overflow-hidden">
-              <img
-                src={member.image}
-                alt={member.name}
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <div className="p-6">
-              <h3 className="text-xl font-semibold mb-1 dark:text-white">{member.name}</h3>
-              <p className="text-green-600 dark:text-green-400 font-medium mb-3">
-                {member.position}
-              </p>
-              <p className="text-gray-600 dark:text-gray-300 text-sm">{member.bio}</p>
-            </div>
-          </div>
+          <MemberCard key={member.id} member={member} />
         ))}
       </div>
     </div>

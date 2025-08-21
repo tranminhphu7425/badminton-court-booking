@@ -80,12 +80,12 @@ const ShowList = ({
         </div>
 
         <div
-          className={`grid grid-cols-1 auto-rows-[1fr] ${
-            mode == 0 ? "md:grid-cols-2 lg:grid-cols-3 " : ""
+          className={`grid grid-cols-2 auto-rows-[1fr] ${
+            mode == 0 ? "md:grid-cols-3 items-stretch" : ""
           } gap-8`}
         >
           {filteredCourts.slice(0, visibleCount).map((location) => (
-            <Div key={location.LocationID}>
+            <Div key={location.LocationID} >
               <Suspense fallback={<LocationCardLoading mode={mode} />}>
                 <LocationCard
                   name={location.LocationName}
