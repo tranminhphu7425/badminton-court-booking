@@ -1,0 +1,20 @@
+tìm kiếm tất cả các sân cầu lông ở Kiên Giang, tạo một bảng bao gồm những thông tin sau: Tên địa điểm, province, district, ward, Address, số điện thoại liên hệ, email liên hệ, thời gian mở, thời gian đóng. Chỉ in bảng, không hiển thị gì thêm. Và chuyển sang ngôn ngữ hỏi sql 
+
+
+
+
+UPDATE locations
+SET locationid = locationid + 1
+WHERE locationid >= 2
+ORDER BY locationid DESC;  -- Rất quan trọng để tránh xung đột khóa
+
+ALTER TABLE courts AUTO_INCREMENT = 164;
+
+
+
+
+371
+377
+
+
+658 - 634 25

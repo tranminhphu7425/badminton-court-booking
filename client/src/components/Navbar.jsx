@@ -26,8 +26,8 @@ import {
   FaHeadset,
   FaBasketballBall,
   FaList,
-  FaPlus ,
-  FaChevronRight 
+  FaPlus,
+  FaChevronRight,
 } from "react-icons/fa";
 import {
   GiBasketballBall,
@@ -41,7 +41,7 @@ import logoSrc from "../assets/images/logos/logo.png";
 
 // Tài nguyên nội bộ
 import sportTypeApi from "../api/sportTypeApi";
-import userApi from "../api/userApi"; 
+import userApi from "../api/userApi";
 
 const sportIcons = {
   badminton: <GiShuttlecock className="text-blue-500" />,
@@ -51,8 +51,6 @@ const sportIcons = {
   volleyball: <MdSportsVolleyball className="text-red-500" />,
   tennis: <GiTennisBall className="text-yellow-500" />,
 };
-
-
 
 const navSubItems = [
   { to: "/booking/1/3", icon: <FaCalendarAlt />, text: "Đặt sân" },
@@ -210,76 +208,42 @@ const Navigation = ({ isLoggedIn, setIsLoggedIn }) => {
               <AnimatePresence>
                 {activeDropdown === "sports" && (
                   <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 20 }}
-                  transition={{ type: "spring", damping: 20, stiffness: 300 }}
-                  className="absolute left-0 mt-2 w-56 bg-white rounded-xl shadow-2xl overflow-hidden z-50 border border-emerald-100"
-                >
-                  <motion.div 
-                    className="divide-y divide-emerald-50"
-                    initial="hidden"
-                    animate="visible"
-                    variants={{
-                      visible: { transition: { staggerChildren: 0.05 } }
-                    }}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 20 }}
+                    transition={{ type: "spring", damping: 20, stiffness: 300 }}
+                    className="absolute left-0 mt-2 w-56 bg-white rounded-xl shadow-2xl overflow-hidden z-50 border border-emerald-100"
                   >
-                    {/* Mục "Tất cả địa điểm" */}
                     <motion.div
+                      className="divide-y divide-emerald-50"
+                      initial="hidden"
+                      animate="visible"
                       variants={{
-                        hidden: { opacity: 0, x: -20 },
-                        visible: { opacity: 1, x: 0 }
+                        visible: { transition: { staggerChildren: 0.05 } },
                       }}
                     >
-                      <Link
-                        to="/sports/all"
-                        className="flex items-center px-4 py-3 text-gray-700 hover:bg-emerald-50 transition-all group"
-                        onClick={() => setActiveSport(null)}
-                      >
-                        <motion.span 
-                          className="mr-3 text-lg text-emerald-500 group-hover:scale-110 transition-transform"
-                          whileHover={{ scale: 1.2 }}
-                        >
-                          <FaList />
-                        </motion.span>
-                        <span className="group-hover:font-medium group-hover:text-emerald-700 transition-all">
-                          Tất cả địa điểm
-                        </span>
-                        <motion.span 
-                          className="ml-auto opacity-0 group-hover:opacity-100 text-emerald-500"
-                          initial={{ x: -10 }}
-                          animate={{ x: 0 }}
-                          transition={{ delay: 0.1 }}
-                        >
-                          <FaChevronRight className="text-xs" />
-                        </motion.span>
-                      </Link>
-                    </motion.div>
-                
-                    {/* Danh sách môn thể thao */}
-                    {sports.map((sport) => (
+                      {/* Mục "Tất cả địa điểm" */}
                       <motion.div
-                        key={sport.SportCode}
                         variants={{
                           hidden: { opacity: 0, x: -20 },
-                          visible: { opacity: 1, x: 0 }
+                          visible: { opacity: 1, x: 0 },
                         }}
                       >
                         <Link
-                          to={`/sports/${sport.SportCode}`}
+                          to="/sports/all"
                           className="flex items-center px-4 py-3 text-gray-700 hover:bg-emerald-50 transition-all group"
-                          onClick={() => setActiveDropdown(null)}
+                          onClick={() => setActiveSport(null)}
                         >
-                          <motion.span 
-                            className="mr-3 text-lg group-hover:scale-110 transition-transform"
+                          <motion.span
+                            className="mr-3 text-lg text-emerald-500 group-hover:scale-110 transition-transform"
                             whileHover={{ scale: 1.2 }}
                           >
-                             {sportIcons[sport.SportCode]}
+                            <FaList />
                           </motion.span>
                           <span className="group-hover:font-medium group-hover:text-emerald-700 transition-all">
-                            {sport.SportName}
+                            Tất cả địa điểm
                           </span>
-                          <motion.span 
+                          <motion.span
                             className="ml-auto opacity-0 group-hover:opacity-100 text-emerald-500"
                             initial={{ x: -10 }}
                             animate={{ x: 0 }}
@@ -289,9 +253,43 @@ const Navigation = ({ isLoggedIn, setIsLoggedIn }) => {
                           </motion.span>
                         </Link>
                       </motion.div>
-                    ))}
+
+                      {/* Danh sách môn thể thao */}
+                      {sports.map((sport) => (
+                        <motion.div
+                          key={sport.SportCode}
+                          variants={{
+                            hidden: { opacity: 0, x: -20 },
+                            visible: { opacity: 1, x: 0 },
+                          }}
+                        >
+                          <Link
+                            to={`/sports/${sport.SportCode}`}
+                            className="flex items-center px-4 py-3 text-gray-700 hover:bg-emerald-50 transition-all group"
+                            onClick={() => setActiveDropdown(null)}
+                          >
+                            <motion.span
+                              className="mr-3 text-lg group-hover:scale-110 transition-transform"
+                              whileHover={{ scale: 1.2 }}
+                            >
+                              {sportIcons[sport.SportCode]}
+                            </motion.span>
+                            <span className="group-hover:font-medium group-hover:text-emerald-700 transition-all">
+                              {sport.SportName}
+                            </span>
+                            <motion.span
+                              className="ml-auto opacity-0 group-hover:opacity-100 text-emerald-500"
+                              initial={{ x: -10 }}
+                              animate={{ x: 0 }}
+                              transition={{ delay: 0.1 }}
+                            >
+                              <FaChevronRight className="text-xs" />
+                            </motion.span>
+                          </Link>
+                        </motion.div>
+                      ))}
+                    </motion.div>
                   </motion.div>
-                </motion.div>
                 )}
               </AnimatePresence>
             </motion.div>
@@ -330,168 +328,206 @@ const Navigation = ({ isLoggedIn, setIsLoggedIn }) => {
                 </motion.button>
 
                 {activeDropdown === "account" && (
-  <motion.div
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-    exit={{ opacity: 0, y: 20 }}
-    transition={{ type: "spring", damping: 20, stiffness: 300 }}
-    className="absolute right-0 mt-2 w-72 bg-white rounded-xl shadow-2xl overflow-hidden z-50 border border-emerald-100"
-  >
-    {/* User Profile Card with Animation */}
-    <motion.div 
-      className="p-4 bg-gradient-to-r from-emerald-50 to-teal-50 border-b border-emerald-200"
-      initial={{ scale: 0.95 }}
-      animate={{ scale: 1 }}
-      transition={{ delay: 0.1 }}
-    >
-      <div className="flex items-center">
-        <motion.div
-          className="relative"
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-        >
-          <div className="w-12 h-12 rounded-full bg-emerald-500 flex items-center justify-center text-white text-xl font-bold shadow-md">
-            {"U".charAt(0)}
-          </div>
-          <motion.div 
-            className="absolute -bottom-1 -right-1 bg-emerald-600 rounded-full p-1"
-            animate={{ rotate: 360 }}
-            transition={{ repeat: Infinity, duration: 8, ease: "linear" }}
-          >
-            <FaCrown className="text-yellow-300 text-xs" />
-          </motion.div>
-        </motion.div>
-        
-        <div className="ml-3">
-          <motion.p 
-            className="text-lg font-bold text-emerald-900"
-            initial={{ x: -10 }}
-            animate={{ x: 0 }}
-          >
-            {userData.FullName}
-          </motion.p>
-          <motion.div 
-            className="flex items-center mt-1"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.2 }}
-          >
-            <FaStar className="text-yellow-400 text-sm mr-1" />
-            <span className="text-xs font-medium bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full">
-              {0} lượt đánh giá
-            </span>
-          </motion.div>
-        </div>
-      </div>
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 20 }}
+                    transition={{ type: "spring", damping: 20, stiffness: 300 }}
+                    className="absolute right-0 mt-2 w-72 bg-white rounded-xl shadow-2xl overflow-hidden z-50 border border-emerald-100"
+                  >
+                    {/* User Profile Card with Animation */}
+                    <motion.div
+                      className="p-4 bg-gradient-to-r from-emerald-50 to-teal-50 border-b border-emerald-200"
+                      initial={{ scale: 0.95 }}
+                      animate={{ scale: 1 }}
+                      transition={{ delay: 0.1 }}
+                    >
+                      <div className="flex items-center">
+                        <motion.div
+                          className="relative"
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                        >
+                          <div className="w-12 h-12 rounded-full bg-emerald-500 flex items-center justify-center text-white text-xl font-bold shadow-md">
+                            {"U".charAt(0)}
+                          </div>
+                          <motion.div
+                            className="absolute -bottom-1 -right-1 bg-emerald-600 rounded-full p-1"
+                            animate={{ rotate: 360 }}
+                            transition={{
+                              repeat: Infinity,
+                              duration: 8,
+                              ease: "linear",
+                            }}
+                          >
+                            <FaCrown className="text-yellow-300 text-xs" />
+                          </motion.div>
+                        </motion.div>
 
-      {/* Balance with pulse animation */}
-      <motion.div 
-        className="mt-3 bg-white rounded-lg p-3 shadow-inner border border-emerald-100"
-        initial={{ y: 10 }}
-        animate={{ y: 0 }}
-        whileHover={{ scale: 1.02 }}
-      >
-        <div className="flex justify-between items-center">
-          <div>
-            <p className="text-xs text-gray-500">Số dư khả dụng</p>
-            <motion.p 
-              className="text-xl font-bold text-emerald-600"
-              animate={{ scale: [1, 1.05, 1] }}
-              transition={{ repeat: Infinity, duration: 2 }}
-            >
-              {0}đ
-            </motion.p>
-          </div>
-          <motion.button
-            className="px-3 py-1 bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-xs font-semibold rounded-full shadow-md hover:shadow-lg"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <FaPlus className="inline mr-1" />
-            Nạp tiền
-          </motion.button>
-        </div>
-      </motion.div>
-    </motion.div>
+                        <div className="ml-3">
+                          <motion.p
+                            className="text-lg font-bold text-emerald-900"
+                            initial={{ x: -10 }}
+                            animate={{ x: 0 }}
+                          >
+                            {userData.FullName}
+                          </motion.p>
+                          <motion.div
+                            className="flex items-center mt-1"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ delay: 0.2 }}
+                          >
+                            <FaStar className="text-yellow-400 text-sm mr-1" />
+                            <span className="text-xs font-medium bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full">
+                              {0} lượt đánh giá
+                            </span>
+                          </motion.div>
+                        </div>
+                      </div>
 
-    {/* Menu Items with Staggered Animation */}
-    <motion.div 
-      className="divide-y divide-emerald-50"
-      initial="hidden"
-      animate="visible"
-      variants={{
-        visible: { transition: { staggerChildren: 0.05 } }
-      }}
-    >
-      {[
-        { icon: <FaUser className="text-emerald-500" />, text: "Trang cá nhân", to: "/profile" },
-        { icon: <FaHistory className="text-blue-500" />, text: "Lịch sử đặt sân", to: "/history" },
-        { icon: <FaHeart className="text-rose-500" />, text: "Sân yêu thích", to: "/favorites" },
-        { icon: <FaStar className="text-yellow-500" />, text: "Đánh giá của tôi", to: "/reviews" },
-        { icon: <FaWallet className="text-purple-500" />, text: "Ví thanh toán", to: "/wallet" },
-        { icon: <FaCrown className="text-amber-500" />, text: "Gói hội viên", to: "/membership" },
-        { icon: <FaTimesCircle className="text-gray-500" />, text: "Đơn đã hủy", to: "/canceled" },
-        { icon: <FaHeadset className="text-sky-500" />, text: "Hỗ trợ", to: "/support" },
-      ].map((item, index) => (
-        <motion.div
-          key={item.text}
-          variants={{
-            hidden: { opacity: 0, x: -20 },
-            visible: { opacity: 1, x: 0 }
-          }}
-        >
-          <Link
-            to={item.to}
-            className="flex items-center px-4 py-3 text-gray-700 hover:bg-emerald-50 transition-all group"
-            onClick={() => setActiveDropdown(null)}
-          >
-            <motion.span 
-              className="mr-3 text-lg group-hover:scale-110 transition-transform"
-              whileHover={{ scale: 1.2 }}
-            >
-              {item.icon}
-            </motion.span>
-            <span className="group-hover:font-medium group-hover:text-emerald-700 transition-all">
-              {item.text}
-            </span>
-            <motion.span 
-              className="ml-auto opacity-0 group-hover:opacity-100 text-emerald-500"
-              initial={{ x: -10 }}
-              animate={{ x: 0 }}
-              transition={{ delay: 0.1 }}
-            >
-              <FaChevronRight className="text-xs" />
-            </motion.span>
-          </Link>
-        </motion.div>
-      ))}
+                      {/* Balance with pulse animation */}
+                      <motion.div
+                        className="mt-3 bg-white rounded-lg p-3 shadow-inner border border-emerald-100"
+                        initial={{ y: 10 }}
+                        animate={{ y: 0 }}
+                        whileHover={{ scale: 1.02 }}
+                      >
+                        <div className="flex justify-between items-center">
+                          <div>
+                            <p className="text-xs text-gray-500">
+                              Số dư khả dụng
+                            </p>
+                            <motion.p
+                              className="text-xl font-bold text-emerald-600"
+                              animate={{ scale: [1, 1.05, 1] }}
+                              transition={{ repeat: Infinity, duration: 2 }}
+                            >
+                              {0}đ
+                            </motion.p>
+                          </div>
+                          <motion.button
+                            className="px-3 py-1 bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-xs font-semibold rounded-full shadow-md hover:shadow-lg"
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                          >
+                            <FaPlus className="inline mr-1" />
+                            Nạp tiền
+                          </motion.button>
+                        </div>
+                      </motion.div>
+                    </motion.div>
 
-      {/* Logout with special animation */}
-      <motion.div
-        className="border-t border-emerald-100"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.4 }}
-      >
-        <motion.button
-          onClick={handleLogout}
-          className="flex items-center w-full px-4 py-3 text-red-500 hover:bg-red-50 transition-colors group"
-          whileHover={{ x: [0, -3, 3, -2, 2, 0] }}
-          transition={{ duration: 0.5 }}
-        >
-          <motion.span 
-            className="mr-3 group-hover:animate-pulse"
-            animate={{ rotate: [0, 20, -20, 0] }}
-            transition={{ repeat: Infinity, duration: 2 }}
-          >
-            <FaPowerOff />
-          </motion.span>
-          <span className="font-medium">Đăng xuất</span>
-        </motion.button>
-      </motion.div>
-    </motion.div>
-  </motion.div>
-)}
+                    {/* Menu Items with Staggered Animation */}
+                    <motion.div
+                      className="divide-y divide-emerald-50"
+                      initial="hidden"
+                      animate="visible"
+                      variants={{
+                        visible: { transition: { staggerChildren: 0.05 } },
+                      }}
+                    >
+                      {[
+                        {
+                          icon: <FaUser className="text-emerald-500" />,
+                          text: "Trang cá nhân",
+                          to: "/profile",
+                        },
+                        {
+                          icon: <FaHistory className="text-blue-500" />,
+                          text: "Lịch sử đặt sân",
+                          to: "/history",
+                        },
+                        {
+                          icon: <FaHeart className="text-rose-500" />,
+                          text: "Sân yêu thích",
+                          to: "/favorites",
+                        },
+                        {
+                          icon: <FaStar className="text-yellow-500" />,
+                          text: "Đánh giá của tôi",
+                          to: "/reviews",
+                        },
+                        {
+                          icon: <FaWallet className="text-purple-500" />,
+                          text: "Ví thanh toán",
+                          to: "/wallet",
+                        },
+                        {
+                          icon: <FaCrown className="text-amber-500" />,
+                          text: "Gói hội viên",
+                          to: "/membership",
+                        },
+                        {
+                          icon: <FaTimesCircle className="text-gray-500" />,
+                          text: "Đơn đã hủy",
+                          to: "/canceled",
+                        },
+                        {
+                          icon: <FaHeadset className="text-sky-500" />,
+                          text: "Hỗ trợ",
+                          to: "/support",
+                        },
+                      ].map((item, index) => (
+                        <motion.div
+                          key={item.text}
+                          variants={{
+                            hidden: { opacity: 0, x: -20 },
+                            visible: { opacity: 1, x: 0 },
+                          }}
+                        >
+                          <Link
+                            to={item.to}
+                            className="flex items-center px-4 py-3 text-gray-700 hover:bg-emerald-50 transition-all group"
+                            onClick={() => setActiveDropdown(null)}
+                          >
+                            <motion.span
+                              className="mr-3 text-lg group-hover:scale-110 transition-transform"
+                              whileHover={{ scale: 1.2 }}
+                            >
+                              {item.icon}
+                            </motion.span>
+                            <span className="group-hover:font-medium group-hover:text-emerald-700 transition-all">
+                              {item.text}
+                            </span>
+                            <motion.span
+                              className="ml-auto opacity-0 group-hover:opacity-100 text-emerald-500"
+                              initial={{ x: -10 }}
+                              animate={{ x: 0 }}
+                              transition={{ delay: 0.1 }}
+                            >
+                              <FaChevronRight className="text-xs" />
+                            </motion.span>
+                          </Link>
+                        </motion.div>
+                      ))}
+
+                      {/* Logout with special animation */}
+                      <motion.div
+                        className="border-t border-emerald-100"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 0.4 }}
+                      >
+                        <motion.button
+                          onClick={handleLogout}
+                          className="flex items-center w-full px-4 py-3 text-red-500 hover:bg-red-50 transition-colors group"
+                          whileHover={{ x: [0, -3, 3, -2, 2, 0] }}
+                          transition={{ duration: 0.5 }}
+                        >
+                          <motion.span
+                            className="mr-3 group-hover:animate-pulse"
+                            animate={{ rotate: [0, 20, -20, 0] }}
+                            transition={{ repeat: Infinity, duration: 2 }}
+                          >
+                            <FaPowerOff />
+                          </motion.span>
+                          <span className="font-medium">Đăng xuất</span>
+                        </motion.button>
+                      </motion.div>
+                    </motion.div>
+                  </motion.div>
+                )}
               </motion.div>
             ) : (
               <div className="flex space-x-3">

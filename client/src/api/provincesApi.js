@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'https://provinces.open-api.vn/api/';
+const API_BASE_URL = 'https://provinces.open-api.vn/api/v2/';
 
 
 export const getProvinces = async () => {
